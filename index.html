@@ -206,6 +206,16 @@
   .marquee-card.is-active{transform:translateX(0);}
   .marquee-card.is-prev{transform:translateX(-112%);}
 
+  .marquee-card.has-bg{
+    background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-ledger-bg.jpg');
+    background-size:cover;background-position:center;border-color:var(--green-deep);
+  }
+  .marquee-card.has-bg::before{background:var(--gold);}
+  .marquee-card.has-bg .mc-idx{color:var(--gold);}
+  .marquee-card.has-bg .mc-idx::before{background:var(--gold);}
+  .marquee-card.has-bg h3{color:var(--cream);}
+  .marquee-card.has-bg p{color:rgba(247,245,239,0.7);}
+
   .rule{height:1px;background:var(--line);width:100%;}
 
   /* right column: replaces the old portrait block with an operational "ledger" panel */
@@ -246,18 +256,34 @@
   .stat .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--lbl);margin-top:8px;}
 
   /* ===== SERVICES ===== */
-  /* ===== FEATURE SCROLL PATH — pinned frame, one feature fills the viewport per scroll step ===== */
+  /* ===== FEATURE TABS — title nav in the gap above the deck, timer-driven ===== */
+  .feature-gap{height:64px;}
+  .feature-blank{height:400px;}
+  .feature-tabs{
+    max-width:1400px;margin:0 auto;padding:0 60px 28px;
+    display:flex;gap:36px;border-bottom:1px solid var(--line);
+  }
+  .feature-tab{
+    position:relative;flex:1;background:none;border:none;cursor:pointer;text-align:left;
+    padding:0 0 20px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);transition:color .3s ease;
+  }
+  .feature-tab:hover{color:var(--ink-soft);}
+  .feature-tab.is-active{color:var(--green);}
+  .feature-tab .ft-track{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
+  .feature-tab .ft-fill{width:100%;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;display:block;}
+
+  /* ===== FEATURE DECK — one card visible at a time, advances on a timer or by tab click ===== */
   .feature-path{
-    position:relative;
-    height:500vh; /* 5 features x 100vh of scroll travel */
+    max-width:1400px;margin:0 auto;padding:0 0 100px;
   }
   .feature-sticky{
-    position:sticky;top:0;height:100vh;overflow:hidden;
+    position:relative;height:600px;
     display:flex;flex-direction:column;
   }
   .feature-sticky-head{
     display:flex;justify-content:space-between;align-items:center;
-    padding:34px 60px;position:relative;z-index:3;
+    padding:0 60px 34px;position:relative;z-index:3;
   }
   .feature-sticky-head h2{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--green);font-weight:500;}
   .feature-sticky-head .fc-counter{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;color:var(--gold);}
@@ -382,8 +408,9 @@
     .grid-field::before{background-position:22px 0;background-size:calc((100% - 44px)/2) 100%;}
     .stats{grid-template-columns:repeat(2,1fr);padding:28px 22px;margin-top:44px;row-gap:24px;}
     .stat{border-right:none;padding:0;}
-    .feature-path{padding:64px 0 60px;}
-    .feature-path{height:auto;}
+    .feature-gap{height:32px;}
+    .feature-tabs{display:none;}
+    .feature-path{padding:0 0 60px;}
     .feature-sticky{position:relative;height:auto;}
     .feature-sticky-head{padding:28px 22px 18px;}
     .feature-frame-stack{position:static;}
@@ -449,7 +476,7 @@
 
 <div class="facts-wrap">
   <div class="marquee-track" id="marqueeTrack">
-    <div class="marquee-card">
+    <div class="marquee-card has-bg">
       <div class="marquee-card-inner">
         <div class="mc-idx">Ledger</div>
         <h3>Books, kept current.</h3>
@@ -502,105 +529,7 @@
     <div class="stat"><div class="num">By Referral</div><div class="lbl">New Client Introductions</div></div>
   </div>
 
-  <div class="feature-path" id="featurePath">
-    <div class="feature-sticky">
-      <div class="feature-sticky-head">
-        <h2>What Runs Behind the Scenes</h2>
-        <span class="fc-counter" id="fcCounter">01 / 05</span>
-      </div>
-
-      <div class="feature-frame-stack">
-        <div class="feature-frame is-active">
-          <div class="feature-frame-text">
-            <div class="fc-idx">Ledger</div>
-            <h3>Continuous Categorization</h3>
-            <p>Every transaction is routed to the correct account as it clears — not batched and guessed at come quarter's end.</p>
-            <div class="fc-stat"><span class="n">Live</span><span class="l">On Your Books</span></div>
-          </div>
-          <div class="feature-frame-visual has-bg">
-            <div class="fv-head"><span>Ledger Feed</span><span>Today</span></div>
-            <div class="fv-rows">
-              <div class="fv-row"><span>Client payment — Revelation Detailing</span><span class="v">Revenue</span></div>
-              <div class="fv-row"><span>Fuel purchase — Shell #4021</span><span class="v">Auto Exp.</span></div>
-              <div class="fv-row"><span>Software renewal — QBO</span><span class="v">Subscriptions</span></div>
-              <div class="fv-row"><span>Owner transfer</span><span class="v">Equity</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="feature-frame">
-          <div class="feature-frame-text">
-            <div class="fc-idx">Close</div>
-            <h3>Same-Day Period Close</h3>
-            <p>Adjusting entries are surfaced and cleared before the month ends, so close day is a formality, not a fire drill.</p>
-            <div class="fc-stat"><span class="n">Under 24 Hrs</span><span class="l">Average Close Time</span></div>
-          </div>
-          <div class="feature-frame-visual">
-            <div class="fv-head"><span>Close Checklist</span><span>July</span></div>
-            <div class="fv-rows">
-              <div class="fv-row"><span>Bank reconciliation</span><span class="v">Cleared</span></div>
-              <div class="fv-row"><span>Accrued payroll</span><span class="v">Cleared</span></div>
-              <div class="fv-row"><span>Depreciation entry</span><span class="v">Cleared</span></div>
-              <div class="fv-row"><span>Owner review</span><span class="v">Pending</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="feature-frame">
-          <div class="feature-frame-text">
-            <div class="fc-idx">Tax</div>
-            <h3>Liability, Tracked Year-Round</h3>
-            <p>Your tax position is calculated from live books throughout the year — never reconstructed from a shoebox in April.</p>
-            <div class="fc-stat"><span class="n">Zero</span><span class="l">Amended Returns Filed</span></div>
-          </div>
-          <div class="feature-frame-visual">
-            <div class="fv-head"><span>Liability Estimate</span><span>Q3</span></div>
-            <div class="fv-rows">
-              <div class="fv-row"><span>Federal estimate, YTD</span><span class="v">On Track</span></div>
-              <div class="fv-row"><span>Texas franchise threshold</span><span class="v">Under</span></div>
-              <div class="fv-row"><span>Sales tax remitted</span><span class="v">Current</span></div>
-              <div class="fv-row"><span>Next filing due</span><span class="v">Sep 15</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="feature-frame">
-          <div class="feature-frame-text">
-            <div class="fc-idx">Reporting</div>
-            <h3>Board-Ready Statements</h3>
-            <p>Branded P&amp;L, balance sheet, and cash flow reports, delivered on demand — ready to hand to a lender or partner.</p>
-            <div class="fc-stat"><span class="n">On Demand</span><span class="l">Delivery Time</span></div>
-          </div>
-          <div class="feature-frame-visual">
-            <div class="fv-head"><span>Statement Package</span><span>Ready</span></div>
-            <div class="fv-rows">
-              <div class="fv-row"><span>Profit &amp; Loss</span><span class="v">Generated</span></div>
-              <div class="fv-row"><span>Balance Sheet</span><span class="v">Generated</span></div>
-              <div class="fv-row"><span>Statement of Cash Flows</span><span class="v">Generated</span></div>
-              <div class="fv-row"><span>Cover letter</span><span class="v">Branded</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="feature-frame">
-          <div class="feature-frame-text">
-            <div class="fc-idx">Counsel</div>
-            <h3>One Advisor, Every Question</h3>
-            <p>A single CPA who already knows your business handles both the personal and the entity side, in confidence.</p>
-            <div class="fc-stat"><span class="n">1 : 1</span><span class="l">Advisor Continuity</span></div>
-          </div>
-          <div class="feature-frame-visual">
-            <div class="fv-head"><span>Standing Review</span><span>Monthly</span></div>
-            <div class="fv-rows">
-              <div class="fv-row"><span>Personal return planning</span><span class="v">Scheduled</span></div>
-              <div class="fv-row"><span>Entity distribution strategy</span><span class="v">Scheduled</span></div>
-              <div class="fv-row"><span>Advisor</span><span class="v">Same as Last Call</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="feature-blank" id="featureBlank"></div>
 
   <div class="feature-progress-vertical" id="featureProgressVertical">
     <div class="seg"><i></i></div>
@@ -734,26 +663,53 @@
   window.addEventListener('resize', updatePageProgress);
   updatePageProgress();
 
-  const path = document.getElementById('featurePath');
   const frames = document.querySelectorAll('.feature-frame');
   const counter = document.getElementById('fcCounter');
-  const total = frames.length;
+  const tabs = document.querySelectorAll('.feature-tab');
+  const totalFrames = frames.length;
+  const CARD_DURATION = 6000; // ms each card stays active before advancing
 
-  function updateFeaturePath(){
-    const rect = path.getBoundingClientRect();
-    const scrollable = rect.height - window.innerHeight;
-    let progress = scrollable > 0 ? (-rect.top) / scrollable : 0;
-    progress = Math.min(Math.max(progress, 0), 0.9999);
+  if(totalFrames && tabs.length){
+    let activeIndex = 0;
+    let advanceTimer = null;
 
-    const activeIndex = Math.floor(progress * total);
-    frames.forEach((f,i)=> f.classList.toggle('is-active', i === activeIndex));
+    function paintFills(i){
+      tabs.forEach((t, idx)=>{
+        const fill = t.querySelector('.ft-fill');
+        fill.style.transition = 'none';
+        fill.style.transform = idx < i ? 'scaleX(1)' : 'scaleX(0)';
+      });
+      // force reflow so the next transition actually animates from the reset state
+      void tabs[i].offsetWidth;
+      const activeFill = tabs[i].querySelector('.ft-fill');
+      activeFill.style.transition = `transform ${CARD_DURATION}ms linear`;
+      requestAnimationFrame(()=>{ activeFill.style.transform = 'scaleX(1)'; });
+    }
 
-    counter.textContent = String(activeIndex+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+    function setActive(i){
+      activeIndex = ((i % totalFrames) + totalFrames) % totalFrames;
+      frames.forEach((f, idx)=> f.classList.toggle('is-active', idx === activeIndex));
+      tabs.forEach((t, idx)=> t.classList.toggle('is-active', idx === activeIndex));
+      if(counter) counter.textContent = String(activeIndex+1).padStart(2,'0') + ' / ' + String(totalFrames).padStart(2,'0');
+      paintFills(activeIndex);
+    }
+
+    function startAutoplay(){
+      clearTimeout(advanceTimer);
+      advanceTimer = setTimeout(()=>{ setActive(activeIndex+1); startAutoplay(); }, CARD_DURATION);
+    }
+
+    tabs.forEach((tab, idx)=>{
+      tab.addEventListener('click', ()=>{
+        setActive(idx);
+        startAutoplay();
+      });
+    });
+
+    setActive(0);
+    startAutoplay();
   }
-
-  window.addEventListener('scroll', updateFeaturePath, {passive:true});
-  window.addEventListener('resize', updateFeaturePath);
-  updateFeaturePath();
 </script>
+
 </body>
 </html>
