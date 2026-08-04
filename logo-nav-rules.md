@@ -35,7 +35,7 @@ Keep this exact structure at the top of `<body>` on every page:
   font-size:22px;
   letter-spacing:.06em;      /* tightened from .18em — keep tight */
   color:var(--cream);
-  display:flex;align-items:center;gap:12px;
+  display:flex;align-items:center;gap:8px;
   text-decoration:none;
   transition:transform .25s ease, color .35s ease;
   cursor:pointer;
@@ -59,7 +59,8 @@ Keep this exact structure at the top of `<body>` on every page:
 - **Link:** clicking the logo/wordmark anywhere on the site returns to `index.html`.
 - **Hover:** logo lifts slightly and scales up (~3.5%), icon tilts -4deg.
 - **Spacing:** wordmark letter-spacing is `.06em` (not the wider `.18em` used
-  elsewhere in the nav) so "HLW Financial" doesn't look spread out.
+  elsewhere in the nav) so "HLW Financial" doesn't look spread out. Gap between
+  the icon and wordmark is `8px` (tightened from `12px`).
 
 When adding a new page, copy the header markup and these CSS rules verbatim
 rather than re-deriving them.
