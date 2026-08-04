@@ -207,7 +207,6 @@
   .marquee-card.is-prev{transform:translateX(-112%);}
 
   .marquee-card.has-bg{
-    background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-ledger-bg.jpg');
     background-size:cover;background-position:center;border-color:var(--green-deep);
   }
   .marquee-card.has-bg::before{background:var(--gold);}
@@ -215,6 +214,25 @@
   .marquee-card.has-bg .mc-idx::before{background:var(--gold);}
   .marquee-card.has-bg h3{color:var(--cream);}
   .marquee-card.has-bg p{color:rgba(247,245,239,0.7);}
+  .marquee-card.bg-ledger{background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-ledger-bg.jpg');}
+  .marquee-card.bg-reporting{background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-reporting-bg.png');}
+  .marquee-card.bg-close{background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-close-bg.png');}
+
+  /* nav row above the marquee — one tab per card, timer fill shows time left */
+  .marquee-tabs{
+    max-width:1400px;margin:0 auto;padding:0 60px 24px;
+    display:flex;gap:28px;border-bottom:1px solid var(--line);
+    margin-top:48px;margin-bottom:28px;
+  }
+  .marquee-tab{
+    position:relative;flex:1;background:none;border:none;cursor:pointer;text-align:left;
+    padding:0 0 18px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);transition:color .3s ease;
+  }
+  .marquee-tab:hover{color:var(--ink-soft);}
+  .marquee-tab.is-active{color:var(--green);}
+  .marquee-tab .mt-track{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
+  .marquee-tab .mt-fill{width:100%;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;display:block;}
 
   .rule{height:1px;background:var(--line);width:100%;}
 
@@ -410,6 +428,7 @@
     .stat{border-right:none;padding:0;}
     .feature-gap{height:32px;}
     .feature-tabs{display:none;}
+    .marquee-tabs{display:none;}
     .feature-path{padding:0 0 60px;}
     .feature-sticky{position:relative;height:auto;}
     .feature-sticky-head{padding:28px 22px 18px;}
@@ -474,16 +493,25 @@
   <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
 
+<div class="marquee-tabs" id="marqueeTabs">
+  <button class="marquee-tab" type="button">Ledger<span class="mt-track"><span class="mt-fill"></span></span></button>
+  <button class="marquee-tab" type="button">Close<span class="mt-track"><span class="mt-fill"></span></span></button>
+  <button class="marquee-tab" type="button">Tax<span class="mt-track"><span class="mt-fill"></span></span></button>
+  <button class="marquee-tab" type="button">Reporting<span class="mt-track"><span class="mt-fill"></span></span></button>
+  <button class="marquee-tab" type="button">Counsel<span class="mt-track"><span class="mt-fill"></span></span></button>
+  <button class="marquee-tab" type="button">Standing<span class="mt-track"><span class="mt-fill"></span></span></button>
+</div>
+
 <div class="facts-wrap">
   <div class="marquee-track" id="marqueeTrack">
-    <div class="marquee-card has-bg">
+    <div class="marquee-card has-bg bg-ledger">
       <div class="marquee-card-inner">
         <div class="mc-idx">Ledger</div>
         <h3>Books, kept current.</h3>
         <p>Transactions categorized as they clear, not reconstructed later.</p>
       </div>
     </div>
-    <div class="marquee-card">
+    <div class="marquee-card has-bg bg-close">
       <div class="marquee-card-inner">
         <div class="mc-idx">Close</div>
         <h3>Close day, simplified.</h3>
@@ -497,7 +525,7 @@
         <p>Liability tracked year-round from books that are already right.</p>
       </div>
     </div>
-    <div class="marquee-card">
+    <div class="marquee-card has-bg bg-reporting">
       <div class="marquee-card-inner">
         <div class="mc-idx">Reporting</div>
         <h3>Statements, on demand.</h3>
@@ -613,29 +641,71 @@
   updateNav();
 
   const marqueeCards = document.querySelectorAll('#marqueeTrack .marquee-card');
-  let marqueeIndex = 0;
-  if(marqueeCards.length){
-    marqueeCards[0].classList.add('is-active');
-    setInterval(()=>{
-      const outgoing = marqueeCards[marqueeIndex];
-      outgoing.classList.remove('is-active');
-      outgoing.classList.add('is-prev');
+  const marqueeTabs = document.querySelectorAll('#marqueeTabs .marquee-tab');
+  const MARQUEE_DURATION = 3800; // ms each card stays active before advancing
 
-      marqueeIndex = (marqueeIndex + 1) % marqueeCards.length;
+  if(marqueeCards.length){
+    let marqueeIndex = 0;
+    let marqueeTimer = null;
+
+    function paintMarqueeFills(i){
+      marqueeTabs.forEach((t, idx)=>{
+        const fill = t.querySelector('.mt-fill');
+        fill.style.transition = 'none';
+        fill.style.transform = idx < i ? 'scaleX(1)' : 'scaleX(0)';
+      });
+      if(!marqueeTabs.length) return;
+      // force reflow so the next transition actually animates from the reset state
+      void marqueeTabs[i].offsetWidth;
+      const activeFill = marqueeTabs[i].querySelector('.mt-fill');
+      activeFill.style.transition = `transform ${MARQUEE_DURATION}ms linear`;
+      requestAnimationFrame(()=>{ activeFill.style.transform = 'scaleX(1)'; });
+    }
+
+    function goToMarqueeCard(next){
+      const outgoing = marqueeCards[marqueeIndex];
+      const wasActive = outgoing.classList.contains('is-active');
+      if(wasActive){
+        outgoing.classList.remove('is-active');
+        outgoing.classList.add('is-prev');
+      }
+
+      marqueeIndex = ((next % marqueeCards.length) + marqueeCards.length) % marqueeCards.length;
       const incoming = marqueeCards[marqueeIndex];
       incoming.classList.remove('is-prev');
       incoming.classList.add('is-active');
 
-      // after the outgoing card finishes sliding off-screen left,
-      // snap it back to the waiting position (right) with no transition
-      setTimeout(()=>{
-        outgoing.classList.add('no-transition');
-        outgoing.classList.remove('is-prev');
-        // force reflow so the instant snap is applied before re-enabling transitions
-        void outgoing.offsetWidth;
-        outgoing.classList.remove('no-transition');
-      }, 950);
-    }, 3800);
+      marqueeTabs.forEach((t, idx)=> t.classList.toggle('is-active', idx === marqueeIndex));
+      paintMarqueeFills(marqueeIndex);
+
+      if(wasActive){
+        // after the outgoing card finishes sliding off-screen left,
+        // snap it back to the waiting position (right) with no transition
+        setTimeout(()=>{
+          outgoing.classList.add('no-transition');
+          outgoing.classList.remove('is-prev');
+          // force reflow so the instant snap is applied before re-enabling transitions
+          void outgoing.offsetWidth;
+          outgoing.classList.remove('no-transition');
+        }, 950);
+      }
+    }
+
+    function startMarqueeAutoplay(){
+      clearInterval(marqueeTimer);
+      marqueeTimer = setInterval(()=> goToMarqueeCard(marqueeIndex + 1), MARQUEE_DURATION);
+    }
+
+    marqueeTabs.forEach((tab, idx)=>{
+      tab.addEventListener('click', ()=>{
+        if(idx === marqueeIndex) return;
+        goToMarqueeCard(idx);
+        startMarqueeAutoplay();
+      });
+    });
+
+    goToMarqueeCard(0);
+    startMarqueeAutoplay();
   }
 
   const segs = document.querySelectorAll('.feature-progress-vertical .seg i');
