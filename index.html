@@ -221,8 +221,26 @@
   .marquee-card.has-bg .mc-idx::before{background:var(--gold);}
   .marquee-card.has-bg h3{color:var(--cream);}
   .marquee-card.has-bg p{color:rgba(247,245,239,0.7);}
-  .marquee-card.bg-ledger{background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-ledger-bg.jpg');}
-  .marquee-card.bg-reporting{background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-reporting-bg.png');}
+  .marquee-card.bg-ledger{overflow:hidden;}
+  .marquee-card.bg-ledger video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-ledger::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-ledger .marquee-card-inner{position:relative;z-index:2;}
+  .marquee-card.bg-reporting{overflow:hidden;}
+  .marquee-card.bg-reporting video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-reporting::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-reporting .marquee-card-inner{position:relative;z-index:2;}
   .marquee-card.bg-close{background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-close-bg.png');}
 
   /* nav row above the marquee — one tab per card, timer fill shows time left */
@@ -515,6 +533,7 @@
 <div class="facts-wrap">
   <div class="marquee-track" id="marqueeTrack">
     <div class="marquee-card has-bg bg-ledger">
+      <video src="card-ledger-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Ledger</div>
         <h3>Books, kept current.</h3>
@@ -536,6 +555,7 @@
       </div>
     </div>
     <div class="marquee-card has-bg bg-reporting">
+      <video src="card-reporting-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Reporting</div>
         <h3>Statements, on demand.</h3>
