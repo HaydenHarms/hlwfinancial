@@ -255,6 +255,26 @@
   }
   .marquee-card.bg-reporting .marquee-card-inner{position:relative;z-index:2;}
   .marquee-card.bg-close{background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-close-bg.png');}
+  .marquee-card.bg-tax{overflow:hidden;}
+  .marquee-card.bg-tax video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-tax::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-tax .marquee-card-inner{position:relative;z-index:2;}
+  .marquee-card.bg-counsel{overflow:hidden;}
+  .marquee-card.bg-counsel video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-counsel::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-counsel .marquee-card-inner{position:relative;z-index:2;}
 
   /* nav row above the marquee — one tab per card, timer fill shows time left */
   .marquee-tabs{
@@ -558,7 +578,8 @@
         <p>Adjusting entries surfaced early, so the close is a formality.</p>
       </div>
     </div>
-    <div class="marquee-card">
+    <div class="marquee-card has-bg bg-tax">
+      <video src="card-tax-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Tax</div>
         <h3>No surprises in April.</h3>
@@ -573,7 +594,8 @@
         <p>Clean, branded reports ready to hand to a lender or partner.</p>
       </div>
     </div>
-    <div class="marquee-card">
+    <div class="marquee-card has-bg bg-counsel">
+      <video src="card-counsel-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Counsel</div>
         <h3>One advisor, always.</h3>
