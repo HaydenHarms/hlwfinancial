@@ -495,7 +495,13 @@
     .stat{border-right:none;padding:0;}
     .feature-gap{height:32px;}
     .feature-tabs{display:none;}
-    .marquee-tabs{display:none;}
+    .marquee-tabs{
+      display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      gap:20px;padding:0 22px 16px;margin-top:28px;margin-bottom:16px;
+      scrollbar-width:none;
+    }
+    .marquee-tabs::-webkit-scrollbar{display:none;}
+    .marquee-tab{flex:0 0 auto;padding-bottom:12px;white-space:nowrap;}
     .feature-path{padding:0 0 60px;}
     .feature-sticky{position:relative;height:auto;}
     .feature-sticky-head{padding:28px 22px 18px;}
