@@ -859,8 +859,8 @@
       // left-to-right decode: each character's scramble window starts a
       // little after the one before it, so they resolve in reading order
       // instead of settling randomly
-      const STAGGER = 2;      // frames between each character's start
-      const SCRAMBLE_LEN = 10; // frames a character scrambles before locking in
+      const STAGGER = 1;      // frames between each character's start
+      const SCRAMBLE_LEN = 6; // frames a character scrambles before locking in
       for(let i=0;i<length;i++){
         const from = oldText[i] || '';
         const to = newText[i] || '';
@@ -933,10 +933,11 @@
         if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
         closeCard(card);
       });
-      // tap — toggle open/closed
+      // tap — toggle open/closed (mouse clicks are stopped here but otherwise ignored,
+      // so a click never bubbles up and triggers the outside-click "close" handler below)
       card.addEventListener('click', (e)=>{
-        if(lastPointerType !== 'touch' && lastPointerType !== 'pen') return;
         e.stopPropagation();
+        if(lastPointerType !== 'touch' && lastPointerType !== 'pen') return;
         if(card.classList.contains('is-open')) closeCard(card);
         else openCard(card);
       });
