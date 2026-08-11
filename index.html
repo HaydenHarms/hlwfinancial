@@ -211,7 +211,7 @@
     max-height:0;opacity:0;overflow:hidden;transform:translateY(16px);
     transition:max-height .5s cubic-bezier(.65,0,.35,1), opacity .4s ease, transform .5s cubic-bezier(.65,0,.35,1), margin-top .5s cubic-bezier(.65,0,.35,1);
   }
-  .marquee-card:hover p{
+  .marquee-card:hover p, .marquee-card.is-open p{
     max-height:200px;opacity:1;transform:translateY(0);margin-top:16px;
   }
   .marquee-card.is-active{transform:translateX(0);}
@@ -342,7 +342,7 @@
     max-height:0;opacity:0;overflow:hidden;transform:translateY(16px);
     transition:max-height .5s cubic-bezier(.65,0,.35,1), opacity .4s ease, transform .5s cubic-bezier(.65,0,.35,1), margin-top .5s cubic-bezier(.65,0,.35,1);
   }
-  .product-card:hover .pg-body{
+  .product-card:hover .pg-body, .product-card.is-open .pg-body{
     max-height:200px;opacity:1;transform:translateY(0);margin-top:16px;
   }
 
@@ -731,6 +731,10 @@
       marqueeTimer = setInterval(()=> goToMarqueeCard(marqueeIndex + 1), MARQUEE_DURATION);
     }
 
+    function stopMarqueeAutoplay(){
+      clearInterval(marqueeTimer);
+    }
+
     marqueeTabs.forEach((tab, idx)=>{
       tab.addEventListener('click', ()=>{
         if(idx === marqueeIndex) return;
@@ -741,6 +745,9 @@
 
     goToMarqueeCard(0);
     startMarqueeAutoplay();
+
+    // exposed so touch-tap handling (below) can pause/resume autoplay
+    window.__marqueeAutoplay = { start: startMarqueeAutoplay, stop: stopMarqueeAutoplay };
   }
 
   const frames = document.querySelectorAll('.feature-frame');
@@ -859,6 +866,8 @@
     const finalText = bodyEl.getAttribute('data-final') || bodyEl.textContent;
     bodyEl.textContent = '';
     const scrambler = new FormulaScramble(bodyEl);
+    bodyEl._scrambler = scrambler;
+    bodyEl._finalText = finalText;
     card.addEventListener('mouseenter', ()=>{
       scrambler.setText(finalText);
     });
@@ -867,6 +876,63 @@
       bodyEl.textContent = '';
     });
   });
+
+  // ===== TOUCH DEVICES — no hover, so tap toggles the same reveal state =====
+  const supportsHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+
+  if(!supportsHover){
+    function setupTapReveal(nodeList, onOpen, onClose){
+      const cards = Array.from(nodeList);
+      cards.forEach(card=>{
+        card.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          const wasOpen = card.classList.contains('is-open');
+          cards.forEach(c=>{
+            if(c !== card && c.classList.contains('is-open')){
+              c.classList.remove('is-open');
+              if(onClose) onClose(c);
+            }
+          });
+          if(wasOpen){
+            card.classList.remove('is-open');
+            if(onClose) onClose(card);
+          } else {
+            card.classList.add('is-open');
+            if(onOpen) onOpen(card);
+          }
+        });
+      });
+      document.addEventListener('click', ()=>{
+        cards.forEach(c=>{
+          if(c.classList.contains('is-open')){
+            c.classList.remove('is-open');
+            if(onClose) onClose(c);
+          }
+        });
+      });
+    }
+
+    setupTapReveal(
+      document.querySelectorAll('#marqueeTrack .marquee-card'),
+      ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.stop(); },
+      ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.start(); }
+    );
+
+    setupTapReveal(
+      document.querySelectorAll('.product-card'),
+      (card)=>{
+        const bodyEl = card.querySelector('.pg-body');
+        if(bodyEl && bodyEl._scrambler) bodyEl._scrambler.setText(bodyEl._finalText);
+      },
+      (card)=>{
+        const bodyEl = card.querySelector('.pg-body');
+        if(bodyEl && bodyEl._scrambler){
+          cancelAnimationFrame(bodyEl._scrambler.frameRequest);
+          bodyEl.textContent = '';
+        }
+      }
+    );
+  }
 </script>
 
 </body>
