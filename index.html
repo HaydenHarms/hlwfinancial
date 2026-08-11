@@ -121,7 +121,7 @@
   /* ===== HERO — full-bleed animated background, minimal overlay copy ===== */
   .hero-video{
     position:relative;height:100vh;overflow:hidden;
-    display:flex;align-items:flex-end;
+    display:flex;align-items:center;justify-content:center;
   }
   .hero-bg{
     position:absolute;inset:0;overflow:hidden;
@@ -153,7 +153,8 @@
   }
   .hero-content{
     position:relative;z-index:2;max-width:1400px;margin:0 auto;width:100%;
-    padding:0 60px 96px;color:#f4f1e8;
+    padding:0 60px;color:#f4f1e8;
+    text-align:center;
   }
   .hero-content .eyebrow{
     font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
@@ -164,7 +165,7 @@
   .hero-content h1{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
     font-size:clamp(46px,6.2vw,88px);line-height:1.03;color:#f4f1e8;letter-spacing:-.01em;
-    max-width:900px;
+    max-width:900px;margin:0 auto;
   }
   .hero-content h1 em{font-style:italic;color:var(--gold);font-weight:400;}
   .hero-content p.lede{margin-top:26px;font-size:18px;line-height:1.7;color:rgba(244,241,232,0.7);max-width:460px;}
@@ -488,7 +489,7 @@
     .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
     .nav-links{gap:0;}
     .nav-links a:not(:last-child){display:none;}
-    .hero-content{padding:0 22px 70px;}
+    .hero-content{padding:0 22px;}
     .hero-scroll-cue{left:22px;}
     .facts-wrap{height:52vh;}
     .marquee-card{inset:0 22px;}
