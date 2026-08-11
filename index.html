@@ -319,23 +319,25 @@
     display:flex;justify-content:space-between;
   }
 
-  /* ===== PRODUCT GALLERY — two cards, heading only, hover reveals body w/ Excel-formula scramble ===== */
+  /* ===== PRODUCT GALLERY — two cards, heading only, hover reveals body w/ Excel-formula scramble =====
+     sized to match the marquee cards: combined width spans the same edge-to-edge
+     area (60px side margins), same overall height, small gap between the two ===== */
   .product-gallery{
-    max-width:1400px;margin:64px auto 0;padding:0 60px 100px;
-    display:grid;grid-template-columns:repeat(2,1fr);gap:24px;
+    margin:64px 0 0;padding:0 60px 100px;
+    display:grid;grid-template-columns:1fr 1fr;gap:24px;
   }
   .product-card{
-    position:relative;height:420px;overflow:hidden;
+    position:relative;height:76vh;overflow:hidden;
     border:1px solid var(--line);background:var(--panel-bg);
   }
   .product-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
   .product-card-inner{
     height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
-    padding:0 44px 44px;
+    padding:0 44px 56px;
   }
   .product-card h3{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
-    font-size:clamp(28px,3vw,42px);line-height:1.1;color:var(--green);
+    font-size:clamp(30px,3.6vw,50px);line-height:1.1;color:var(--green);
   }
   .product-card .pg-body{
     margin-top:0;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.6;color:var(--ink-soft);max-width:420px;
@@ -541,7 +543,7 @@
 <section class="hero-video">
   <div class="hero-bg">
     <div class="hero-bg-fallback"></div>
-    <video src="Website_hero.mp4" autoplay muted loop playsinline preload="auto"></video>
+    <video src="Website_hero.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
   </div>
   <div class="hero-noise"></div>
   <div class="hero-overlay"></div>
@@ -563,7 +565,7 @@
 <div class="facts-wrap">
   <div class="marquee-track" id="marqueeTrack">
     <div class="marquee-card has-bg bg-ledger">
-      <video src="card-ledger-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <video src="card-ledger-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Ledger</div>
         <h3>Books, kept current.</h3>
@@ -571,7 +573,7 @@
       </div>
     </div>
     <div class="marquee-card has-bg bg-close">
-      <video src="card-close-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <video src="card-close-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Close</div>
         <h3>Close day, simplified.</h3>
@@ -579,7 +581,7 @@
       </div>
     </div>
     <div class="marquee-card has-bg bg-tax">
-      <video src="card-tax-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <video src="card-tax-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Tax</div>
         <h3>No surprises in April.</h3>
@@ -587,7 +589,7 @@
       </div>
     </div>
     <div class="marquee-card has-bg bg-reporting">
-      <video src="card-reporting-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <video src="card-reporting-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Reporting</div>
         <h3>Statements, on demand.</h3>
@@ -595,7 +597,7 @@
       </div>
     </div>
     <div class="marquee-card has-bg bg-counsel">
-      <video src="card-counsel-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <video src="card-counsel-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
       <div class="marquee-card-inner">
         <div class="mc-idx">Counsel</div>
         <h3>One advisor, always.</h3>
@@ -659,6 +661,26 @@
 </div>
 
 <script>
+  // ===== VIDEO AUTOPLAY HARDENING =====
+  // Some mobile browsers (older iOS Safari, Low Power Mode, some in-app
+  // webviews) ignore the autoplay attribute even when muted+playsinline
+  // are set, and only start playback once .play() is called explicitly.
+  function nudgeVideoPlayback(){
+    document.querySelectorAll('video').forEach(v=>{
+      v.muted = true;
+      if(v.paused){
+        const attempt = v.play();
+        if(attempt && attempt.catch) attempt.catch(()=>{});
+      }
+    });
+  }
+  nudgeVideoPlayback();
+  window.addEventListener('load', nudgeVideoPlayback);
+  // last-resort fallback: retry once on the first tap/click anywhere,
+  // in case the browser is still withholding autoplay until a user gesture
+  document.addEventListener('touchstart', nudgeVideoPlayback, {once:true, passive:true});
+  document.addEventListener('click', nudgeVideoPlayback, {once:true});
+
   const root = document.documentElement;
   const toggle = document.getElementById('themeToggle');
   const label = document.getElementById('themeToggleLabel');
@@ -709,6 +731,19 @@
       const incoming = marqueeCards[marqueeIndex];
       incoming.classList.remove('is-prev');
       incoming.classList.add('is-active');
+
+      // mobile browsers often only honor autoplay for video that's actually
+      // in view — these cards move on/off screen via CSS transform, so
+      // nudge playback explicitly each time a card becomes active
+      const incomingVideo = incoming.querySelector('video');
+      if(incomingVideo){
+        const playAttempt = incomingVideo.play();
+        if(playAttempt && playAttempt.catch) playAttempt.catch(()=>{});
+      }
+      if(wasActive){
+        const outgoingVideo = outgoing.querySelector('video');
+        if(outgoingVideo) outgoingVideo.pause();
+      }
 
       marqueeTabs.forEach((t, idx)=> t.classList.toggle('is-active', idx === marqueeIndex));
       paintMarqueeFills(marqueeIndex);
@@ -821,11 +856,16 @@
       const length = Math.max(oldText.length, newText.length);
       const promise = new Promise(res => this.resolve = res);
       this.queue = [];
+      // left-to-right decode: each character's scramble window starts a
+      // little after the one before it, so they resolve in reading order
+      // instead of settling randomly
+      const STAGGER = 2;      // frames between each character's start
+      const SCRAMBLE_LEN = 10; // frames a character scrambles before locking in
       for(let i=0;i<length;i++){
         const from = oldText[i] || '';
         const to = newText[i] || '';
-        const start = Math.floor(Math.random()*24);
-        const end = start + Math.floor(Math.random()*24);
+        const start = i * STAGGER;
+        const end = start + SCRAMBLE_LEN;
         this.queue.push({from, to, start, end, char:null});
       }
       cancelAnimationFrame(this.frameRequest);
