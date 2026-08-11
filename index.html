@@ -915,11 +915,17 @@
     function closeCard(card){
       if(!card.classList.contains('is-open')) return;
       card.classList.remove('is-open');
-      if(onClose) onClose(card);
+      // resume/pause decisions are tied to how the card was opened, not
+      // whatever the pointer state happens to be at the moment it closes —
+      // avoids drift between the open tap and the later close tap/outside-tap
+      const openedVia = card._openedVia;
+      card._openedVia = null;
+      if(onClose) onClose(card, openedVia);
     }
     function openCard(card){
       cards.forEach(c=>{ if(c !== card) closeCard(c); });
       card.classList.add('is-open');
+      card._openedVia = lastPointerType;
       if(onOpen) onOpen(card);
     }
 
@@ -965,8 +971,11 @@
       // mid-sentence) — desktop hover should never interrupt the slide
       if((lastPointerType === 'touch' || lastPointerType === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
     },
-    ()=>{
-      if((lastPointerType === 'touch' || lastPointerType === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
+    (card, openedVia)=>{
+      // resume based on how this specific card was opened, not the current
+      // pointer state — guarantees a touch-opened card always resumes
+      // autoplay when it closes, however it closes (same tap, another card, or tapping outside)
+      if((openedVia === 'touch' || openedVia === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
     }
   );
 
