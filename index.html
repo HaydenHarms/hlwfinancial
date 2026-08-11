@@ -971,11 +971,13 @@
       // mid-sentence) — desktop hover should never interrupt the slide
       if((lastPointerType === 'touch' || lastPointerType === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
     },
-    (card, openedVia)=>{
-      // resume based on how this specific card was opened, not the current
-      // pointer state — guarantees a touch-opened card always resumes
-      // autoplay when it closes, however it closes (same tap, another card, or tapping outside)
-      if((openedVia === 'touch' || openedVia === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
+    ()=>{
+      // resume based on actual DOM state — once nothing in the marquee is
+      // open anymore, always make sure autoplay is running. This is checked
+      // directly rather than inferred from history, so it can't get stuck
+      // paused however the card ended up closing.
+      const anyOpen = document.querySelector('#marqueeTrack .marquee-card.is-open');
+      if(!anyOpen && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
     }
   );
 
