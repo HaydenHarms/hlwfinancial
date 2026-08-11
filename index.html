@@ -211,7 +211,7 @@
     max-height:0;opacity:0;overflow:hidden;transform:translateY(16px);
     transition:max-height .5s cubic-bezier(.65,0,.35,1), opacity .4s ease, transform .5s cubic-bezier(.65,0,.35,1), margin-top .5s cubic-bezier(.65,0,.35,1);
   }
-  .marquee-card:hover p, .marquee-card.is-open p{
+  .marquee-card.is-open p{
     max-height:200px;opacity:1;transform:translateY(0);margin-top:16px;
   }
   .marquee-card.is-active{transform:translateX(0);}
@@ -342,7 +342,7 @@
     max-height:0;opacity:0;overflow:hidden;transform:translateY(16px);
     transition:max-height .5s cubic-bezier(.65,0,.35,1), opacity .4s ease, transform .5s cubic-bezier(.65,0,.35,1), margin-top .5s cubic-bezier(.65,0,.35,1);
   }
-  .product-card:hover .pg-body, .product-card.is-open .pg-body{
+  .product-card.is-open .pg-body{
     max-height:200px;opacity:1;transform:translateY(0);margin-top:16px;
   }
 
@@ -860,79 +860,83 @@
     }
   }
 
+  // track the real input method live — more reliable than guessing device
+  // capability once at load (mobile browsers / devtools emulation can
+  // misreport hover support, which is why the touch-only branch was
+  // sometimes never running at all)
+  let lastPointerType = 'mouse';
+  document.addEventListener('pointerdown', (e)=>{
+    lastPointerType = e.pointerType || 'mouse';
+  }, {capture:true, passive:true});
+
+  function setupCardReveal(nodeList, onOpen, onClose){
+    const cards = Array.from(nodeList);
+
+    function closeCard(card){
+      if(!card.classList.contains('is-open')) return;
+      card.classList.remove('is-open');
+      if(onClose) onClose(card);
+    }
+    function openCard(card){
+      cards.forEach(c=>{ if(c !== card) closeCard(c); });
+      card.classList.add('is-open');
+      if(onOpen) onOpen(card);
+    }
+
+    cards.forEach(card=>{
+      // real mouse hover
+      card.addEventListener('mouseenter', ()=>{
+        if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
+        openCard(card);
+      });
+      card.addEventListener('mouseleave', ()=>{
+        if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
+        closeCard(card);
+      });
+      // tap — toggle open/closed
+      card.addEventListener('click', (e)=>{
+        if(lastPointerType !== 'touch' && lastPointerType !== 'pen') return;
+        e.stopPropagation();
+        if(card.classList.contains('is-open')) closeCard(card);
+        else openCard(card);
+      });
+    });
+
+    // tapping/clicking outside any card in this group closes it
+    document.addEventListener('click', ()=>{
+      cards.forEach(closeCard);
+    });
+  }
+
   document.querySelectorAll('.product-card').forEach(card=>{
     const bodyEl = card.querySelector('.pg-body');
     if(!bodyEl) return;
     const finalText = bodyEl.getAttribute('data-final') || bodyEl.textContent;
     bodyEl.textContent = '';
-    const scrambler = new FormulaScramble(bodyEl);
-    bodyEl._scrambler = scrambler;
+    bodyEl._scrambler = new FormulaScramble(bodyEl);
     bodyEl._finalText = finalText;
-    card.addEventListener('mouseenter', ()=>{
-      scrambler.setText(finalText);
-    });
-    card.addEventListener('mouseleave', ()=>{
-      cancelAnimationFrame(scrambler.frameRequest);
-      bodyEl.textContent = '';
-    });
   });
 
-  // ===== TOUCH DEVICES — no hover, so tap toggles the same reveal state =====
-  const supportsHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+  setupCardReveal(
+    document.querySelectorAll('#marqueeTrack .marquee-card'),
+    ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.stop(); },
+    ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.start(); }
+  );
 
-  if(!supportsHover){
-    function setupTapReveal(nodeList, onOpen, onClose){
-      const cards = Array.from(nodeList);
-      cards.forEach(card=>{
-        card.addEventListener('click', (e)=>{
-          e.stopPropagation();
-          const wasOpen = card.classList.contains('is-open');
-          cards.forEach(c=>{
-            if(c !== card && c.classList.contains('is-open')){
-              c.classList.remove('is-open');
-              if(onClose) onClose(c);
-            }
-          });
-          if(wasOpen){
-            card.classList.remove('is-open');
-            if(onClose) onClose(card);
-          } else {
-            card.classList.add('is-open');
-            if(onOpen) onOpen(card);
-          }
-        });
-      });
-      document.addEventListener('click', ()=>{
-        cards.forEach(c=>{
-          if(c.classList.contains('is-open')){
-            c.classList.remove('is-open');
-            if(onClose) onClose(c);
-          }
-        });
-      });
-    }
-
-    setupTapReveal(
-      document.querySelectorAll('#marqueeTrack .marquee-card'),
-      ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.stop(); },
-      ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.start(); }
-    );
-
-    setupTapReveal(
-      document.querySelectorAll('.product-card'),
-      (card)=>{
-        const bodyEl = card.querySelector('.pg-body');
-        if(bodyEl && bodyEl._scrambler) bodyEl._scrambler.setText(bodyEl._finalText);
-      },
-      (card)=>{
-        const bodyEl = card.querySelector('.pg-body');
-        if(bodyEl && bodyEl._scrambler){
-          cancelAnimationFrame(bodyEl._scrambler.frameRequest);
-          bodyEl.textContent = '';
-        }
+  setupCardReveal(
+    document.querySelectorAll('.product-card'),
+    (card)=>{
+      const bodyEl = card.querySelector('.pg-body');
+      if(bodyEl && bodyEl._scrambler) bodyEl._scrambler.setText(bodyEl._finalText);
+    },
+    (card)=>{
+      const bodyEl = card.querySelector('.pg-body');
+      if(bodyEl && bodyEl._scrambler){
+        cancelAnimationFrame(bodyEl._scrambler.frameRequest);
+        bodyEl.textContent = '';
       }
-    );
-  }
+    }
+  );
 </script>
 
 </body>
