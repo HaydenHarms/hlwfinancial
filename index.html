@@ -859,7 +859,7 @@
       // left-to-right decode: each character's scramble window starts a
       // little after the one before it, so they resolve in reading order
       // instead of settling randomly
-      const STAGGER = 1;      // frames between each character's start
+      const STAGGER = 0.85;   // frames between each character's start — tuned for ~1.5s at 100 chars
       const SCRAMBLE_LEN = 6; // frames a character scrambles before locking in
       for(let i=0;i<length;i++){
         const from = oldText[i] || '';
@@ -960,8 +960,14 @@
 
   setupCardReveal(
     document.querySelectorAll('#marqueeTrack .marquee-card'),
-    ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.stop(); },
-    ()=>{ if(window.__marqueeAutoplay) window.__marqueeAutoplay.start(); }
+    ()=>{
+      // only pause autoplay for a touch tap (so mobile readers aren't cut off
+      // mid-sentence) — desktop hover should never interrupt the slide
+      if((lastPointerType === 'touch' || lastPointerType === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
+    },
+    ()=>{
+      if((lastPointerType === 'touch' || lastPointerType === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
+    }
   );
 
   setupCardReveal(
