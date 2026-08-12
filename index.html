@@ -55,10 +55,12 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{width:100%;overflow-x:hidden;}
-  /* proximity (not mandatory) — sections gently pull into place once you've
-     mostly scrolled to them, but you can still scroll freely through the
-     middle of a section or coast past one without fighting the page */
-  html{scroll-snap-type:y proximity;}
+  /* mandatory — proximity turned out too weak to feel in practice (browsers apply
+     it inconsistently and it often doesn't trigger on a normal fast scroll).
+     Mandatory reliably snaps once a scroll gesture settles, but since every
+     section is a full screen, one scroll per section is the natural motion
+     anyway — it shouldn't feel like fighting the page. */
+  html{scroll-snap-type:y mandatory;}
   .snap-section{
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
     scroll-snap-align:start;
