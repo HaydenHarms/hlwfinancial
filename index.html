@@ -55,6 +55,14 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{width:100%;overflow-x:hidden;}
+  /* proximity (not mandatory) — sections gently pull into place once you've
+     mostly scrolled to them, but you can still scroll freely through the
+     middle of a section or coast past one without fighting the page */
+  html{scroll-snap-type:y proximity;}
+  .snap-section{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    scroll-snap-align:start;
+  }
   body{
     background:var(--page-bg);color:var(--ink);
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -126,6 +134,7 @@
   .hero-video{
     position:relative;height:100vh;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
+    scroll-snap-align:start;
   }
   .hero-bg{
     position:absolute;inset:0;overflow:hidden;
@@ -476,6 +485,7 @@
   .cta-section{
     position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;
     background:var(--green-deep);color:var(--cream);
+    scroll-snap-align:start;
   }
   .cta-bg{position:absolute;inset:0;overflow:hidden;}
   .cta-bg video{
@@ -613,78 +623,82 @@
   <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
 
-<div class="marquee-tabs" id="marqueeTabs">
-  <button class="marquee-tab" type="button">Ledger<span class="mt-track"><span class="mt-fill"></span></span></button>
-  <button class="marquee-tab" type="button">Close<span class="mt-track"><span class="mt-fill"></span></span></button>
-  <button class="marquee-tab" type="button">Tax<span class="mt-track"><span class="mt-fill"></span></span></button>
-  <button class="marquee-tab" type="button">Reporting<span class="mt-track"><span class="mt-fill"></span></span></button>
-  <button class="marquee-tab" type="button">Counsel<span class="mt-track"><span class="mt-fill"></span></span></button>
-  <button class="marquee-tab" type="button">News<span class="mt-track"><span class="mt-fill"></span></span></button>
-</div>
+<div class="snap-section">
+  <div class="marquee-tabs" id="marqueeTabs">
+    <button class="marquee-tab" type="button">Ledger<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Close<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Tax<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Reporting<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Counsel<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">News<span class="mt-track"><span class="mt-fill"></span></span></button>
+  </div>
 
-<div class="facts-wrap">
-  <div class="marquee-track" id="marqueeTrack">
-    <div class="marquee-card has-bg bg-ledger">
-      <video src="media/card-ledger-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-      <div class="marquee-card-inner">
-        <div class="mc-idx">Ledger</div>
-        <h3>Books, kept current.</h3>
-        <p>Transactions categorized as they clear, not reconstructed later.</p>
+  <div class="facts-wrap">
+    <div class="marquee-track" id="marqueeTrack">
+      <div class="marquee-card has-bg bg-ledger">
+        <video src="media/card-ledger-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Ledger</div>
+          <h3>Books, kept current.</h3>
+          <p>Transactions categorized as they clear, not reconstructed later.</p>
+        </div>
       </div>
-    </div>
-    <div class="marquee-card has-bg bg-close">
-      <video src="media/card-close-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-      <div class="marquee-card-inner">
-        <div class="mc-idx">Close</div>
-        <h3>Close day, simplified.</h3>
-        <p>Adjusting entries surfaced early, so the close is a formality.</p>
+      <div class="marquee-card has-bg bg-close">
+        <video src="media/card-close-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Close</div>
+          <h3>Close day, simplified.</h3>
+          <p>Adjusting entries surfaced early, so the close is a formality.</p>
+        </div>
       </div>
-    </div>
-    <div class="marquee-card has-bg bg-tax">
-      <video src="media/card-tax-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-      <div class="marquee-card-inner">
-        <div class="mc-idx">Tax</div>
-        <h3>No surprises in April.</h3>
-        <p>Liability tracked year-round from books that are already right.</p>
+      <div class="marquee-card has-bg bg-tax">
+        <video src="media/card-tax-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Tax</div>
+          <h3>No surprises in April.</h3>
+          <p>Liability tracked year-round from books that are already right.</p>
+        </div>
       </div>
-    </div>
-    <div class="marquee-card has-bg bg-reporting">
-      <video src="media/card-reporting-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-      <div class="marquee-card-inner">
-        <div class="mc-idx">Reporting</div>
-        <h3>Statements, on demand.</h3>
-        <p>Clean, branded reports ready to hand to a lender or partner.</p>
+      <div class="marquee-card has-bg bg-reporting">
+        <video src="media/card-reporting-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Reporting</div>
+          <h3>Statements, on demand.</h3>
+          <p>Clean, branded reports ready to hand to a lender or partner.</p>
+        </div>
       </div>
-    </div>
-    <div class="marquee-card has-bg bg-counsel">
-      <video src="media/card-counsel-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-      <div class="marquee-card-inner">
-        <div class="mc-idx">Counsel</div>
-        <h3>One advisor, always.</h3>
-        <p>A single CPA across the personal and business side, in confidence.</p>
+      <div class="marquee-card has-bg bg-counsel">
+        <video src="media/card-counsel-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Counsel</div>
+          <h3>One advisor, always.</h3>
+          <p>A single CPA across the personal and business side, in confidence.</p>
+        </div>
       </div>
-    </div>
-    <div class="marquee-card">
-      <div class="marquee-card-inner">
-        <div class="mc-idx">News</div>
-        <h3>The latest from HLW.</h3>
-        <p></p>
+      <div class="marquee-card">
+        <div class="marquee-card-inner">
+          <div class="mc-idx">News</div>
+          <h3>The latest from HLW.</h3>
+          <p></p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="product-gallery">
-  <div class="product-card" id="prodBookkeeping">
-    <div class="product-card-inner">
-      <h3>Bookkeeping</h3>
-      <p class="pg-body" data-final="Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.">Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.</p>
+<div class="snap-section">
+  <div class="product-gallery">
+    <div class="product-card" id="prodBookkeeping">
+      <div class="product-card-inner">
+        <h3>Bookkeeping</h3>
+        <p class="pg-body" data-final="Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.">Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.</p>
+      </div>
     </div>
-  </div>
-  <div class="product-card" id="prodTax">
-    <div class="product-card-inner">
-      <h3>Tax Preparation</h3>
-      <p class="pg-body" data-final="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.</p>
+    <div class="product-card" id="prodTax">
+      <div class="product-card-inner">
+        <h3>Tax Preparation</h3>
+        <p class="pg-body" data-final="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.</p>
+      </div>
     </div>
   </div>
 </div>
