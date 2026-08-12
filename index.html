@@ -55,13 +55,17 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{width:100%;height:100%;overflow-x:hidden;}
-  /* native CSS scroll-snap-type doesn't expose a trigger-distance or
-     animation-speed control, so section snapping is handled entirely in
-     JS instead (see "SECTION SNAP" below) — body just needs to be the
-     scroll container, same reasoning as before re: fixed elements. */
   body{overflow-y:scroll;}
   .snap-section{
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  }
+  /* the section right after the hero needs to actually paint ON TOP of it
+     (not just come later in the DOM) and be fully opaque, so that as it
+     scrolls up in normal flow it visually covers the sticky hero beneath —
+     that's the whole "slide up and cover" effect. */
+  #marqueeSection{
+    position:relative;z-index:2;
+    background:var(--page-bg);
   }
   body{
     background:var(--page-bg);color:var(--ink);
@@ -132,8 +136,9 @@
 
   /* ===== HERO — full-bleed animated background, minimal overlay copy ===== */
   .hero-video{
-    position:relative;height:100vh;overflow:hidden;
+    position:sticky;top:0;height:100vh;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
+    z-index:1;
   }
   .hero-bg{
     position:absolute;inset:0;overflow:hidden;
@@ -653,7 +658,7 @@
   <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
 
-<div class="snap-section">
+<div class="snap-section" id="marqueeSection">
   <div class="marquee-tabs" id="marqueeTabs">
     <button class="marquee-tab" type="button">Ledger<span class="mt-track"><span class="mt-fill"></span></span></button>
     <button class="marquee-tab" type="button">Close<span class="mt-track"><span class="mt-fill"></span></span></button>
@@ -794,72 +799,6 @@
   document.body.addEventListener('scroll', updateNav, {passive:true});
   updateNav();
 
-  // ===== SECTION SNAP — lock zones at each edge, small dead zone in between.
-  // 18%-wide lock zones barely ever triggered — most natural scroll-stops
-  // never landed inside such a narrow band, so it didn't feel locked at
-  // all. Widened to 40% each side: only the middle 20% of a section is a
-  // true dead zone now, so most scrolling actually engages the lock. Since
-  // it only ever pulls to the NEAREST edge (max travel = 40% of one
-  // section), this stays far short of the old bug where it could yank you
-  // a full section backward from almost anywhere. =====
-  (function(){
-    const sections = Array.from(document.querySelectorAll('.hero-video, .snap-section, .cta-section'));
-    if(sections.length < 2) return;
-
-    const LOCK_ZONE = 0.4;     // fraction of the gap, from each edge, that locks into place — wide, so it actually engages on normal scrolling
-    const PULL_DURATION = 550; // ms — snappier, more decisive pull
-    let settleTimer = null;
-    let animating = false;
-
-    function easeInOutCubic(t){
-      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
-    }
-
-    function animateScrollTo(target){
-      animating = true;
-      const start = document.body.scrollTop;
-      const change = target - start;
-      const startTime = performance.now();
-      function step(now){
-        const t = Math.min((now - startTime) / PULL_DURATION, 1);
-        document.body.scrollTop = start + change * easeInOutCubic(t);
-        if(t < 1) requestAnimationFrame(step);
-        else animating = false;
-      }
-      requestAnimationFrame(step);
-    }
-
-    function settle(){
-      if(animating) return;
-      const scrollTop = document.body.scrollTop;
-
-      // find which gap (between section i and i+1) the scroll position is in
-      let i = sections.length - 2;
-      for(let k = 0; k < sections.length - 1; k++){
-        if(scrollTop >= sections[k].offsetTop && scrollTop < sections[k+1].offsetTop){
-          i = k;
-          break;
-        }
-      }
-      if(scrollTop >= sections[sections.length - 1].offsetTop) return; // already at the last section
-
-      const gapStart = sections[i].offsetTop;
-      const gapEnd = sections[i+1].offsetTop;
-      const gapSize = gapEnd - gapStart;
-      if(gapSize <= 0) return;
-      const progress = (scrollTop - gapStart) / gapSize;
-
-      if(progress < LOCK_ZONE) animateScrollTo(gapStart);
-      else if(progress > 1 - LOCK_ZONE) animateScrollTo(gapEnd);
-      // else: dead zone, no-op
-    }
-
-    document.body.addEventListener('scroll', ()=>{
-      clearTimeout(settleTimer);
-      settleTimer = setTimeout(settle, 140); // waits for scrolling to actually stop
-    }, {passive:true});
-  })();
-
   // ===== SCROLL PROGRESS — right-edge segments fill as you move down the page =====
   (function(){
     const segs = document.querySelectorAll('.feature-progress-vertical .seg i');
@@ -898,10 +837,10 @@
     let marqueeTimer = null;
 
     function paintMarqueeFills(i){
-      marqueeTabs.forEach((t, idx)=>{
+      marqueeTabs.forEach((t)=>{
         const fill = t.querySelector('.mt-fill');
         fill.style.transition = 'none';
-        fill.style.transform = idx < i ? 'scaleX(1)' : 'scaleX(0)';
+        fill.style.transform = 'scaleX(0)'; // every tab starts empty — only the active one should ever show fill
       });
       if(!marqueeTabs.length) return;
       // force reflow so the next transition actually animates from the reset state
