@@ -794,19 +794,20 @@
   document.body.addEventListener('scroll', updateNav, {passive:true});
   updateNav();
 
-  // ===== SECTION SNAP — lock zones at each edge, wide dead zone in between.
-  // Pure dead-zone (previous version) barely ever triggered in normal
-  // scrolling, so it didn't feel locked at all. Pure "pull to nearest"
-  // (the version before that) dragged you back from too far away. This is
-  // the middle ground: within ~18% of viewport height of a section edge,
-  // it snugly aligns (that's the felt "lock"); anywhere in the wide middle
-  // 64% of a section, nothing happens — full freedom to scroll through it. =====
+  // ===== SECTION SNAP — lock zones at each edge, small dead zone in between.
+  // 18%-wide lock zones barely ever triggered — most natural scroll-stops
+  // never landed inside such a narrow band, so it didn't feel locked at
+  // all. Widened to 40% each side: only the middle 20% of a section is a
+  // true dead zone now, so most scrolling actually engages the lock. Since
+  // it only ever pulls to the NEAREST edge (max travel = 40% of one
+  // section), this stays far short of the old bug where it could yank you
+  // a full section backward from almost anywhere. =====
   (function(){
     const sections = Array.from(document.querySelectorAll('.hero-video, .snap-section, .cta-section'));
     if(sections.length < 2) return;
 
-    const LOCK_ZONE = 0.18;    // fraction of the gap, from each edge, that locks into place
-    const PULL_DURATION = 700; // ms
+    const LOCK_ZONE = 0.4;     // fraction of the gap, from each edge, that locks into place — wide, so it actually engages on normal scrolling
+    const PULL_DURATION = 550; // ms — snappier, more decisive pull
     let settleTimer = null;
     let animating = false;
 
