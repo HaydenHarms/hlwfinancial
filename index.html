@@ -794,18 +794,20 @@
   document.body.addEventListener('scroll', updateNav, {passive:true});
   updateNav();
 
-  // ===== SECTION SNAP — custom JS version: native CSS scroll-snap doesn't
-  // expose a trigger-distance or animation-speed control, so both are
-  // handled by hand here. You have to scroll a deliberate distance (42% of
-  // the viewport) past the nearest section before it commits to advancing;
-  // anything short of that eases back to where you were. The pull itself
-  // is a slower, eased 900ms animation rather than an instant native snap. =====
+  // ===== SECTION SNAP — dead-zone version. The previous version pulled you
+  // BACK to the nearest section any time you hadn't crossed the threshold —
+  // which made it feel like the hero was grabbing you, since most normal
+  // scrolling happens in small increments that never accumulate enough
+  // distance in one motion. Now there's no backward pull at all: short of
+  // a decisive scroll, nothing happens — true dead zone, zero resistance.
+  // The only automatic behavior left is nudging FORWARD to complete a
+  // transition once you're clearly most of the way into the next section. =====
   (function(){
     const sections = Array.from(document.querySelectorAll('.hero-video, .snap-section, .cta-section'));
     if(sections.length < 2) return;
 
-    const ADVANCE_THRESHOLD = 0.42; // fraction of viewport height that must be crossed to advance
-    const PULL_DURATION = 900;      // ms — the "slow down the pull" ask
+    const COMMIT_THRESHOLD = 0.6; // must cross 60% of viewport height toward a neighbor to commit
+    const PULL_DURATION = 900;    // ms — the eased "finish the transition" animation
     let settleTimer = null;
     let animating = false;
 
@@ -842,13 +844,16 @@
       const scrollTop = document.body.scrollTop;
       const nearest = nearestSectionIndex(scrollTop);
       const delta = scrollTop - sections[nearest].offsetTop;
-      const threshold = viewportH * ADVANCE_THRESHOLD;
+      const threshold = viewportH * COMMIT_THRESHOLD;
 
-      let target = nearest;
-      if(delta > threshold && nearest < sections.length - 1) target = nearest + 1;
-      else if(delta < -threshold && nearest > 0) target = nearest - 1;
-
-      animateScrollTo(sections[target].offsetTop);
+      // dead zone: only act if you've decisively crossed toward a neighbor.
+      // otherwise, do nothing — leave the scroll position exactly as-is.
+      if(delta > threshold && nearest < sections.length - 1){
+        animateScrollTo(sections[nearest + 1].offsetTop);
+      } else if(delta < -threshold && nearest > 0){
+        animateScrollTo(sections[nearest - 1].offsetTop);
+      }
+      // else: no-op by design
     }
 
     document.body.addEventListener('scroll', ()=>{
