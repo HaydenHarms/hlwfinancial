@@ -794,31 +794,21 @@
   document.body.addEventListener('scroll', updateNav, {passive:true});
   updateNav();
 
-  // ===== SECTION SNAP — dead-zone version. The previous version pulled you
-  // BACK to the nearest section any time you hadn't crossed the threshold —
-  // which made it feel like the hero was grabbing you, since most normal
-  // scrolling happens in small increments that never accumulate enough
-  // distance in one motion. Now there's no backward pull at all: short of
-  // a decisive scroll, nothing happens — true dead zone, zero resistance.
-  // The only automatic behavior left is nudging FORWARD to complete a
-  // transition once you're clearly most of the way into the next section. =====
+  // ===== SECTION SNAP — lock zones at each edge, wide dead zone in between.
+  // Pure dead-zone (previous version) barely ever triggered in normal
+  // scrolling, so it didn't feel locked at all. Pure "pull to nearest"
+  // (the version before that) dragged you back from too far away. This is
+  // the middle ground: within ~18% of viewport height of a section edge,
+  // it snugly aligns (that's the felt "lock"); anywhere in the wide middle
+  // 64% of a section, nothing happens — full freedom to scroll through it. =====
   (function(){
     const sections = Array.from(document.querySelectorAll('.hero-video, .snap-section, .cta-section'));
     if(sections.length < 2) return;
 
-    const COMMIT_THRESHOLD = 0.6; // must cross 60% of viewport height toward a neighbor to commit
-    const PULL_DURATION = 900;    // ms — the eased "finish the transition" animation
+    const LOCK_ZONE = 0.18;    // fraction of the gap, from each edge, that locks into place
+    const PULL_DURATION = 700; // ms
     let settleTimer = null;
     let animating = false;
-
-    function nearestSectionIndex(scrollTop){
-      let closest = 0, closestDist = Infinity;
-      sections.forEach((s, i)=>{
-        const dist = Math.abs(s.offsetTop - scrollTop);
-        if(dist < closestDist){ closestDist = dist; closest = i; }
-      });
-      return closest;
-    }
 
     function easeInOutCubic(t){
       return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
@@ -840,20 +830,27 @@
 
     function settle(){
       if(animating) return;
-      const viewportH = window.innerHeight;
       const scrollTop = document.body.scrollTop;
-      const nearest = nearestSectionIndex(scrollTop);
-      const delta = scrollTop - sections[nearest].offsetTop;
-      const threshold = viewportH * COMMIT_THRESHOLD;
 
-      // dead zone: only act if you've decisively crossed toward a neighbor.
-      // otherwise, do nothing — leave the scroll position exactly as-is.
-      if(delta > threshold && nearest < sections.length - 1){
-        animateScrollTo(sections[nearest + 1].offsetTop);
-      } else if(delta < -threshold && nearest > 0){
-        animateScrollTo(sections[nearest - 1].offsetTop);
+      // find which gap (between section i and i+1) the scroll position is in
+      let i = sections.length - 2;
+      for(let k = 0; k < sections.length - 1; k++){
+        if(scrollTop >= sections[k].offsetTop && scrollTop < sections[k+1].offsetTop){
+          i = k;
+          break;
+        }
       }
-      // else: no-op by design
+      if(scrollTop >= sections[sections.length - 1].offsetTop) return; // already at the last section
+
+      const gapStart = sections[i].offsetTop;
+      const gapEnd = sections[i+1].offsetTop;
+      const gapSize = gapEnd - gapStart;
+      if(gapSize <= 0) return;
+      const progress = (scrollTop - gapStart) / gapSize;
+
+      if(progress < LOCK_ZONE) animateScrollTo(gapStart);
+      else if(progress > 1 - LOCK_ZONE) animateScrollTo(gapEnd);
+      // else: dead zone, no-op
     }
 
     document.body.addEventListener('scroll', ()=>{
