@@ -100,8 +100,9 @@
     border-bottom:1px solid transparent;
   }
   .site-nav.scrolled{
-    background:var(--page-bg);color:var(--ink);
-    border-bottom:1px solid var(--line);
+    background:rgba(11,18,13,0.55);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(244,241,232,0.12);
     padding-top:18px;padding-bottom:18px;
   }
   .site-nav .mark{
@@ -116,7 +117,7 @@
   }
   .site-nav .mark svg{width:26px;height:26px;flex:0 0 auto;color:inherit;transition:transform .25s ease;}
   .site-nav .mark:hover svg{transform:rotate(-4deg);}
-  .site-nav.scrolled .mark{color:var(--green);}
+
   .site-nav .mark span{color:var(--gold);}
   .nav-links{display:flex;align-items:center;gap:34px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:inherit;}
   .nav-links a{color:inherit;text-decoration:none;}
@@ -126,7 +127,7 @@
     font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;
     color:inherit;text-transform:uppercase;transition:border-color .3s ease;
   }
-  .site-nav.scrolled .theme-toggle{border-color:var(--line);}
+
   .theme-toggle .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
   .nav-links a:last-child{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;letter-spacing:.08em;
@@ -632,7 +633,7 @@
     <a href="#">Approach</a>
     <a href="#">Team</a>
     <button class="theme-toggle" id="themeToggle" type="button"><span class="dot"></span><span id="themeToggleLabel">Dark Mode</span></button>
-    <a href="#">Client Access</a>
+    <a href="client-access.html">Client Access</a>
   </div>
 </header>
 
