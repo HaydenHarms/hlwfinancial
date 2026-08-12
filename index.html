@@ -475,6 +475,25 @@
   }
   .cta-section.spot-active .cta-spotlight{opacity:1;}
 
+  /* ambient drifting motes — dust suspended in the light, sparse and slow;
+     screen-blended so they read brighter/warmer wherever the spotlight passes */
+  .cta-motes{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 1.2s ease;}
+  .cta-section.is-visible .cta-motes{opacity:1;}
+  .cta-motes .mote{
+    position:absolute;left:var(--mote-x);top:var(--mote-y);
+    width:var(--mote-size);height:var(--mote-size);border-radius:50%;
+    background:var(--mote-color);mix-blend-mode:screen;filter:blur(.4px);
+    opacity:0;
+    animation:ctaMoteDrift var(--mote-dur) linear infinite;
+    animation-delay:var(--mote-delay);
+  }
+  @keyframes ctaMoteDrift{
+    0%{transform:translate(0,0);opacity:0;}
+    12%{opacity:var(--mote-o);}
+    88%{opacity:var(--mote-o);}
+    100%{transform:translate(var(--mote-dx), var(--mote-dy));opacity:0;}
+  }
+
   .cta-status{
     display:flex;align-items:center;justify-content:space-between;
     font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
@@ -732,6 +751,7 @@
 
 <section class="cta-section" id="ctaSection">
   <div class="cta-spotlight" id="ctaSpotlight"></div>
+  <div class="cta-motes" id="ctaMotes"></div>
   <div class="cta-inner">
 
     <div class="cta-status">
@@ -1127,6 +1147,40 @@
       section.classList.remove('spot-active');
     });
   })();
+
+  // ===== CTA — ambient drifting motes =====
+  (function(){
+    const container = document.getElementById('ctaMotes');
+    if(!container) return;
+    const MOTE_COUNT = 20;
+    const colors = ['rgba(201,171,95,', 'rgba(247,245,239,']; // gold and cream, alternating
+    for(let i = 0; i < MOTE_COUNT; i++){
+      const mote = document.createElement('div');
+      mote.className = 'mote';
+      const size = (Math.random() * 2 + 1).toFixed(1);          // 1–3px
+      const startX = (Math.random() * 100).toFixed(1) + '%';
+      const startY = (Math.random() * 100).toFixed(1) + '%';
+      const driftX = Math.round((Math.random() - 0.5) * 90) + 'px';   // slight horizontal sway
+      const driftY = -Math.round(Math.random() * 140 + 60) + 'px';    // slow upward drift
+      const duration = (Math.random() * 18 + 18).toFixed(1) + 's';    // 18–36s per cycle
+      const delay = -(Math.random() * 30).toFixed(1) + 's';           // stagger starts, avoid a synced "burst"
+      const opacity = (Math.random() * 0.35 + 0.25).toFixed(2);
+      const color = colors[i % 2] + opacity + ')';
+
+      mote.style.setProperty('--mote-size', size + 'px');
+      mote.style.setProperty('--mote-x', startX);
+      mote.style.setProperty('--mote-y', startY);
+      mote.style.setProperty('--mote-dx', driftX);
+      mote.style.setProperty('--mote-dy', driftY);
+      mote.style.setProperty('--mote-dur', duration);
+      mote.style.setProperty('--mote-delay', delay);
+      mote.style.setProperty('--mote-o', opacity);
+      mote.style.setProperty('--mote-color', color);
+
+      container.appendChild(mote);
+    }
+  })();
+
 
   // ===== CTA — magnetic button (desktop mouse only) =====
   (function(){
