@@ -466,6 +466,15 @@
   }
   .cta-inner{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:100px 60px 110px;}
 
+  /* cursor-reactive spotlight — a soft warm light that follows the cursor
+     across the panel, like reading by lamplight; desktop mouse only */
+  .cta-spotlight{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(420px circle at var(--spot-x,50%) var(--spot-y,40%), rgba(201,171,95,0.16), transparent 65%);
+    opacity:0;transition:opacity .5s ease;
+  }
+  .cta-section.spot-active .cta-spotlight{opacity:1;}
+
   .cta-status{
     display:flex;align-items:center;justify-content:space-between;
     font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
@@ -524,6 +533,28 @@
   .cta-btn span, .cta-btn svg{position:relative;z-index:1;transition:color .45s ease, stroke .45s ease;}
   .cta-btn:hover span{color:var(--green-deep);}
   .cta-btn:hover svg{stroke:var(--green-deep);}
+
+  /* wax-seal press — a brief stamped flourish on click, like sealing a letter */
+  .cta-btn .seal{
+    position:absolute;z-index:2;pointer-events:none;
+    left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;
+    border-radius:50%;border:1px solid var(--gold);
+    opacity:0;transform:scale(1.6);
+  }
+  .cta-btn .seal::before{
+    content:"";position:absolute;inset:6px;border-radius:50%;border:1px solid var(--gold);opacity:.6;
+  }
+  .cta-btn .seal::after{
+    content:"";position:absolute;top:50%;left:50%;width:4px;height:4px;margin:-2px 0 0 -2px;
+    border-radius:50%;background:var(--gold);
+  }
+  .cta-btn.is-sealed .seal{animation:ctaSealStamp .6s cubic-bezier(.2,.8,.3,1) forwards;}
+  @keyframes ctaSealStamp{
+    0%{opacity:0;transform:scale(1.6);}
+    40%{opacity:1;transform:scale(0.9);}
+    60%{opacity:1;transform:scale(1.02);}
+    100%{opacity:0;transform:scale(1.12);}
+  }
   .cta-btn svg{transition:transform .45s cubic-bezier(.65,0,.35,1), stroke .45s ease;}
   .cta-btn:hover svg{transform:translateX(4px);}
 
@@ -700,6 +731,7 @@
 </div>
 
 <section class="cta-section" id="ctaSection">
+  <div class="cta-spotlight" id="ctaSpotlight"></div>
   <div class="cta-inner">
 
     <div class="cta-status">
@@ -712,9 +744,10 @@
     <p class="support">Bookkeeping, tax preparation, or a question that doesn't fit neatly into either — reach out and we'll follow up within a day.</p>
 
     <div class="cta-actions">
-      <a href="#" class="cta-btn">
+      <a href="#" class="cta-btn" id="ctaMainBtn">
         <span>Request an Introduction</span>
         <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5h13M9 1l5 4-5 4"/></svg>
+        <span class="seal" aria-hidden="true"></span>
       </a>
       <a href="#" class="cta-ghost">View Our Approach</a>
     </div>
@@ -1075,6 +1108,63 @@
       });
     }, {threshold:0.3});
     io.observe(section);
+  })();
+
+  // ===== CTA — cursor-reactive spotlight (desktop mouse only) =====
+  (function(){
+    const section = document.getElementById('ctaSection');
+    if(!section) return;
+    section.addEventListener('mousemove', (e)=>{
+      if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
+      const rect = section.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      section.style.setProperty('--spot-x', x + '%');
+      section.style.setProperty('--spot-y', y + '%');
+      section.classList.add('spot-active');
+    });
+    section.addEventListener('mouseleave', ()=>{
+      section.classList.remove('spot-active');
+    });
+  })();
+
+  // ===== CTA — magnetic button (desktop mouse only) =====
+  (function(){
+    const btn = document.getElementById('ctaMainBtn');
+    if(!btn) return;
+    const strength = 0.35, maxOffset = 14;
+    btn.addEventListener('mouseenter', ()=>{
+      if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
+      btn.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1)';
+    });
+    btn.addEventListener('mousemove', (e)=>{
+      if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
+      const rect = btn.getBoundingClientRect();
+      const relX = e.clientX - (rect.left + rect.width / 2);
+      const relY = e.clientY - (rect.top + rect.height / 2);
+      const dx = Math.max(-maxOffset, Math.min(maxOffset, relX * strength));
+      const dy = Math.max(-maxOffset, Math.min(maxOffset, relY * strength));
+      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    btn.addEventListener('mouseleave', ()=>{
+      btn.style.transform = 'translate(0, 0)';
+    });
+  })();
+
+  // ===== CTA — wax-seal press on click =====
+  (function(){
+    const btn = document.getElementById('ctaMainBtn');
+    if(!btn) return;
+    btn.addEventListener('click', function(e){
+      if(btn.classList.contains('is-sealed')) return;
+      e.preventDefault();
+      btn.classList.add('is-sealed');
+      const dest = btn.getAttribute('href');
+      setTimeout(()=>{
+        btn.classList.remove('is-sealed');
+        if(dest) window.location.href = dest;
+      }, 600);
+    });
   })();
 </script>
 
