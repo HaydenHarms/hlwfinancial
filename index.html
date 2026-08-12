@@ -452,20 +452,96 @@
 
 
 
-  /* ===== PROCESS STRIP — operational, sequential, quiet ===== */
-  .process{background:var(--green-deep);color:var(--cream);}
-  .process-inner{max-width:1400px;margin:0 auto;padding:80px 60px;}
-  .process-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;}
-  .process-head h2{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:32px;font-weight:500;}
-  .process-head span{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:rgba(247,245,239,0.45);text-transform:uppercase;}
-  .process-row{
-    display:grid;grid-template-columns:70px 1fr 1.4fr;gap:28px;align-items:baseline;
-    padding:22px 0;border-top:1px solid rgba(247,245,239,0.14);
+  /* ===== CTA — general-inquiry close, dark band (adapts via --green-deep per theme) ===== */
+  .cta-section{position:relative;overflow:hidden;background:var(--green-deep);color:var(--cream);}
+  .cta-section::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:
+      linear-gradient(90deg, rgba(247,245,239,0.08) 1px, transparent 1px),
+      linear-gradient(rgba(247,245,239,0.08) 1px, transparent 1px);
+    background-size:calc((100% - 120px)/6) 64px;
+    background-position:60px 0, 60px 0;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
   }
-  .process-row:last-child{border-bottom:1px solid rgba(247,245,239,0.14);}
-  .process-row .step{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(247,245,239,0.4);}
-  .process-row h4{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:19px;font-weight:500;color:var(--cream);}
-  .process-row p{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:rgba(247,245,239,0.55);}
+  .cta-inner{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:100px 60px 110px;}
+
+  .cta-status{
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:rgba(247,245,239,0.5);
+    padding-bottom:48px;margin-bottom:48px;border-bottom:1px solid rgba(247,245,239,0.14);
+    opacity:0;transform:translateY(10px);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1);
+  }
+  .cta-section.is-visible .cta-status{opacity:1;transform:translateY(0);}
+  .cta-status .dot-row{display:flex;align-items:center;gap:10px;}
+  .cta-status .dot{
+    width:6px;height:6px;border-radius:50%;background:var(--green);
+    animation:ctaPulseDot 2.4s ease-in-out infinite;
+  }
+  @keyframes ctaPulseDot{
+    0%{box-shadow:0 0 0 0 rgba(143,184,154,.45);}
+    70%{box-shadow:0 0 0 8px rgba(143,184,154,0);}
+    100%{box-shadow:0 0 0 0 rgba(143,184,154,0);}
+  }
+
+  .cta-section h2{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-weight:500;font-size:clamp(32px,4vw,52px);line-height:1.15;letter-spacing:-.01em;
+    max-width:700px;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .8s ease .05s, transform .8s cubic-bezier(.2,.7,.3,1) .05s;
+  }
+  .cta-section.is-visible h2{opacity:1;transform:translateY(0);}
+  .cta-section h2 em{font-style:italic;color:var(--gold);font-weight:400;}
+
+  .cta-body{margin-top:64px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;}
+
+  .ledger{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2.5;color:rgba(247,245,239,0.55);}
+  .ledger .row{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:10px;white-space:nowrap;}
+  .ledger .row .label{color:var(--cream);opacity:0;}
+  .ledger .row .dots{overflow:hidden;color:rgba(247,245,239,0.2);}
+  .ledger .row .dots i{font-style:normal;}
+  .ledger .row .val{color:var(--gold);opacity:0;flex-shrink:0;}
+  .ledger .caret{
+    display:inline-block;width:7px;height:14px;background:var(--gold);
+    vertical-align:-2px;animation:ctaCaretBlink 1s step-end infinite;
+  }
+  @keyframes ctaCaretBlink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+
+  .cta-actions{display:flex;flex-direction:column;align-items:flex-start;gap:24px;}
+  .cta-btn{
+    position:relative;overflow:hidden;
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--cream);background:transparent;
+    border:1px solid var(--gold);padding:18px 32px;
+    text-decoration:none;cursor:pointer;
+    opacity:0;transform:translateY(14px);
+    transition:opacity .8s ease .15s, transform .8s cubic-bezier(.2,.7,.3,1) .15s;
+  }
+  .cta-section.is-visible .cta-btn{opacity:1;transform:translateY(0);}
+  .cta-btn::before{
+    content:"";position:absolute;inset:0;background:var(--gold);
+    transform:translateX(-101%);transition:transform .45s cubic-bezier(.65,0,.35,1);
+    z-index:0;
+  }
+  .cta-btn:hover::before{transform:translateX(0);}
+  .cta-btn span, .cta-btn svg{position:relative;z-index:1;transition:color .45s ease, stroke .45s ease;}
+  .cta-btn:hover span{color:var(--green-deep);}
+  .cta-btn:hover svg{stroke:var(--green-deep);}
+  .cta-btn svg{transition:transform .45s cubic-bezier(.65,0,.35,1), stroke .45s ease;}
+  .cta-btn:hover svg{transform:translateX(4px);}
+
+  .cta-ghost{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:rgba(247,245,239,0.55);text-decoration:none;border-bottom:1px solid rgba(247,245,239,0.2);padding-bottom:4px;
+    opacity:0;transform:translateY(14px);
+    transition:opacity .8s ease .25s, transform .8s cubic-bezier(.2,.7,.3,1) .25s, color .3s ease, border-color .3s ease;
+  }
+  .cta-section.is-visible .cta-ghost{opacity:1;transform:translateY(0);}
+  .cta-ghost:hover{color:var(--gold);border-color:var(--gold);}
 
   /* ===== FOOTER ===== */
   .footer{padding:44px 60px;}
@@ -509,8 +585,9 @@
     .feature-frame:last-child{border-bottom:none;}
     .feature-frame-visual{height:auto;}
     .feature-progress-vertical{display:none;}
-    .process-inner{padding:56px 22px;}
-    .process-row{grid-template-columns:1fr;gap:6px;padding:18px 0;}
+    .cta-inner{padding:70px 22px 80px;}
+    .cta-status{flex-direction:column;align-items:flex-start;gap:14px;padding-bottom:36px;margin-bottom:36px;}
+    .cta-body{grid-template-columns:1fr;gap:44px;margin-top:48px;}
     .footer{padding:32px 22px;}
     .footer-inner{flex-direction:column;gap:12px;align-items:flex-start;}
   }
@@ -629,29 +706,30 @@
   </div>
 </div>
 
-<div class="process">
-  <div class="process-inner">
-    <div class="process-head">
-      <h2>How an Engagement Runs</h2>
-      <span>Method</span>
+<section class="cta-section" id="ctaSection">
+  <div class="cta-inner">
+
+    <div class="cta-status">
+      <div class="dot-row"><span class="dot"></span> Accepting New Engagements</div>
+      <div>Dallas, Texas</div>
     </div>
-    <div class="process-row">
-      <span class="step">01</span>
-      <h4>Introduction</h4>
-      <p>A private conversation to understand your finances and where continuity is missing.</p>
+
+    <h2>Let's talk about<br>your <em>finances.</em></h2>
+
+    <div class="cta-body">
+      <div class="ledger" id="ctaLedger"><!-- typed in by JS --></div>
+
+      <div class="cta-actions">
+        <a href="#" class="cta-btn">
+          <span>Request an Introduction</span>
+          <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5h13M9 1l5 4-5 4"/></svg>
+        </a>
+        <a href="#" class="cta-ghost">View Our Approach</a>
+      </div>
     </div>
-    <div class="process-row">
-      <span class="step">02</span>
-      <h4>Books, Brought Current</h4>
-      <p>Your ledger is reconciled and set onto a continuous-close cadence from day one.</p>
-    </div>
-    <div class="process-row">
-      <span class="step">03</span>
-      <h4>Standing Advisory</h4>
-      <p>A dedicated advisor reviews your position monthly, ahead of filing deadlines rather than against them.</p>
-    </div>
+
   </div>
-</div>
+</section>
 
 <div class="footer">
   <div class="footer-inner">
@@ -995,6 +1073,73 @@
       }
     }
   );
+
+  // ===== CTA — ledger status readout, typed in on scroll-into-view =====
+  (function(){
+    const section = document.getElementById('ctaSection');
+    const ledgerEl = document.getElementById('ctaLedger');
+    if(!section || !ledgerEl) return;
+
+    const rows = [
+      { label: 'Books Reconciled', value: 'Daily' },
+      { label: 'Returns Filed',    value: 'On Time' },
+      { label: 'Advisory Review',  value: 'Monthly' }
+    ];
+    let typed = false;
+
+    function buildDots(label, value){
+      const used = label.length + value.length;
+      const count = Math.max(6, 46 - used);
+      return '.'.repeat(count);
+    }
+
+    function typeLedger(){
+      if(typed) return;
+      typed = true;
+      ledgerEl.innerHTML = '';
+      rows.forEach((r, i)=>{
+        const row = document.createElement('div');
+        row.className = 'row';
+        const dotsFull = buildDots(r.label, r.value);
+        row.innerHTML = `<span class="label">${r.label}</span><span class="dots"><i></i></span><span class="val">${r.value}</span>`;
+        ledgerEl.appendChild(row);
+
+        const labelEl = row.querySelector('.label');
+        const dotsEl = row.querySelector('.dots i');
+        const valEl = row.querySelector('.val');
+        const delay = i * 650;
+
+        setTimeout(()=>{
+          labelEl.style.opacity = 1;
+          let n = 0;
+          const dotInterval = setInterval(()=>{
+            n++;
+            dotsEl.textContent = dotsFull.slice(0, n);
+            if(n >= dotsFull.length){
+              clearInterval(dotInterval);
+              valEl.style.opacity = 1;
+            }
+          }, 12);
+        }, delay);
+      });
+
+      setTimeout(()=>{
+        const caret = document.createElement('span');
+        caret.className = 'caret';
+        ledgerEl.appendChild(caret);
+      }, rows.length * 650 + 500);
+    }
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          section.classList.add('is-visible');
+          setTimeout(typeLedger, 300);
+        }
+      });
+    }, {threshold:0.3});
+    io.observe(section);
+  })();
 </script>
 
 </body>
