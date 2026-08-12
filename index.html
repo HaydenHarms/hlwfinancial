@@ -54,13 +54,13 @@
     --lbl:#7c8570;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  html,body{width:100%;overflow-x:hidden;}
-  /* mandatory — proximity turned out too weak to feel in practice (browsers apply
-     it inconsistently and it often doesn't trigger on a normal fast scroll).
-     Mandatory reliably snaps once a scroll gesture settles, but since every
-     section is a full screen, one scroll per section is the natural motion
-     anyway — it shouldn't feel like fighting the page. */
-  html{scroll-snap-type:y mandatory;}
+  html,body{width:100%;height:100%;overflow-x:hidden;}
+  /* scroll-snap-type on `html` (the implicit document scroller) is flaky
+     across browsers — making `body` an explicit scroll container instead
+     is the reliable version of this technique. Fixed-position elements
+     (nav, progress bar) are unaffected — they stay relative to the
+     viewport regardless of which element is doing the scrolling. */
+  body{overflow-y:scroll;scroll-snap-type:y mandatory;}
   .snap-section{
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
     scroll-snap-align:start;
@@ -755,10 +755,13 @@
   });
 
   const siteNav = document.getElementById('siteNav');
+  // body is now the actual scroll container (see the scroll-snap CSS notes
+  // above), so scroll position reads from body.scrollTop, not window.scrollY,
+  // and the 'scroll' event fires on body, not window.
   function updateNav(){
-    siteNav.classList.toggle('scrolled', window.scrollY > window.innerHeight - 90);
+    siteNav.classList.toggle('scrolled', document.body.scrollTop > window.innerHeight - 90);
   }
-  window.addEventListener('scroll', updateNav, {passive:true});
+  document.body.addEventListener('scroll', updateNav, {passive:true});
   updateNav();
 
   // ===== SCROLL PROGRESS — right-edge segments fill as you move down the page =====
@@ -769,8 +772,8 @@
     if(!progressWrap || !segs.length) return;
 
     function updatePageProgress(){
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      let progress = docHeight > 0 ? window.scrollY / docHeight : 0;
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      let progress = docHeight > 0 ? document.body.scrollTop / docHeight : 0;
       progress = Math.min(Math.max(progress, 0), 0.9999);
 
       const total = segs.length;
@@ -783,9 +786,9 @@
       });
 
       const heroHeight = heroEl ? heroEl.offsetHeight : window.innerHeight;
-      progressWrap.classList.toggle('is-visible', window.scrollY > heroHeight - 40);
+      progressWrap.classList.toggle('is-visible', document.body.scrollTop > heroHeight - 40);
     }
-    window.addEventListener('scroll', updatePageProgress, {passive:true});
+    document.body.addEventListener('scroll', updatePageProgress, {passive:true});
     window.addEventListener('resize', updatePageProgress);
     updatePageProgress();
   })();
