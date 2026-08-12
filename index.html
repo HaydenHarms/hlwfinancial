@@ -56,15 +56,14 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{width:100%;height:100%;overflow-x:hidden;}
   body{overflow-y:scroll;}
+  /* every section after the hero needs explicit stacking + a solid opaque
+     background — the sticky hero has z-index:1, and any later section that
+     doesn't definitively paint above it (with real content covering the
+     viewport, not just relying on scroll position) can let it bleed
+     through wherever that section has gaps or a transparent background. */
   .snap-section{
-    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-  }
-  /* the section right after the hero needs to actually paint ON TOP of it
-     (not just come later in the DOM) and be fully opaque, so that as it
-     scrolls up in normal flow it visually covers the sticky hero beneath —
-     that's the whole "slide up and cover" effect. */
-  #marqueeSection{
     position:relative;z-index:2;
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
     background:var(--page-bg);
   }
   body{
@@ -519,7 +518,7 @@
      so a video can be dropped in later — just add a <video> inside .cta-bg
      the same way the hero does, no other changes needed. ===== */
   .cta-section{
-    position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;
+    position:relative;z-index:2;overflow:hidden;min-height:100vh;display:flex;align-items:center;
     background:var(--green-deep);color:var(--cream);
   }
   .cta-bg{position:absolute;inset:0;overflow:hidden;}
@@ -566,7 +565,7 @@
   .cta-section.is-visible .cta-tiny{opacity:1;transform:translateY(0);}
 
   /* ===== FOOTER ===== */
-  .footer{padding:44px 60px;}
+  .footer{position:relative;z-index:2;background:var(--page-bg);padding:44px 60px;}
   .footer-inner{
     max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
   }
