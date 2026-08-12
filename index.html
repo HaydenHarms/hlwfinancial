@@ -859,8 +859,8 @@
       // left-to-right decode: each character's scramble window starts a
       // little after the one before it, so they resolve in reading order
       // instead of settling randomly
-      const STAGGER = 0.85;   // frames between each character's start — tuned for ~1.5s at 100 chars
-      const SCRAMBLE_LEN = 6; // frames a character scrambles before locking in
+      const STAGGER = 0.567;  // frames between each character's start — 1.5x faster than the previous 100-char/1.5s pace
+      const SCRAMBLE_LEN = 4; // frames a character scrambles before locking in
       for(let i=0;i<length;i++){
         const from = oldText[i] || '';
         const to = newText[i] || '';
