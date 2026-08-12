@@ -62,6 +62,23 @@
   }
   .mono{font-family:'JetBrains Mono',monospace;}
 
+  /* ===== SCROLL PROGRESS — fixed right edge, fills as you move down the page ===== */
+  .feature-progress-vertical{
+    position:fixed;right:32px;top:50%;transform:translateY(-50%);
+    z-index:40;display:flex;flex-direction:column;gap:10px;
+    opacity:0;transition:opacity .4s ease;pointer-events:none;
+  }
+  .feature-progress-vertical.is-visible{opacity:1;}
+  .feature-progress-vertical .seg{width:3px;height:34px;background:var(--line);position:relative;overflow:hidden;}
+  .feature-progress-vertical .seg i{
+    position:absolute;left:0;bottom:0;width:100%;height:100%;display:block;
+    background:var(--gold);transform:scaleY(0);transform-origin:bottom;
+    transition:transform .1s linear;
+  }
+  @media(max-width:900px){
+    .feature-progress-vertical{display:none;}
+  }
+
   /* ===== SITE NAV (fixed, transparent over hero, solid once scrolled) ===== */
   .site-nav{
     position:fixed;top:0;left:0;right:0;z-index:50;
@@ -453,7 +470,7 @@
 
 
   /* ===== CTA — general-inquiry close, dark band (adapts via --green-deep per theme) ===== */
-  .cta-section{position:relative;overflow:hidden;background:var(--green-deep);color:var(--cream);}
+  .cta-section{position:relative;overflow:hidden;background:var(--green-deep);color:var(--cream);min-height:100vh;display:flex;align-items:center;}
   .cta-section::before{
     content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
     background-image:
@@ -464,7 +481,7 @@
     -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
     mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
   }
-  .cta-inner{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:100px 60px 110px;}
+  .cta-inner{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:80px 60px;width:100%;}
 
   /* cursor-reactive spotlight — a soft warm light that follows the cursor
      across the panel, like reading by lamplight; desktop mouse only */
@@ -474,27 +491,6 @@
     opacity:0;transition:opacity .5s ease;
   }
   .cta-section.spot-active .cta-spotlight{opacity:1;}
-
-  /* ambient drifting motes — dust suspended in the light, sparse and slow.
-     Given a solid glow rather than relying on mix-blend-mode, which was
-     washing them out to invisible in some browsers. */
-  .cta-motes{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 1.2s ease;}
-  .cta-section.is-visible .cta-motes{opacity:1;}
-  .cta-motes .mote{
-    position:absolute;left:var(--mote-x);top:var(--mote-y);
-    width:var(--mote-size);height:var(--mote-size);border-radius:50%;
-    background:var(--mote-color);
-    box-shadow:0 0 6px 1px var(--mote-color);
-    opacity:0;
-    animation:ctaMoteDrift var(--mote-dur) linear infinite;
-    animation-delay:var(--mote-delay);
-  }
-  @keyframes ctaMoteDrift{
-    0%{transform:translate(0,0);opacity:0;}
-    12%{opacity:var(--mote-o);}
-    88%{opacity:var(--mote-o);}
-    100%{transform:translate(var(--mote-dx), var(--mote-dy));opacity:0;}
-  }
 
   .cta-status{
     display:flex;align-items:center;justify-content:space-between;
@@ -555,29 +551,6 @@
   .cta-btn:hover span{color:var(--green-deep);}
   .cta-btn:hover svg{stroke:var(--green-deep);}
 
-  /* wax-seal press — a brief stamped flourish on click, like sealing a letter.
-     Colored to contrast against the gold hover-fill (you can only click while
-     hovering, so it must read against gold, not on top of it). */
-  .cta-btn .seal{
-    position:absolute;z-index:2;pointer-events:none;
-    left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;
-    border-radius:50%;border:1.5px solid var(--green-deep);
-    opacity:0;transform:scale(1.6);
-  }
-  .cta-btn .seal::before{
-    content:"";position:absolute;inset:6px;border-radius:50%;border:1.5px solid var(--green-deep);opacity:.7;
-  }
-  .cta-btn .seal::after{
-    content:"";position:absolute;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;
-    border-radius:50%;background:var(--green-deep);
-  }
-  .cta-btn.is-sealed .seal{animation:ctaSealStamp .6s cubic-bezier(.2,.8,.3,1) forwards;}
-  @keyframes ctaSealStamp{
-    0%{opacity:0;transform:scale(1.6);}
-    40%{opacity:1;transform:scale(0.9);}
-    60%{opacity:1;transform:scale(1.02);}
-    100%{opacity:0;transform:scale(1.12);}
-  }
   .cta-btn svg{transition:transform .45s cubic-bezier(.65,0,.35,1), stroke .45s ease;}
   .cta-btn:hover svg{transform:translateX(4px);}
 
@@ -632,7 +605,7 @@
     .feature-frame:last-child{border-bottom:none;}
     .feature-frame-visual{height:auto;}
     .feature-progress-vertical{display:none;}
-    .cta-inner{padding:70px 22px 80px;}
+    .cta-inner{padding:70px 22px;}
     .cta-status{flex-direction:column;align-items:flex-start;gap:14px;padding-bottom:36px;margin-bottom:36px;}
     .cta-actions{margin-top:36px;gap:22px;}
     .footer{padding:32px 22px;}
@@ -663,6 +636,14 @@
     <a href="#">Client Access</a>
   </div>
 </header>
+
+<div class="feature-progress-vertical" id="featureProgressVertical">
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+</div>
 
 <section class="hero-video">
   <div class="hero-bg">
@@ -755,7 +736,6 @@
 
 <section class="cta-section" id="ctaSection">
   <div class="cta-spotlight" id="ctaSpotlight"></div>
-  <div class="cta-motes" id="ctaMotes"></div>
   <div class="cta-inner">
 
     <div class="cta-status">
@@ -771,7 +751,6 @@
       <a href="#" class="cta-btn" id="ctaMainBtn">
         <span>Request an Introduction</span>
         <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5h13M9 1l5 4-5 4"/></svg>
-        <span class="seal" aria-hidden="true"></span>
       </a>
       <a href="#" class="cta-ghost">View Our Approach</a>
     </div>
@@ -822,6 +801,35 @@
   }
   window.addEventListener('scroll', updateNav, {passive:true});
   updateNav();
+
+  // ===== SCROLL PROGRESS — right-edge segments fill as you move down the page =====
+  (function(){
+    const segs = document.querySelectorAll('.feature-progress-vertical .seg i');
+    const progressWrap = document.getElementById('featureProgressVertical');
+    const heroEl = document.querySelector('.hero-video');
+    if(!progressWrap || !segs.length) return;
+
+    function updatePageProgress(){
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      let progress = docHeight > 0 ? window.scrollY / docHeight : 0;
+      progress = Math.min(Math.max(progress, 0), 0.9999);
+
+      const total = segs.length;
+      const activeIndex = Math.floor(progress * total);
+      const within = (progress * total) - activeIndex;
+      segs.forEach((s, i)=>{
+        if(i < activeIndex) s.style.transform = 'scaleY(1)';
+        else if(i === activeIndex) s.style.transform = `scaleY(${within})`;
+        else s.style.transform = 'scaleY(0)';
+      });
+
+      const heroHeight = heroEl ? heroEl.offsetHeight : window.innerHeight;
+      progressWrap.classList.toggle('is-visible', window.scrollY > heroHeight - 40);
+    }
+    window.addEventListener('scroll', updatePageProgress, {passive:true});
+    window.addEventListener('resize', updatePageProgress);
+    updatePageProgress();
+  })();
 
   const marqueeCards = document.querySelectorAll('#marqueeTrack .marquee-card');
   const marqueeTabs = document.querySelectorAll('#marqueeTabs .marquee-tab');
@@ -1152,76 +1160,37 @@
     });
   })();
 
-  // ===== CTA — ambient drifting motes =====
-  (function(){
-    const container = document.getElementById('ctaMotes');
-    if(!container) return;
-    const MOTE_COUNT = 20;
-    const colors = ['rgba(201,171,95,', 'rgba(247,245,239,']; // gold and cream, alternating
-    for(let i = 0; i < MOTE_COUNT; i++){
-      const mote = document.createElement('div');
-      mote.className = 'mote';
-      const size = (Math.random() * 2 + 2.5).toFixed(1);         // 2.5–4.5px — was too small to notice
-      const startX = (Math.random() * 100).toFixed(1) + '%';
-      const startY = (Math.random() * 100).toFixed(1) + '%';
-      const driftX = Math.round((Math.random() - 0.5) * 90) + 'px';   // slight horizontal sway
-      const driftY = -Math.round(Math.random() * 140 + 60) + 'px';    // slow upward drift
-      const duration = (Math.random() * 18 + 18).toFixed(1) + 's';    // 18–36s per cycle
-      const delay = -(Math.random() * 30).toFixed(1) + 's';           // stagger starts, avoid a synced "burst"
-      const opacity = (Math.random() * 0.35 + 0.55).toFixed(2);  // 0.55–0.9 — was too faint to notice
-      const color = colors[i % 2] + opacity + ')';
-
-      mote.style.setProperty('--mote-size', size + 'px');
-      mote.style.setProperty('--mote-x', startX);
-      mote.style.setProperty('--mote-y', startY);
-      mote.style.setProperty('--mote-dx', driftX);
-      mote.style.setProperty('--mote-dy', driftY);
-      mote.style.setProperty('--mote-dur', duration);
-      mote.style.setProperty('--mote-delay', delay);
-      mote.style.setProperty('--mote-o', opacity);
-      mote.style.setProperty('--mote-color', color);
-
-      container.appendChild(mote);
-    }
-  })();
-
 
   // ===== CTA — magnetic button (desktop mouse only) =====
+  // reacts to the cursor from a distance, not just once you're already over it
   (function(){
+    const section = document.getElementById('ctaSection');
     const btn = document.getElementById('ctaMainBtn');
-    if(!btn) return;
-    const strength = 0.35, maxOffset = 14;
-    btn.addEventListener('mouseenter', ()=>{
-      if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
-      btn.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1)';
-    });
-    btn.addEventListener('mousemove', (e)=>{
+    if(!section || !btn) return;
+    const strength = 0.4;
+    const maxOffset = 16;
+    const pullRadius = 170; // px — button starts pulling toward the cursor from this far away
+    btn.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1)';
+
+    section.addEventListener('mousemove', (e)=>{
       if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
       const rect = btn.getBoundingClientRect();
-      const relX = e.clientX - (rect.left + rect.width / 2);
-      const relY = e.clientY - (rect.top + rect.height / 2);
-      const dx = Math.max(-maxOffset, Math.min(maxOffset, relX * strength));
-      const dy = Math.max(-maxOffset, Math.min(maxOffset, relY * strength));
-      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if(dist > pullRadius){
+        btn.style.transform = 'translate(0, 0)';
+        return;
+      }
+      const pull = 1 - (dist / pullRadius); // 0 at the radius edge, 1 at the center
+      const offsetX = Math.max(-maxOffset, Math.min(maxOffset, dx * strength * pull));
+      const offsetY = Math.max(-maxOffset, Math.min(maxOffset, dy * strength * pull));
+      btn.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
     });
-    btn.addEventListener('mouseleave', ()=>{
+    section.addEventListener('mouseleave', ()=>{
       btn.style.transform = 'translate(0, 0)';
-    });
-  })();
-
-  // ===== CTA — wax-seal press on click =====
-  (function(){
-    const btn = document.getElementById('ctaMainBtn');
-    if(!btn) return;
-    btn.addEventListener('click', function(e){
-      if(btn.classList.contains('is-sealed')) return;
-      e.preventDefault();
-      btn.classList.add('is-sealed');
-      const dest = btn.getAttribute('href');
-      setTimeout(()=>{
-        btn.classList.remove('is-sealed');
-        if(dest) window.location.href = dest;
-      }, 600);
     });
   })();
 </script>
