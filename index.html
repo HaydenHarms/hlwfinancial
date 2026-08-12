@@ -496,21 +496,14 @@
   .cta-section.is-visible h2{opacity:1;transform:translateY(0);}
   .cta-section h2 em{font-style:italic;color:var(--gold);font-weight:400;}
 
-  .cta-body{margin-top:64px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;}
-
-  .ledger{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2.5;color:rgba(247,245,239,0.55);}
-  .ledger .row{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:10px;white-space:nowrap;}
-  .ledger .row .label{color:var(--cream);opacity:0;}
-  .ledger .row .dots{overflow:hidden;color:rgba(247,245,239,0.2);}
-  .ledger .row .dots i{font-style:normal;}
-  .ledger .row .val{color:var(--gold);opacity:0;flex-shrink:0;}
-  .ledger .caret{
-    display:inline-block;width:7px;height:14px;background:var(--gold);
-    vertical-align:-2px;animation:ctaCaretBlink 1s step-end infinite;
+  .cta-section p.support{
+    margin-top:26px;font-size:17px;line-height:1.7;max-width:520px;color:rgba(247,245,239,0.6);
+    opacity:0;transform:translateY(14px);
+    transition:opacity .8s ease .1s, transform .8s cubic-bezier(.2,.7,.3,1) .1s;
   }
-  @keyframes ctaCaretBlink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+  .cta-section.is-visible p.support{opacity:1;transform:translateY(0);}
 
-  .cta-actions{display:flex;flex-direction:column;align-items:flex-start;gap:24px;}
+  .cta-actions{margin-top:44px;display:flex;align-items:center;gap:32px;flex-wrap:wrap;}
   .cta-btn{
     position:relative;overflow:hidden;
     display:inline-flex;align-items:center;gap:12px;
@@ -519,7 +512,7 @@
     border:1px solid var(--gold);padding:18px 32px;
     text-decoration:none;cursor:pointer;
     opacity:0;transform:translateY(14px);
-    transition:opacity .8s ease .15s, transform .8s cubic-bezier(.2,.7,.3,1) .15s;
+    transition:opacity .8s ease .18s, transform .8s cubic-bezier(.2,.7,.3,1) .18s;
   }
   .cta-section.is-visible .cta-btn{opacity:1;transform:translateY(0);}
   .cta-btn::before{
@@ -538,7 +531,7 @@
     font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
     color:rgba(247,245,239,0.55);text-decoration:none;border-bottom:1px solid rgba(247,245,239,0.2);padding-bottom:4px;
     opacity:0;transform:translateY(14px);
-    transition:opacity .8s ease .25s, transform .8s cubic-bezier(.2,.7,.3,1) .25s, color .3s ease, border-color .3s ease;
+    transition:opacity .8s ease .28s, transform .8s cubic-bezier(.2,.7,.3,1) .28s, color .3s ease, border-color .3s ease;
   }
   .cta-section.is-visible .cta-ghost{opacity:1;transform:translateY(0);}
   .cta-ghost:hover{color:var(--gold);border-color:var(--gold);}
@@ -587,7 +580,7 @@
     .feature-progress-vertical{display:none;}
     .cta-inner{padding:70px 22px 80px;}
     .cta-status{flex-direction:column;align-items:flex-start;gap:14px;padding-bottom:36px;margin-bottom:36px;}
-    .cta-body{grid-template-columns:1fr;gap:44px;margin-top:48px;}
+    .cta-actions{margin-top:36px;gap:22px;}
     .footer{padding:32px 22px;}
     .footer-inner{flex-direction:column;gap:12px;align-items:flex-start;}
   }
@@ -716,16 +709,14 @@
 
     <h2>Let's talk about<br>your <em>finances.</em></h2>
 
-    <div class="cta-body">
-      <div class="ledger" id="ctaLedger"><!-- typed in by JS --></div>
+    <p class="support">Bookkeeping, tax preparation, or a question that doesn't fit neatly into either — reach out and we'll follow up within a day.</p>
 
-      <div class="cta-actions">
-        <a href="#" class="cta-btn">
-          <span>Request an Introduction</span>
-          <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5h13M9 1l5 4-5 4"/></svg>
-        </a>
-        <a href="#" class="cta-ghost">View Our Approach</a>
-      </div>
+    <div class="cta-actions">
+      <a href="#" class="cta-btn">
+        <span>Request an Introduction</span>
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5h13M9 1l5 4-5 4"/></svg>
+      </a>
+      <a href="#" class="cta-ghost">View Our Approach</a>
     </div>
 
   </div>
@@ -1074,68 +1065,13 @@
     }
   );
 
-  // ===== CTA — ledger status readout, typed in on scroll-into-view =====
+  // ===== CTA — fade/rise into view on scroll =====
   (function(){
     const section = document.getElementById('ctaSection');
-    const ledgerEl = document.getElementById('ctaLedger');
-    if(!section || !ledgerEl) return;
-
-    const rows = [
-      { label: 'Books Reconciled', value: 'Daily' },
-      { label: 'Returns Filed',    value: 'On Time' },
-      { label: 'Advisory Review',  value: 'Monthly' }
-    ];
-    let typed = false;
-
-    function buildDots(label, value){
-      const used = label.length + value.length;
-      const count = Math.max(6, 46 - used);
-      return '.'.repeat(count);
-    }
-
-    function typeLedger(){
-      if(typed) return;
-      typed = true;
-      ledgerEl.innerHTML = '';
-      rows.forEach((r, i)=>{
-        const row = document.createElement('div');
-        row.className = 'row';
-        const dotsFull = buildDots(r.label, r.value);
-        row.innerHTML = `<span class="label">${r.label}</span><span class="dots"><i></i></span><span class="val">${r.value}</span>`;
-        ledgerEl.appendChild(row);
-
-        const labelEl = row.querySelector('.label');
-        const dotsEl = row.querySelector('.dots i');
-        const valEl = row.querySelector('.val');
-        const delay = i * 650;
-
-        setTimeout(()=>{
-          labelEl.style.opacity = 1;
-          let n = 0;
-          const dotInterval = setInterval(()=>{
-            n++;
-            dotsEl.textContent = dotsFull.slice(0, n);
-            if(n >= dotsFull.length){
-              clearInterval(dotInterval);
-              valEl.style.opacity = 1;
-            }
-          }, 12);
-        }, delay);
-      });
-
-      setTimeout(()=>{
-        const caret = document.createElement('span');
-        caret.className = 'caret';
-        ledgerEl.appendChild(caret);
-      }, rows.length * 650 + 500);
-    }
-
+    if(!section) return;
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{
-        if(e.isIntersecting){
-          section.classList.add('is-visible');
-          setTimeout(typeLedger, 300);
-        }
+        if(e.isIntersecting) section.classList.add('is-visible');
       });
     }, {threshold:0.3});
     io.observe(section);
