@@ -475,14 +475,16 @@
   }
   .cta-section.spot-active .cta-spotlight{opacity:1;}
 
-  /* ambient drifting motes — dust suspended in the light, sparse and slow;
-     screen-blended so they read brighter/warmer wherever the spotlight passes */
+  /* ambient drifting motes — dust suspended in the light, sparse and slow.
+     Given a solid glow rather than relying on mix-blend-mode, which was
+     washing them out to invisible in some browsers. */
   .cta-motes{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 1.2s ease;}
   .cta-section.is-visible .cta-motes{opacity:1;}
   .cta-motes .mote{
     position:absolute;left:var(--mote-x);top:var(--mote-y);
     width:var(--mote-size);height:var(--mote-size);border-radius:50%;
-    background:var(--mote-color);mix-blend-mode:screen;filter:blur(.4px);
+    background:var(--mote-color);
+    box-shadow:0 0 6px 1px var(--mote-color);
     opacity:0;
     animation:ctaMoteDrift var(--mote-dur) linear infinite;
     animation-delay:var(--mote-delay);
@@ -553,19 +555,21 @@
   .cta-btn:hover span{color:var(--green-deep);}
   .cta-btn:hover svg{stroke:var(--green-deep);}
 
-  /* wax-seal press — a brief stamped flourish on click, like sealing a letter */
+  /* wax-seal press — a brief stamped flourish on click, like sealing a letter.
+     Colored to contrast against the gold hover-fill (you can only click while
+     hovering, so it must read against gold, not on top of it). */
   .cta-btn .seal{
     position:absolute;z-index:2;pointer-events:none;
     left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;
-    border-radius:50%;border:1px solid var(--gold);
+    border-radius:50%;border:1.5px solid var(--green-deep);
     opacity:0;transform:scale(1.6);
   }
   .cta-btn .seal::before{
-    content:"";position:absolute;inset:6px;border-radius:50%;border:1px solid var(--gold);opacity:.6;
+    content:"";position:absolute;inset:6px;border-radius:50%;border:1.5px solid var(--green-deep);opacity:.7;
   }
   .cta-btn .seal::after{
-    content:"";position:absolute;top:50%;left:50%;width:4px;height:4px;margin:-2px 0 0 -2px;
-    border-radius:50%;background:var(--gold);
+    content:"";position:absolute;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;
+    border-radius:50%;background:var(--green-deep);
   }
   .cta-btn.is-sealed .seal{animation:ctaSealStamp .6s cubic-bezier(.2,.8,.3,1) forwards;}
   @keyframes ctaSealStamp{
@@ -1157,14 +1161,14 @@
     for(let i = 0; i < MOTE_COUNT; i++){
       const mote = document.createElement('div');
       mote.className = 'mote';
-      const size = (Math.random() * 2 + 1).toFixed(1);          // 1–3px
+      const size = (Math.random() * 2 + 2.5).toFixed(1);         // 2.5–4.5px — was too small to notice
       const startX = (Math.random() * 100).toFixed(1) + '%';
       const startY = (Math.random() * 100).toFixed(1) + '%';
       const driftX = Math.round((Math.random() - 0.5) * 90) + 'px';   // slight horizontal sway
       const driftY = -Math.round(Math.random() * 140 + 60) + 'px';    // slow upward drift
       const duration = (Math.random() * 18 + 18).toFixed(1) + 's';    // 18–36s per cycle
       const delay = -(Math.random() * 30).toFixed(1) + 's';           // stagger starts, avoid a synced "burst"
-      const opacity = (Math.random() * 0.35 + 0.25).toFixed(2);
+      const opacity = (Math.random() * 0.35 + 0.55).toFixed(2);  // 0.55–0.9 — was too faint to notice
       const color = colors[i % 2] + opacity + ')';
 
       mote.style.setProperty('--mote-size', size + 'px');
