@@ -37,22 +37,6 @@
     --hairline:#e5e2d5;
     --lbl:#8a7f66;
   }
-  html[data-theme="dark"]{
-    --green:#8fb89a;
-    --green-deep:#0b120d;
-    --cream:#eef0e9;
-    --line:#33402f;
-    --ink:#e9ebe2;
-    --ink-soft:#a3ab97;
-    --gold:#c9ab5f;
-    --panel-bg:#12180f;
-    --page-bg:#0c100a;
-    --grid-v:rgba(143,184,154,0.10);
-    --grid-h:rgba(143,184,154,0.06);
-    --muted:#6d7364;
-    --hairline:#232c1f;
-    --lbl:#7c8570;
-  }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{width:100%;height:100%;overflow-x:hidden;}
   body{overflow-y:scroll;}
@@ -121,14 +105,6 @@
   .site-nav .mark span{color:var(--gold);}
   .nav-links{display:flex;align-items:center;gap:34px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:inherit;}
   .nav-links a{color:inherit;text-decoration:none;}
-  .theme-toggle{
-    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-    border:1px solid rgba(244,241,232,0.35);background:none;padding:8px 14px;
-    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;
-    color:inherit;text-transform:uppercase;transition:border-color .3s ease;
-  }
-
-  .theme-toggle .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
   .nav-links a:last-child{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;letter-spacing:.08em;
     color:var(--cream)!important;background:var(--green);padding:10px 18px;
@@ -652,7 +628,6 @@
     <a href="#">Practice</a>
     <a href="#">Approach</a>
     <a href="#">Team</a>
-    <button class="theme-toggle" id="themeToggle" type="button"><span class="dot"></span><span id="themeToggleLabel">Dark Mode</span></button>
     <a href="client-access.html">Client Access</a>
   </div>
 </header>
@@ -799,15 +774,6 @@
   // in case the browser is still withholding autoplay until a user gesture
   document.addEventListener('touchstart', nudgeVideoPlayback, {once:true, passive:true});
   document.addEventListener('click', nudgeVideoPlayback, {once:true});
-
-  const root = document.documentElement;
-  const toggle = document.getElementById('themeToggle');
-  const label = document.getElementById('themeToggleLabel');
-  toggle.addEventListener('click', ()=>{
-    const isDark = root.getAttribute('data-theme') === 'dark';
-    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    label.textContent = isDark ? 'Dark Mode' : 'Light Mode';
-  });
 
   const siteNav = document.getElementById('siteNav');
   // body is now the actual scroll container (see the scroll-snap CSS notes
