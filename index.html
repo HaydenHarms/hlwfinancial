@@ -369,6 +369,17 @@
   .product-card{
     position:relative;height:76vh;overflow:hidden;
     border:1px solid var(--line);background:var(--panel-bg);
+    display:block;text-decoration:none;color:inherit;
+    transition:transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s cubic-bezier(.16,1,.3,1);
+  }
+  /* slight "grow" on hover — real mouse hover only, so it never triggers
+     from a tap or from :hover being stuck active after a touch scroll */
+  @media(hover:hover) and (pointer:fine){
+    .product-card:hover{
+      transform:scale(1.025);
+      box-shadow:0 22px 44px rgba(19,37,24,0.22);
+      z-index:3;
+    }
   }
   .product-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
   .product-card-inner{
@@ -733,19 +744,19 @@
 
 <div class="snap-section">
   <div class="product-gallery">
-    <div class="product-card" id="prodBookkeeping">
+    <a class="product-card" id="prodBookkeeping" href="bookkeeping.html">
       <div class="product-card-inner">
         <h3>Bookkeeping</h3>
         <p class="pg-body" data-final="Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.">Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.</p>
       </div>
-    </div>
-    <div class="product-card has-bg" id="prodTax">
+    </a>
+    <a class="product-card has-bg" id="prodTax" href="tax-prep.html">
       <img src="media/product-tax.png" alt="">
       <div class="product-card-inner">
         <h3>Tax Preparation</h3>
         <p class="pg-body" data-final="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.</p>
       </div>
-    </div>
+    </a>
   </div>
 </div>
 
