@@ -579,11 +579,20 @@
     .nav-links{gap:0;}
     .nav-links a:not(:last-child){display:none;}
     .hero-content{padding:0 22px;}
-    .hero-scroll-cue{left:22px;}
+    .hero-scroll-cue{left:22px;bottom:26px;gap:14px;font-size:13px;letter-spacing:.1em;}
+    .hero-scroll-cue .line{width:2px;height:48px;}
+    /* the marquee/product sections use min-height:100vh + centered content on
+       desktop so the reveal reads as one deliberate "scene" per viewport —
+       on mobile the content is much shorter than the viewport, so that same
+       centering opens up a big empty gap above and below it. Let each
+       section size itself to its content instead, with a small fixed
+       breathing gap, so hero → marquee → products sit close together. */
+    .snap-section{min-height:0;justify-content:flex-start;}
+    #marqueeSection{padding-top:28px;}
     .facts-wrap{height:52vh;}
     .marquee-card{inset:0 22px;}
     .marquee-card-inner{padding:0 26px 40px;}
-    .product-gallery{grid-template-columns:1fr;padding:0 22px 60px;}
+    .product-gallery{grid-template-columns:1fr;margin-top:36px;padding:0 22px 60px;}
     .product-card{height:340px;}
     .product-card-inner{padding:0 26px 30px;}
     .feature-gap{height:32px;}
@@ -747,7 +756,7 @@
   </div>
   <div class="cta-overlay"></div>
   <div class="cta-inner">
-    <h2>Whatever it is — books, taxes, or something in between — <a href="#" class="cta-inline">let's talk.</a></h2>
+    <h2>Whatever it is — books, taxes, or something in between — <a href="mailto:harms.e.hayden@gmail.com" class="cta-inline">let's talk.</a></h2>
     <span class="cta-tiny">Dallas, Texas · Accepting New Engagements</span>
   </div>
 </section>
@@ -1040,8 +1049,13 @@
     lastPointerType = e.pointerType || 'mouse';
   }, {capture:true, passive:true});
 
-  function setupCardReveal(nodeList, onOpen, onClose){
+  function setupCardReveal(nodeList, onOpen, onClose, opts={}){
     const cards = Array.from(nodeList);
+    // 'tap' (default): touch activates the animation on tap, like a click.
+    // 'scroll': touch activates the animation when the card scrolls into
+    // view instead — used for cards that will eventually be links, where
+    // a tap needs to be free to navigate rather than just toggle the reveal.
+    const touchMode = opts.touchMode || 'tap';
 
     function closeCard(card){
       if(!card.classList.contains('is-open')) return;
@@ -1071,19 +1085,36 @@
         closeCard(card);
       });
       // tap — toggle open/closed (mouse clicks are stopped here but otherwise ignored,
-      // so a click never bubbles up and triggers the outside-click "close" handler below)
+      // so a click never bubbles up and triggers the outside-click "close" handler below).
+      // Skipped entirely in 'scroll' mode, where touch activation comes from the
+      // IntersectionObserver below instead, leaving taps free (e.g. to follow a link).
       card.addEventListener('click', (e)=>{
         e.stopPropagation();
+        if(touchMode === 'scroll') return;
         if(lastPointerType !== 'touch' && lastPointerType !== 'pen') return;
         if(card.classList.contains('is-open')) closeCard(card);
         else openCard(card);
       });
     });
 
-    // tapping/clicking outside any card in this group closes it
-    document.addEventListener('click', ()=>{
-      cards.forEach(closeCard);
-    });
+    if(touchMode === 'scroll'){
+      // touch-only: activate the decode animation as each card scrolls into
+      // view, and reset it once the card scrolls back out, so it replays on
+      // re-entry. Desktop hover (handled above) is unaffected.
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(lastPointerType !== 'touch' && lastPointerType !== 'pen') return;
+          if(entry.isIntersecting) openCard(entry.target);
+          else closeCard(entry.target);
+        });
+      }, {threshold:0.5});
+      cards.forEach(card=>io.observe(card));
+    } else {
+      // tapping/clicking outside any card in this group closes it
+      document.addEventListener('click', ()=>{
+        cards.forEach(closeCard);
+      });
+    }
   }
 
   document.querySelectorAll('.product-card').forEach(card=>{
@@ -1124,7 +1155,8 @@
         cancelAnimationFrame(bodyEl._scrambler.frameRequest);
         bodyEl.textContent = '';
       }
-    }
+    },
+    {touchMode:'scroll'}
   );
 
   // ===== CTA — fade/rise into view on scroll =====
