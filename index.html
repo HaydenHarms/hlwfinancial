@@ -960,12 +960,17 @@
   ].join('   ');
 
   class FormulaScramble{
-    constructor(el){
+    constructor(el, opts={}){
       this.el = el;
       this.queue = [];
       this.frame = 0;
       this.frameRequest = null;
       this.resolve = null;
+      // frames between each character's start, and frames a character
+      // scrambles before locking in — defaults match the product-card pace,
+      // pass opts to run a different total duration (see heroFuture below)
+      this.stagger = opts.stagger != null ? opts.stagger : 0.567;
+      this.scrambleLen = opts.scrambleLen != null ? opts.scrambleLen : 4;
       this.update = this.update.bind(this);
     }
     setText(newText){
@@ -976,8 +981,8 @@
       // left-to-right decode: each character's scramble window starts a
       // little after the one before it, so they resolve in reading order
       // instead of settling randomly
-      const STAGGER = 0.567;  // frames between each character's start — 1.5x faster than the previous 100-char/1.5s pace
-      const SCRAMBLE_LEN = 4; // frames a character scrambles before locking in
+      const STAGGER = this.stagger;
+      const SCRAMBLE_LEN = this.scrambleLen;
       for(let i=0;i<length;i++){
         const from = oldText[i] || '';
         const to = newText[i] || '';
@@ -1109,7 +1114,9 @@
     if(!el) return;
     const finalText = el.textContent;
     el.textContent = '';
-    const scrambler = new FormulaScramble(el);
+    // "future." is 7 chars: (7-1)*13 + 12 = 90 frames = 1.5s @ 60fps,
+    // independent of the product-card scramble speed
+    const scrambler = new FormulaScramble(el, {stagger: 13, scrambleLen: 12});
     // small delay so it reads as an intro beat once the hero is visible,
     // rather than firing before the page has settled
     setTimeout(()=> scrambler.setText(finalText), 400);
