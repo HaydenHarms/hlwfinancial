@@ -648,7 +648,7 @@
   <div class="hero-noise"></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <h1>Laying the <em>foundation</em> of the <em>future.</em></h1>
+    <h1>Laying the <em>foundation</em> of the <em id="heroFuture">future.</em></h1>
   </div>
   <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
@@ -1102,6 +1102,18 @@
     bodyEl._scrambler = new FormulaScramble(bodyEl);
     bodyEl._finalText = finalText;
   });
+
+  // ===== HERO — decode the word "future." in on load, same scramble as the product cards =====
+  (function(){
+    const el = document.getElementById('heroFuture');
+    if(!el) return;
+    const finalText = el.textContent;
+    el.textContent = '';
+    const scrambler = new FormulaScramble(el);
+    // small delay so it reads as an intro beat once the hero is visible,
+    // rather than firing before the page has settled
+    setTimeout(()=> scrambler.setText(finalText), 400);
+  })();
 
   setupCardReveal(
     document.querySelectorAll('#marqueeTrack .marquee-card'),
