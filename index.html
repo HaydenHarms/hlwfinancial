@@ -1108,7 +1108,7 @@
     bodyEl._finalText = finalText;
   });
 
-  // ===== HERO — decode the word "future." in on load, same scramble as the product cards =====
+  // ===== HERO — decode the word "future." on load AND on every scroll-into-view =====
   (function(){
     const el = document.getElementById('heroFuture');
     if(!el) return;
@@ -1117,9 +1117,25 @@
     // "future." is 7 chars: (7-1)*13 + 12 = 90 frames = 1.5s @ 60fps,
     // independent of the product-card scramble speed
     const scrambler = new FormulaScramble(el, {stagger: 13, scrambleLen: 12});
-    // small delay so it reads as an intro beat once the hero is visible,
-    // rather than firing before the page has settled
-    setTimeout(()=> scrambler.setText(finalText), 400);
+    function play(){
+      cancelAnimationFrame(scrambler.frameRequest);
+      scrambler.setText(finalText);
+    }
+    // small delay so the initial run reads as an intro beat once the hero
+    // is visible, rather than firing before the page has settled
+    setTimeout(play, 400);
+    // replay any time the hero scrolls back into view (e.g. scrolling up
+    // from further down the page) — skips the very first firing above,
+    // since the observer's initial callback would otherwise double-trigger it
+    let firstCallback = true;
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(firstCallback) return;
+        if(entry.isIntersecting) play();
+      });
+      firstCallback = false;
+    }, {threshold:0.5});
+    io.observe(el);
   })();
 
   setupCardReveal(
