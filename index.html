@@ -1120,9 +1120,8 @@
     const heroSection = document.querySelector('.hero-video');
     const finalText = el.textContent;
     el.textContent = '';
-    // "future." is 7 chars: (7-1)*10 + 12 = 72 frames = 1.2s @ 60fps —
-    // slightly faster than before, independent of the product-card speed
-    const scrambler = new FormulaScramble(el, {stagger: 10, scrambleLen: 12, pool: GLYPH_POOL});
+    // "future." is 7 chars: (7-1)*5.5 + 12 = 45 frames = .75s @ 60fps
+    const scrambler = new FormulaScramble(el, {stagger: 5.5, scrambleLen: 12, pool: GLYPH_POOL});
     function play(){
       cancelAnimationFrame(scrambler.frameRequest);
       scrambler.setText(finalText);
