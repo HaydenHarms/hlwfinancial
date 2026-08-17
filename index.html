@@ -959,6 +959,10 @@
     '=PMT(B2/12,C2,-D2)','=NPV(0.08,B2:B10)'
   ].join('   ');
 
+  // plain matrix-style glyph pool for a "regular" decode (used by the hero,
+  // as opposed to the product cards' Excel-formula scramble)
+  const GLYPH_POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>/\\';
+
   class FormulaScramble{
     constructor(el, opts={}){
       this.el = el;
@@ -971,6 +975,7 @@
       // pass opts to run a different total duration (see heroFuture below)
       this.stagger = opts.stagger != null ? opts.stagger : 0.567;
       this.scrambleLen = opts.scrambleLen != null ? opts.scrambleLen : 4;
+      this.pool = opts.pool != null ? opts.pool : FORMULA_POOL;
       this.update = this.update.bind(this);
     }
     setText(newText){
@@ -1005,7 +1010,7 @@
           output += q.to;
         } else if(this.frame >= q.start){
           if(!q.char || Math.random() < 0.3){
-            q.char = FORMULA_POOL[Math.floor(Math.random()*FORMULA_POOL.length)];
+            q.char = this.pool[Math.floor(Math.random()*this.pool.length)];
           }
           output += q.char;
         } else {
@@ -1108,15 +1113,16 @@
     bodyEl._finalText = finalText;
   });
 
-  // ===== HERO — decode the word "future." on load AND on every scroll-into-view =====
+  // ===== HERO — decode the word "future." on load AND every time the user scrolls back up past it =====
   (function(){
     const el = document.getElementById('heroFuture');
     if(!el) return;
+    const heroSection = document.querySelector('.hero-video');
     const finalText = el.textContent;
     el.textContent = '';
     // "future." is 7 chars: (7-1)*13 + 12 = 90 frames = 1.5s @ 60fps,
     // independent of the product-card scramble speed
-    const scrambler = new FormulaScramble(el, {stagger: 13, scrambleLen: 12});
+    const scrambler = new FormulaScramble(el, {stagger: 13, scrambleLen: 12, pool: GLYPH_POOL});
     function play(){
       cancelAnimationFrame(scrambler.frameRequest);
       scrambler.setText(finalText);
@@ -1124,18 +1130,32 @@
     // small delay so the initial run reads as an intro beat once the hero
     // is visible, rather than firing before the page has settled
     setTimeout(play, 400);
-    // replay any time the hero scrolls back into view (e.g. scrolling up
-    // from further down the page) — skips the very first firing above,
-    // since the observer's initial callback would otherwise double-trigger it
-    let firstCallback = true;
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(firstCallback) return;
-        if(entry.isIntersecting) play();
+
+    // The hero is `position:sticky`, so once it's pinned it stays inside
+    // the viewport's bounding box for the whole scroll range where later
+    // sections overlay it — an IntersectionObserver on the element never
+    // sees it "leave" and re-enter, so it never fires again on scroll-back-up.
+    // Track raw scroll position instead: once the user has scrolled down
+    // far enough that the hero is fully covered, scrolling back up past
+    // that point replays the decode.
+    let pastHero = false;
+    let ticking = false;
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(()=>{
+        const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
+        const y = window.scrollY;
+        if(y > heroHeight){
+          pastHero = true;
+        } else if(pastHero && y <= heroHeight * 0.5){
+          play();
+          pastHero = false;
+        }
+        ticking = false;
       });
-      firstCallback = false;
-    }, {threshold:0.5});
-    io.observe(el);
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
   })();
 
   setupCardReveal(
