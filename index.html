@@ -1120,9 +1120,9 @@
     const heroSection = document.querySelector('.hero-video');
     const finalText = el.textContent;
     el.textContent = '';
-    // "future." is 7 chars: (7-1)*13 + 12 = 90 frames = 1.5s @ 60fps,
-    // independent of the product-card scramble speed
-    const scrambler = new FormulaScramble(el, {stagger: 13, scrambleLen: 12, pool: GLYPH_POOL});
+    // "future." is 7 chars: (7-1)*10 + 12 = 72 frames = 1.2s @ 60fps —
+    // slightly faster than before, independent of the product-card speed
+    const scrambler = new FormulaScramble(el, {stagger: 10, scrambleLen: 12, pool: GLYPH_POOL});
     function play(){
       cancelAnimationFrame(scrambler.frameRequest);
       scrambler.setText(finalText);
@@ -1137,7 +1137,9 @@
     // sees it "leave" and re-enter, so it never fires again on scroll-back-up.
     // Track raw scroll position instead: once the user has scrolled down
     // far enough that the hero is fully covered, scrolling back up past
-    // that point replays the decode.
+    // that point replays the decode. This page's scroll container is
+    // document.body (see updateNav above), not window, so listen there —
+    // a window scroll listener never fires on this layout.
     let pastHero = false;
     let ticking = false;
     function onScroll(){
@@ -1145,7 +1147,7 @@
       ticking = true;
       requestAnimationFrame(()=>{
         const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
-        const y = window.scrollY;
+        const y = document.body.scrollTop;
         if(y > heroHeight){
           pastHero = true;
         } else if(pastHero && y <= heroHeight * 0.5){
@@ -1155,7 +1157,7 @@
         ticking = false;
       });
     }
-    window.addEventListener('scroll', onScroll, {passive:true});
+    document.body.addEventListener('scroll', onScroll, {passive:true});
   })();
 
   setupCardReveal(
