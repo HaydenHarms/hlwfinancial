@@ -161,6 +161,20 @@
     max-width:900px;margin:0 auto;
   }
   .hero-content h1 em{font-style:italic;color:var(--gold);font-weight:400;}
+  /* blur-to-sharp settle for #heroFuture — each character starts soft and
+     drifted, then sharpens and settles into place */
+  .decode-char{
+    display:inline-block;
+    filter:blur(6px);
+    opacity:0;
+    transform:translateY(6px);
+    transition:filter .5s ease, opacity .5s ease, transform .5s ease;
+  }
+  .decode-char.is-settled{
+    filter:blur(0);
+    opacity:1;
+    transform:translateY(0);
+  }
   .hero-content p.lede{margin-top:26px;font-size:18px;line-height:1.7;color:rgba(244,241,232,0.7);max-width:460px;}
   .hero-content .cta-row{margin-top:38px;display:flex;align-items:center;gap:28px;}
   .hero-content .btn{
@@ -1113,18 +1127,34 @@
     bodyEl._finalText = finalText;
   });
 
-  // ===== HERO — decode the word "future." on load AND every time the user scrolls back up past it =====
+  // ===== HERO — "future." blurs into focus, character by character, on load AND every time the user scrolls back up past it =====
   (function(){
     const el = document.getElementById('heroFuture');
     if(!el) return;
     const heroSection = document.querySelector('.hero-video');
     const finalText = el.textContent;
+
+    // build one <span> per character so each can animate its own
+    // blur/opacity/position independently
     el.textContent = '';
-    // "future." is 7 chars: (7-1)*5.5 + 12 = 45 frames = .75s @ 60fps
-    const scrambler = new FormulaScramble(el, {stagger: 5.5, scrambleLen: 12, pool: GLYPH_POOL});
+    const spans = [];
+    for(const ch of finalText){
+      const s = document.createElement('span');
+      s.className = 'decode-char';
+      s.textContent = ch === ' ' ? '\u00A0' : ch;
+      el.appendChild(s);
+      spans.push(s);
+    }
+
+    let playTimer = null;
     function play(){
-      cancelAnimationFrame(scrambler.frameRequest);
-      scrambler.setText(finalText);
+      clearTimeout(playTimer);
+      const STEP_MS = 55; // ms between each character starting to settle — ~.75s total for "future."
+      spans.forEach((s, i)=>{
+        s.classList.remove('is-settled');
+        void s.offsetWidth; // force reflow so the transition replays on repeat plays
+        playTimer = setTimeout(()=> s.classList.add('is-settled'), i*STEP_MS);
+      });
     }
     // small delay so the initial run reads as an intro beat once the hero
     // is visible, rather than firing before the page has settled
