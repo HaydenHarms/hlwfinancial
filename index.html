@@ -182,6 +182,7 @@
     border:1px solid var(--line);background:var(--panel-bg);
     transform:translateX(112%);
     transition:transform .9s cubic-bezier(.65,0,.35,1);
+    display:block;text-decoration:none;color:inherit;cursor:pointer;
   }
   .marquee-card.no-transition{transition:none;}
   .marquee-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
@@ -631,54 +632,54 @@
 
   <div class="facts-wrap">
     <div class="marquee-track" id="marqueeTrack">
-      <div class="marquee-card has-bg bg-ledger">
+      <a class="marquee-card has-bg bg-ledger" href="news.html">
         <video src="media/card-ledger-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
         <div class="marquee-card-inner">
           <div class="mc-idx">Ledger</div>
           <h3>Books, kept current.</h3>
           <p>Transactions categorized as they clear, not reconstructed later.</p>
         </div>
-      </div>
-      <div class="marquee-card has-bg bg-close">
+      </a>
+      <a class="marquee-card has-bg bg-close" href="news.html">
         <video src="media/card-close-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
         <div class="marquee-card-inner">
           <div class="mc-idx">Close</div>
           <h3>Close day, simplified.</h3>
           <p>Adjusting entries surfaced early, so the close is a formality.</p>
         </div>
-      </div>
-      <div class="marquee-card has-bg bg-tax">
+      </a>
+      <a class="marquee-card has-bg bg-tax" href="news.html">
         <video src="media/card-tax-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
         <div class="marquee-card-inner">
           <div class="mc-idx">Tax</div>
           <h3>No surprises in April.</h3>
           <p>Liability tracked year-round from books that are already right.</p>
         </div>
-      </div>
-      <div class="marquee-card has-bg bg-reporting">
+      </a>
+      <a class="marquee-card has-bg bg-reporting" href="news.html">
         <video src="media/card-reporting-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
         <div class="marquee-card-inner">
           <div class="mc-idx">Reporting</div>
           <h3>Statements, on demand.</h3>
           <p>Clean, branded reports ready to hand to a lender or partner.</p>
         </div>
-      </div>
-      <div class="marquee-card has-bg bg-counsel">
+      </a>
+      <a class="marquee-card has-bg bg-counsel" href="news.html">
         <video src="media/card-counsel-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
         <div class="marquee-card-inner">
           <div class="mc-idx">Counsel</div>
           <h3>One advisor, always.</h3>
           <p>A single CPA across the personal and business side, in confidence.</p>
         </div>
-      </div>
-      <div class="marquee-card has-bg bg-news">
+      </a>
+      <a class="marquee-card has-bg bg-news" href="news.html">
         <video src="media/card-news-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
         <div class="marquee-card-inner">
           <div class="mc-idx">News</div>
           <h3>The latest from HLW.</h3>
           <p></p>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </div>
@@ -1149,7 +1150,8 @@
       // paused however the card ended up closing.
       const anyOpen = document.querySelector('#marqueeTrack .marquee-card.is-open');
       if(!anyOpen && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
-    }
+    },
+    {touchMode:'scroll'}
   );
 
   setupCardReveal(
