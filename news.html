@@ -83,6 +83,11 @@
   .news-featured{
     max-width:1400px;margin:0 auto;padding:0 60px 30px;
   }
+  .news-featured-link{
+    display:block;width:100%;text-align:left;
+    background:none;border:none;padding:0;margin:0;cursor:pointer;
+    font-family:inherit;color:inherit;
+  }
   .news-featured-media{
     position:relative;
     height:52vh;min-height:340px;
@@ -159,6 +164,70 @@
     font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--ink-soft);
   }
 
+  .news-empty{
+    max-width:1400px;margin:0 auto;padding:0 60px 120px;
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);
+    display:none;
+  }
+  .news-empty.is-shown{display:block;}
+
+  /* ===== ARTICLE READER — dimmed scrim behind, a centered reading
+     panel in front (not a full-screen takeover). Same open/close
+     pattern as the Get Started panel (scrim click, close button,
+     Escape), but a centered scale/fade instead of a side slide-in,
+     since this is "opening up" an article rather than a form. ===== */
+  .article-overlay{
+    position:fixed;inset:0;z-index:250;
+    display:flex;align-items:center;justify-content:center;
+    padding:40px 24px;
+    visibility:hidden;
+    transition:visibility 0s linear .4s;
+  }
+  .article-overlay.is-open{visibility:visible;transition-delay:0s;}
+  .article-scrim{
+    position:absolute;inset:0;
+    background:rgba(11,18,13,0.62);
+    opacity:0;transition:opacity .4s ease;
+  }
+  .article-overlay.is-open .article-scrim{opacity:1;}
+  .article-panel{
+    position:relative;z-index:2;
+    width:100%;max-width:720px;max-height:85vh;overflow-y:auto;
+    background:var(--panel-bg);border:1px solid var(--line);
+    box-shadow:0 40px 90px rgba(11,18,13,0.35);
+    padding:52px 52px 60px;
+    opacity:0;transform:translateY(18px) scale(.97);
+    transition:opacity .4s cubic-bezier(.2,.7,.3,1), transform .4s cubic-bezier(.2,.7,.3,1);
+  }
+  .article-overlay.is-open .article-panel{opacity:1;transform:translateY(0) scale(1);}
+  .article-panel::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
+  .article-close{
+    position:absolute;top:22px;right:24px;
+    background:none;border:none;cursor:pointer;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);padding:4px;
+    transition:color .3s ease;
+  }
+  .article-close:hover{color:var(--gold);}
+  .article-panel .meta{
+    display:flex;gap:12px;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:20px;padding-right:60px;
+  }
+  .article-panel .meta .date{color:var(--muted);text-transform:none;letter-spacing:.02em;}
+  .article-panel h2{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(26px,3vw,36px);line-height:1.2;color:var(--green);margin-bottom:26px;
+  }
+  .article-panel .body p{
+    font-size:16px;line-height:1.75;color:var(--ink-soft);margin-bottom:18px;
+  }
+  .article-panel .body p:last-child{margin-bottom:0;}
+
+  @media(max-width:640px){
+    .article-panel{padding:60px 26px 40px;max-height:88vh;}
+  }
+
   @media(max-width:900px){
     .news-header{padding:120px 22px 40px;}
     .news-tabs{gap:22px;padding-bottom:18px;margin-bottom:34px;}
@@ -192,7 +261,7 @@
 </div>
 
 <div class="news-featured">
-  <a href="news.html" style="text-decoration:none;color:inherit;display:block;">
+  <button class="news-featured-link" id="newsFeaturedLink" type="button">
     <div class="news-featured-media">
       <div class="news-featured-tag">Featured</div>
       <svg viewBox="0 0 303 302" role="img" aria-label="HLW Financial" fill="currentColor" fill-rule="evenodd">
@@ -202,10 +271,10 @@
       </svg>
     </div>
     <div class="news-featured-cap">
-      <h2>HLW Financial opens its doors — founding-client onboarding now underway.</h2>
-      <span class="date">August 2026 · Firm News</span>
+      <h2 id="newsFeaturedTitle"></h2>
+      <span class="date" id="newsFeaturedMeta"></span>
     </div>
-  </a>
+  </button>
 </div>
 
 <div class="news-latest-head">
@@ -213,44 +282,17 @@
   <span class="arrow">→</span>
 </div>
 
-<div class="news-grid" id="newsGrid">
+<div class="news-grid" id="newsGrid"></div>
+<p class="news-empty" id="newsEmpty">Nothing in this category yet.</p>
 
-  <a href="news.html" class="news-card" data-category="firm">
-    <div class="meta"><span>Firm News</span><span class="date">Aug 2026</span></div>
-    <h4>HLW Financial LLC officially formed in Dallas, Texas.</h4>
-    <p>Three founding partners, one continuous-close philosophy — here's what's opening for founding clients this season.</p>
-  </a>
-
-  <a href="news.html" class="news-card" data-category="insights">
-    <div class="meta"><span>Insights</span><span class="date">Aug 2026</span></div>
-    <h4>What "continuous close" actually means for a small business.</h4>
-    <p>Why waiting until year-end to reconcile the books costs more than it saves — and what a monthly cadence looks like in practice.</p>
-  </a>
-
-  <a href="news.html" class="news-card" data-category="press">
-    <div class="meta"><span>Press</span><span class="date">Jul 2026</span></div>
-    <h4>Sample press mention placeholder.</h4>
-    <p>This card is a layout placeholder for a future media mention or press note — swap in a real link and excerpt when one exists.</p>
-  </a>
-
-  <a href="news.html" class="news-card" data-category="insights">
-    <div class="meta"><span>Insights</span><span class="date">Jul 2026</span></div>
-    <h4>Texas franchise tax: what closely held businesses should track.</h4>
-    <p>A short primer on the filing thresholds and deadlines that most often catch small entity owners off guard.</p>
-  </a>
-
-  <a href="news.html" class="news-card" data-category="firm">
-    <div class="meta"><span>Firm News</span><span class="date">Jul 2026</span></div>
-    <h4>Now accepting new engagements, by referral and introduction.</h4>
-    <p>A short note on how we're structuring intake during the firm's early founding-client phase.</p>
-  </a>
-
-  <a href="news.html" class="news-card" data-category="insights">
-    <div class="meta"><span>Insights</span><span class="date">Jun 2026</span></div>
-    <h4>One advisor, two returns: how we handle personal and business together.</h4>
-    <p>The case for a single CPA across both sides of a closely held business owner's filing picture.</p>
-  </a>
-
+<div class="article-overlay" id="articleOverlay">
+  <div class="article-scrim" id="articleScrim"></div>
+  <div class="article-panel">
+    <button class="article-close" id="articleClose" type="button">Close ✕</button>
+    <div class="meta"><span id="articleCategory"></span><span class="date" id="articleDate"></span></div>
+    <h2 id="articleTitle"></h2>
+    <div class="body" id="articleBody"></div>
+  </div>
 </div>
 
 <div class="footer" id="siteFooter"></div>
@@ -259,26 +301,125 @@
 
 <script src="hlw-chrome.js"></script>
 <script>
+  // ===== NEWSROOM ARTICLES — single source of truth. To add a new
+  // article later: duplicate one object below with a new id/content —
+  // the card grid, the featured slot (if you flag one), and the reader
+  // panel all render from this same data, so nothing else needs to
+  // change by hand. =====
+  const ARTICLES = [
+    {
+      id: 'template',
+      category: 'Template',
+      filterKey: 'template',
+      date: 'Aug 2026',
+      title: 'Template',
+      excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duplicate this entry in the ARTICLES array to add a real post — the card grid and the reader panel below both render from this same data.',
+      featured: true,
+      body: [
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.'
+      ]
+    }
+  ];
+
+  // ===== render cards from ARTICLES =====
+  (function(){
+    const grid = document.getElementById('newsGrid');
+    const emptyMsg = document.getElementById('newsEmpty');
+
+    function cardHTML(a){
+      return '<a href="#" class="news-card" data-id="' + a.id + '" data-category="' + a.filterKey + '">' +
+        '<div class="meta"><span>' + a.category + '</span><span class="date">' + a.date + '</span></div>' +
+        '<h4>' + a.title + '</h4>' +
+        '<p>' + a.excerpt + '</p>' +
+      '</a>';
+    }
+    grid.innerHTML = ARTICLES.map(cardHTML).join('');
+
+    // featured slot — first article flagged featured:true
+    const featured = ARTICLES.find(a => a.featured) || ARTICLES[0];
+    if(featured){
+      document.getElementById('newsFeaturedTitle').textContent = featured.title;
+      document.getElementById('newsFeaturedMeta').textContent = featured.date + ' · ' + featured.category;
+      document.getElementById('newsFeaturedLink').dataset.id = featured.id;
+    }
+
+    if(!ARTICLES.length) emptyMsg.classList.add('is-shown');
+  })();
+
+  // ===== ARTICLE READER — dimmed scrim behind, centered panel in
+  // front. Opens on any card click or the featured block, populated
+  // from the matching ARTICLES entry. =====
+  (function(){
+    const overlay = document.getElementById('articleOverlay');
+    const scrim = document.getElementById('articleScrim');
+    const closeBtn = document.getElementById('articleClose');
+    if(!overlay) return;
+
+    function openArticle(id){
+      const a = ARTICLES.find(x => x.id === id);
+      if(!a) return;
+      document.getElementById('articleCategory').textContent = a.category;
+      document.getElementById('articleDate').textContent = a.date;
+      document.getElementById('articleTitle').textContent = a.title;
+      document.getElementById('articleBody').innerHTML = a.body.map(p => '<p>' + p + '</p>').join('');
+      overlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeArticle(){
+      overlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    // delegated click — covers cards (re-rendered dynamically) and the
+    // featured block without needing to rebind listeners after render
+    document.addEventListener('click', function(e){
+      const card = e.target.closest('.news-card');
+      const featured = e.target.closest('#newsFeaturedLink');
+      if(card){
+        e.preventDefault();
+        openArticle(card.dataset.id);
+      } else if(featured){
+        e.preventDefault();
+        openArticle(featured.dataset.id);
+      }
+    });
+
+    scrim.addEventListener('click', closeArticle);
+    closeBtn.addEventListener('click', closeArticle);
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeArticle();
+    });
+  })();
+
   // ===== NEWSROOM — category tab filtering + card reveal on load =====
   (function(){
     const tabs = document.querySelectorAll('#newsTabs .news-tab');
-    const cards = document.querySelectorAll('#newsGrid .news-card');
+    const emptyMsg = document.getElementById('newsEmpty');
+
+    function applyFilter(filter){
+      const cards = document.querySelectorAll('#newsGrid .news-card');
+      let visibleCount = 0;
+      cards.forEach(card=>{
+        const match = filter === 'all' || card.dataset.category === filter;
+        card.classList.toggle('is-hidden', !match);
+        if(match) visibleCount++;
+      });
+      emptyMsg.classList.toggle('is-shown', visibleCount === 0);
+    }
 
     tabs.forEach(tab=>{
       tab.addEventListener('click', ()=>{
         tabs.forEach(t=>t.classList.remove('is-active'));
         tab.classList.add('is-active');
-        const filter = tab.dataset.filter;
-        cards.forEach(card=>{
-          const match = filter === 'all' || card.dataset.category === filter;
-          card.classList.toggle('is-hidden', !match);
-        });
+        applyFilter(tab.dataset.filter);
       });
     });
 
     // simple staggered reveal on load, matching the rest of the site's
     // scroll/entry animations rather than snapping straight in
-    cards.forEach((card, i)=>{
+    document.querySelectorAll('#newsGrid .news-card').forEach((card, i)=>{
       setTimeout(()=> card.classList.add('is-shown'), 80 + i * 60);
     });
   })();
