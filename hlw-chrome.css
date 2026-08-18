@@ -1,0 +1,156 @@
+/* =====================================================================
+   hlw-chrome.css — shared site chrome: nav, Get Started modal, footer.
+   Loaded by every page (<link rel="stylesheet" href="hlw-chrome.css">).
+   Edit ONCE here — every page picks it up automatically, no per-page
+   copies to keep in sync. Named "hlw-chrome" (not "shared") in case a
+   second shared file is ever needed for something else.
+   ===================================================================== */
+
+/* ===== SITE NAV (fixed, transparent over hero, solid once scrolled) ===== */
+.site-nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  padding:26px 60px;
+  display:flex;justify-content:space-between;align-items:center;
+  color:rgba(244,241,232,0.88);
+  transition:background .35s ease, border-color .35s ease, color .35s ease, padding .3s ease;
+  border-bottom:1px solid transparent;
+}
+.site-nav.scrolled{
+  background:rgba(11,18,13,0.55);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(244,241,232,0.12);
+  padding-top:18px;padding-bottom:18px;
+}
+.site-nav .mark{
+  font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.06em;color:var(--cream);
+  display:flex;align-items:center;gap:8px;
+  text-decoration:none;
+  transition:transform .25s ease, color .35s ease;
+  cursor:pointer;
+}
+.site-nav .mark:hover{
+  transform:translateY(-2px) scale(1.035);
+}
+.site-nav .mark svg{width:26px;height:26px;flex:0 0 auto;color:inherit;transition:transform .25s ease;}
+.site-nav .mark:hover svg{transform:rotate(-4deg);}
+.site-nav .mark span{color:var(--gold);}
+.nav-links{display:flex;align-items:center;gap:34px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:inherit;}
+.nav-links a{color:inherit;text-decoration:none;}
+.nav-links a.nav-btn{
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;letter-spacing:.08em;
+  color:var(--cream)!important;background:var(--green);padding:10px 18px;
+  transition:background .3s ease;
+}
+.nav-links a.nav-btn:hover{background:var(--green-deep);}
+/* Get Started — same button shape as Client Access, distinguished by
+   color (gold fill vs. green) so it reads as the primary action */
+.nav-links a.nav-btn-primary{
+  background:var(--gold);color:var(--green-deep)!important;
+}
+.nav-links a.nav-btn-primary:hover{background:#9c8a4a;}
+
+@media(max-width:900px){
+  .site-nav{padding:18px 22px;}
+  .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
+  .nav-links{gap:0;}
+  .nav-links a:not(:last-child){display:none;}
+}
+
+/* ===== GET STARTED — slide-in panel form, modeled on Palantir's
+   contact/get-started split-panel: dark scrim over the page, a light
+   panel from the right with plain underline inputs (no boxes), a
+   small caps label above each field. Opens from the nav's Get
+   Started button and every "let's talk" link, on every page. ===== */
+.gs-overlay{
+  position:fixed;inset:0;z-index:300;
+  visibility:hidden;
+  transition:visibility 0s linear .45s;
+}
+.gs-overlay.is-open{visibility:visible;transition-delay:0s;}
+.gs-scrim{
+  position:absolute;inset:0;
+  background:rgba(11,18,13,0.55);
+  opacity:0;transition:opacity .4s ease;
+}
+.gs-overlay.is-open .gs-scrim{opacity:1;}
+.gs-panel{
+  position:absolute;top:0;right:0;height:100%;width:min(600px,92vw);
+  background:var(--panel-bg);
+  box-shadow:-40px 0 90px rgba(0,0,0,0.35);
+  overflow-y:auto;
+  padding:64px 56px 60px;
+  transform:translateX(100%);
+  transition:transform .5s cubic-bezier(.2,.7,.3,1);
+}
+.gs-overlay.is-open .gs-panel{transform:translateX(0);}
+.gs-meta{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:50px;
+}
+.gs-close{
+  background:none;border:none;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);padding:4px 0;
+  transition:color .3s ease;
+}
+.gs-close:hover{color:var(--gold);}
+.gs-panel h2{
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+  font-size:clamp(26px,3vw,36px);line-height:1.25;color:var(--green);
+  max-width:440px;margin-bottom:48px;
+}
+.gs-field{margin-bottom:32px;}
+.gs-field label{
+  display:block;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.gs-field input,
+.gs-field select,
+.gs-field textarea{
+  width:100%;border:none;border-bottom:1px solid var(--line);background:transparent;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;color:var(--ink);
+  padding:6px 2px 10px;outline:none;
+  transition:border-color .3s ease;
+}
+.gs-field select{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='%235a5343'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 4px center;
+  cursor:pointer;
+}
+.gs-field textarea{resize:vertical;min-height:70px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+.gs-field input:focus,
+.gs-field select:focus,
+.gs-field textarea:focus{border-color:var(--gold);}
+.gs-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.gs-submit{
+  margin-top:16px;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--green-deep)!important;background:var(--gold);
+  border:none;padding:14px 30px;border-radius:2px;cursor:pointer;
+  transition:background .3s ease;
+}
+.gs-submit:hover{background:#9c8a4a;}
+.gs-note{
+  margin-top:16px;font-size:12.5px;color:var(--muted);line-height:1.6;max-width:420px;
+}
+
+@media(max-width:640px){
+  .gs-panel{padding:50px 26px 40px;}
+  .gs-row{grid-template-columns:1fr;gap:0;}
+}
+
+/* ===== FOOTER ===== */
+.footer{position:relative;z-index:2;background:var(--page-bg);padding:44px 60px;}
+.footer-inner{
+  max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
+}
+.footer .mark{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.14em;color:var(--green);}
+.footer .fine{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.03em;}
+
+@media(max-width:900px){
+  .footer{padding:32px 22px;}
+  .footer-inner{flex-direction:column;gap:12px;align-items:flex-start;}
+}
