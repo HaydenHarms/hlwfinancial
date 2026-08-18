@@ -1,1 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tax Preparation — HLW Financial</title>
 
+<meta property="og:title" content="Tax Preparation — HLW Financial">
+<meta property="og:description" content="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">
+<meta property="og:image" content="https://haydenharms.github.io/hlwfinancial/media/social-preview.jpg">
+<meta property="og:image:width" content="1187">
+<meta property="og:image:height" content="1200">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://haydenharms.github.io/hlwfinancial/tax-prep.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tax Preparation — HLW Financial">
+<meta name="twitter:description" content="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">
+<meta name="twitter:image" content="https://haydenharms.github.io/hlwfinancial/media/social-preview.jpg">
+<link rel="icon" type="image/svg+xml" href="media/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1c3524;
+    --green-deep:#132518;
+    --cream:#f7f5ef;
+    --line:#c9c2ae;
+    --ink:#1c2b1f;
+    --ink-soft:#5a5343;
+    --gold:#8a7a3f;
+    --panel-bg:#fdfcf8;
+    --page-bg:var(--cream);
+    --muted:#9a9482;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{width:100%;overflow-x:hidden;}
+  body{
+    background:var(--page-bg);color:var(--ink);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
+
+  /* ===== SITE-WIDE NAV/LOGO PATTERN — identical to index.html ===== */
+  .site-nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    padding:26px 60px;
+    display:flex;justify-content:space-between;align-items:center;
+    color:rgba(244,241,232,0.88);
+    transition:background .35s ease, border-color .35s ease, color .35s ease, padding .3s ease;
+    border-bottom:1px solid transparent;
+  }
+  .site-nav.scrolled{
+    background:rgba(11,18,13,0.55);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(244,241,232,0.12);
+    padding-top:18px;padding-bottom:18px;
+  }
+  .site-nav .mark{
+    font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.06em;color:var(--cream);
+    display:flex;align-items:center;gap:8px;
+    text-decoration:none;
+    transition:transform .25s ease, color .35s ease;
+    cursor:pointer;
+  }
+  .site-nav .mark:hover{transform:translateY(-2px) scale(1.035);}
+  .site-nav .mark svg{width:26px;height:26px;flex:0 0 auto;color:inherit;transition:transform .25s ease;}
+  .site-nav .mark:hover svg{transform:rotate(-4deg);}
+  .site-nav .mark span{color:var(--gold);}
+  .nav-links{display:flex;align-items:center;gap:34px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:inherit;}
+  .nav-links a{color:inherit;text-decoration:none;}
+
+  /* ===== OVERVIEW HERO ===== */
+  .overview-hero{
+    min-height:100vh;display:flex;align-items:center;
+    padding:140px 60px 100px;
+    background:var(--green-deep);color:var(--cream);
+    position:relative;overflow:hidden;
+  }
+  .overview-hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(90deg, rgba(247,245,239,0.06) 1px, transparent 1px),
+      linear-gradient(rgba(247,245,239,0.06) 1px, transparent 1px);
+    background-size:calc((100% - 120px)/6) 64px;
+    background-position:60px 0, 60px 0;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 30% 40%, black 0%, transparent 75%);
+    mask-image:radial-gradient(ellipse 70% 60% at 30% 40%, black 0%, transparent 75%);
+  }
+  .overview-hero-inner{position:relative;z-index:2;max-width:720px;}
+  .overview-hero .eyebrow{
+    display:flex;align-items:center;gap:10px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:26px;
+  }
+  .overview-hero .eyebrow::before{content:"";width:28px;height:1px;background:var(--gold);}
+  .overview-hero h1{
+    font-weight:500;font-size:clamp(36px,5.4vw,60px);line-height:1.15;letter-spacing:-.01em;
+  }
+  .overview-hero h1 em{font-style:italic;color:var(--gold);font-weight:400;}
+  .overview-hero p{
+    margin:26px 0 0;font-size:18px;line-height:1.7;color:rgba(247,245,239,0.75);max-width:560px;
+  }
+
+  /* ===== FEATURE HIGHLIGHTS ===== */
+  .features{
+    padding:90px 60px;max-width:1200px;margin:0 auto;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:40px;
+  }
+  .feature-item{border-top:1px solid var(--line);padding-top:22px;}
+  .feature-item h3{
+    font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:var(--green);margin-bottom:10px;
+  }
+  .feature-item p{font-size:15px;line-height:1.65;color:var(--ink-soft);}
+
+  /* ===== PRICING PLACEHOLDER ===== */
+  .pricing-note{
+    max-width:1200px;margin:0 auto 90px;padding:0 60px;
+  }
+  .pricing-note-inner{
+    background:var(--panel-bg);border:1px solid var(--line);border-radius:4px;
+    padding:36px 40px;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  }
+  .pricing-note-inner .label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:8px;
+  }
+  .pricing-note-inner h4{
+    font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:var(--green);
+  }
+  .pricing-note-inner .cta-link{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:4px;white-space:nowrap;
+    transition:color .3s ease, border-color .3s ease;
+  }
+  .pricing-note-inner .cta-link:hover{color:var(--gold);border-color:var(--gold);}
+
+  /* ===== CTA — same pattern as index.html's cta-section, no video ===== */
+  .cta-section{
+    position:relative;overflow:hidden;min-height:60vh;display:flex;align-items:center;
+    background:var(--green-deep);color:var(--cream);
+  }
+  .cta-bg-fallback{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(90deg, rgba(247,245,239,0.08) 1px, transparent 1px),
+      linear-gradient(rgba(247,245,239,0.08) 1px, transparent 1px);
+    background-size:calc((100% - 120px)/6) 64px;
+    background-position:60px 0, 60px 0;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
+  }
+  .cta-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(11,18,13,0.35) 0%, rgba(11,18,13,0.65) 70%, rgba(11,18,13,0.85) 100%);
+  }
+  .cta-inner{position:relative;z-index:2;max-width:1200px;margin:0 auto;width:100%;padding:80px 60px;}
+  .cta-section h2{
+    font-weight:500;font-size:clamp(28px,4.2vw,54px);line-height:1.28;letter-spacing:-.01em;
+  }
+  .cta-inline{
+    color:var(--gold);text-decoration:none;border-bottom:2px solid var(--gold);
+    transition:color .3s ease, border-color .3s ease;
+  }
+  .cta-inline:hover{color:var(--cream);border-color:var(--cream);}
+  .cta-tiny{
+    display:block;margin-top:40px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:rgba(247,245,239,0.5);
+  }
+
+  /* ===== FOOTER — identical to index.html ===== */
+  .footer{position:relative;z-index:2;background:var(--page-bg);padding:44px 60px;}
+  .footer-inner{
+    max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
+  }
+  .footer .mark{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.14em;color:var(--green);}
+  .footer .fine{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.03em;}
+
+  @media(max-width:900px){
+    .site-nav{padding:18px 22px;}
+    .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
+    .nav-links{gap:0;}
+    .nav-links a:not(:last-child){display:none;}
+    .overview-hero{padding:120px 22px 70px;}
+    .features{padding:60px 22px;grid-template-columns:1fr;gap:32px;}
+    .pricing-note{padding:0 22px;margin-bottom:60px;}
+    .pricing-note-inner{padding:28px 26px;}
+    .cta-inner{padding:70px 22px;}
+    .footer{padding:32px 22px;}
+    .footer-inner{flex-direction:column;gap:12px;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SITE-WIDE NAV/LOGO PATTERN: keep this exact <header class="site-nav">…<a class="mark">
+     block (and its CSS rules .site-nav / .mark / .mark:hover above) identical on every
+     page so the logo always links home and gets the same hover "lift" effect. -->
+<header class="site-nav scrolled" id="siteNav">
+  <a class="mark" href="index.html" aria-label="HLW Financial — home">
+    <svg viewBox="0 0 303 302" role="img" aria-label="HLW Financial logo" fill="currentColor" fill-rule="evenodd">
+      <title>HLW Financial logo</title>
+      <path d="M157.42 24.15c-0.7 0.18 -1.13 0.48 -1.57 1.1 -0.38 0.58 -2.3 5.73 -13.02 35 -2.42 6.6 -10.75 29.33 -16.12 43.92 -1.97 5.37 -3.88 10.55 -4.23 11.55 -0.35 0.98 -1.88 5.13 -3.38 9.25 -15.1 41.05 -14.33 38.9 -14.22 39.75 0.17 1.25 0.9 1.65 4.03 2.2 35.25 6.28 68.65 20.07 98.17 40.47 18.73 12.97 30.53 22.8 52.42 43.7 8.18 7.83 9.38 8.92 9.92 8.92 0.9 0 -0.88 -2.78 -5.43 -8.45 -23.92 -29.8 -51.78 -56.25 -76.07 -72.13 -20.22 -13.23 -36.63 -21.08 -55.58 -26.58 -6.33 -1.85 -6.28 -1.75 -4.43 -7.45 0.6 -1.82 2.82 -8.63 4.93 -15.13 2.12 -6.52 4.27 -13.07 4.75 -14.58 1.35 -4.15 5.93 -18.22 7.42 -22.75 0.72 -2.2 2.9 -8.88 4.83 -14.83 1.93 -5.97 4.63 -14.25 6 -18.42 1.37 -4.17 3.23 -9.92 4.15 -12.75 2.58 -7.97 2.2 -7.7 9.25 -6.33 11.4 2.2 22.07 5.93 35.8 12.55 13.03 6.28 30.33 17.55 46.72 30.45 6.13 4.82 6.67 3.57 1.27 -2.88 -19.97 -23.82 -63.63 -50.42 -92.27 -56.2 -2.68 -0.53 -2.58 -0.52 -3.33 -0.35Z"/>
+      <path d="M116.55 54.9c-0.75 0.62 -1.02 1.27 -3.97 9.35 -1.45 3.93 -3.42 9.3 -4.37 11.92 -0.97 2.62 -1.92 5.23 -2.13 5.83 -0.2 0.6 -1.3 3.55 -2.42 6.58 -1.12 3.02 -3.97 10.78 -6.33 17.25 -10.55 28.82 -17.77 48.5 -18.87 51.42 -0.65 1.73 -1.5 4.07 -1.88 5.17 -0.4 1.1 -3.13 8.57 -6.08 16.58 -5.55 15.08 -5.8 15.92 -5.27 16.77 0.52 0.77 0.9 0.85 9.85 2.4 2.93 0.5 7.17 1.28 13.15 2.43 3.95 0.75 12.77 2.58 16.43 3.42 1.6 0.37 3.77 0.85 4.8 1.08 3.95 0.88 14.93 3.72 19.62 5.07 0.92 0.27 3.05 0.87 4.75 1.35 45.35 12.68 80.47 29.52 113.37 54.35 5.03 3.8 6.53 4.8 6.82 4.52 0.97 -0.97 -9.65 -11.93 -20.52 -21.23 -33.32 -28.45 -78.73 -49.92 -138.98 -65.67 -6.28 -1.65 -6.93 -1.9 -7.42 -2.88 -0.47 -0.95 -1.27 1.72 8.9 -29.43 2.67 -8.2 6.52 -19.98 8.53 -26.17 15.45 -47.42 17.25 -52.92 17.55 -53.5 0.77 -1.5 1.47 -1.55 5.78 -0.48 5.98 1.48 5.87 1.55 8.03 -4.45 2.12 -5.87 2.45 -5.57 -11.15 -10.1 -6.35 -2.13 -7.32 -2.32 -8.2 -1.57Z"/>
+      <path d="M76.9 84.97c-0.68 0.43 -1.07 1.1 -1.88 3.28 -1.52 4.12 -8.72 23.72 -13.52 36.83 -2.22 6.05 -8 21.82 -11.37 31 -3.12 8.48 -10.83 29.55 -13.97 38.08 -1 2.7 -2.48 6.75 -3.3 9 -0.83 2.25 -2.6 7.08 -3.95 10.75 -1.33 3.67 -2.7 7.38 -3.02 8.25 -0.73 1.98 -0.88 3 -0.5 3.57 0.58 0.92 0.7 0.93 8.85 1.68 4.63 0.43 15.55 1.55 22.75 2.33 6.03 0.65 17.17 2.1 22.33 2.92 4.98 0.78 14.1 2.28 17.17 2.83 1.52 0.27 4.1 0.72 5.75 1 21.32 3.7 42.97 8.67 62.55 14.35 26.53 7.68 43.05 14.07 65.95 25.5 7.6 3.78 8.42 4.13 8.42 3.5 0 -1.95 -16.4 -13.18 -31.42 -21.52 -23.02 -12.77 -52.37 -23.75 -86 -32.15 -21.32 -5.32 -40.37 -9.08 -69.75 -13.75 -3.35 -0.53 -3.87 -0.68 -4.43 -1.28 -0.88 -0.93 -1.12 -0.08 4.5 -17.23 2.28 -6.98 11.68 -35.82 14.88 -45.67 0.77 -2.38 3.07 -9.4 5.08 -15.58 2.02 -6.18 5.05 -15.53 6.75 -20.75 4.25 -13.1 3.37 -12.13 9.83 -10.68 5.45 1.23 5.28 1.33 7.5 -4.65 2.15 -5.82 2.2 -5.73 -4.2 -7.85 -10.75 -3.53 -14.05 -4.37 -15.02 -3.77Z"/>
+    </svg>
+    HLW <span>Financial</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html#">Practice</a>
+    <a href="index.html#">Approach</a>
+    <a href="index.html#">Team</a>
+    <a href="client-access.html">Client Access</a>
+  </div>
+</header>
+
+<section class="overview-hero">
+  <div class="overview-hero-inner">
+    <div class="eyebrow">Tax Preparation</div>
+    <h1>No surprises in <em>April.</em></h1>
+    <p>Individual and entity returns prepared from books that are already right — liability tracked year-round from a continuous close, not assembled from scratch the week before the deadline.</p>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature-item">
+    <h3>Individual & entity returns</h3>
+    <p>Personal and business filings handled together, by one advisor who already knows both sides.</p>
+  </div>
+  <div class="feature-item">
+    <h3>Liability, tracked year-round</h3>
+    <p>Estimated taxes tracked from a continuous close, not calculated cold in the final weeks.</p>
+  </div>
+  <div class="feature-item">
+    <h3>One advisor, always</h3>
+    <p>A single CPA across the personal and business side, in confidence, all year.</p>
+  </div>
+</section>
+
+<div class="pricing-note">
+  <div class="pricing-note-inner">
+    <div>
+      <div class="label">Pricing</div>
+      <h4>Scoped to your return — details coming soon.</h4>
+    </div>
+    <a href="mailto:harms.e.hayden@gmail.com" class="cta-link">Ask for a Quote</a>
+  </div>
+</div>
+
+<section class="cta-section" id="ctaSection">
+  <div class="cta-bg-fallback"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-inner">
+    <h2>Ready to get ahead of the deadline — <a href="mailto:harms.e.hayden@gmail.com" class="cta-inline">let's talk.</a></h2>
+    <span class="cta-tiny">Dallas, Texas · Accepting New Engagements</span>
+  </div>
+</section>
+
+<div class="footer">
+  <div class="footer-inner">
+    <div class="mark">HLW FINANCIAL</div>
+    <div class="fine">DALLAS, TEXAS &nbsp;·&nbsp; BY REFERRAL &amp; INTRODUCTION</div>
+  </div>
+</div>
+
+<script>
+  const siteNav = document.getElementById('siteNav');
+  function updateNav(){
+    siteNav.classList.toggle('scrolled', window.scrollY > 40 || true);
+  }
+  window.addEventListener('scroll', updateNav, {passive:true});
+  updateNav();
+</script>
+
+</body>
+</html>
