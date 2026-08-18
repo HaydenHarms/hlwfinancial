@@ -97,20 +97,27 @@
 
   // ---- nav: solid background once scrolled ----
   // default threshold is a flat 40px; the homepage instead waits until
-  // the user has scrolled past the full-height hero (set via
-  // data-nav-mode="hero" on the #siteNav element) — everything else
-  // about the nav is identical across pages
+  // the user has scrolled past the full-height hero (data-nav-mode="hero").
+  // Light pages with no dark hero at all (coming-soon pages, the
+  // newsroom) need the nav ALWAYS solid (data-nav-mode="light") —
+  // otherwise the nav's light/cream text sits invisible against the
+  // light page background until the user scrolls.
   if(navMount){
-    var heroMode = navMount.getAttribute('data-nav-mode') === 'hero';
-    var updateNav = function(){
-      var scrollY = document.body.scrollTop || window.scrollY || 0;
-      var threshold = heroMode ? (window.innerHeight - 90) : 40;
-      navMount.classList.toggle('scrolled', scrollY > threshold);
-    };
-    document.body.addEventListener('scroll', updateNav, {passive:true});
-    window.addEventListener('scroll', updateNav, {passive:true});
-    window.addEventListener('resize', updateNav);
-    updateNav();
+    var navMode = navMount.getAttribute('data-nav-mode');
+    if(navMode === 'light'){
+      navMount.classList.add('scrolled');
+    } else {
+      var heroMode = navMode === 'hero';
+      var updateNav = function(){
+        var scrollY = document.body.scrollTop || window.scrollY || 0;
+        var threshold = heroMode ? (window.innerHeight - 90) : 40;
+        navMount.classList.toggle('scrolled', scrollY > threshold);
+      };
+      document.body.addEventListener('scroll', updateNav, {passive:true});
+      window.addEventListener('scroll', updateNav, {passive:true});
+      window.addEventListener('resize', updateNav);
+      updateNav();
+    }
   }
 
   // ---- Get Started modal: open/close + mailto submit ----
