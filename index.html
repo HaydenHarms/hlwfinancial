@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HLW Financial</title>
+
+<!-- Social preview (Open Graph + Twitter Card) -->
+<meta property="og:title" content="HLW Financial">
+<meta property="og:description" content="Tax preparation, advisory, and continuous-close accounting for families and closely held businesses.">
+<meta property="og:image" content="https://haydenharms.github.io/hlwfinancial/media/social-preview.jpg">
+<meta property="og:image:width" content="1187">
+<meta property="og:image:height" content="1200">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://haydenharms.github.io/hlwfinancial/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HLW Financial">
+<meta name="twitter:description" content="Tax preparation, advisory, and continuous-close accounting for families and closely held businesses.">
+<meta name="twitter:image" content="https://haydenharms.github.io/hlwfinancial/media/social-preview.jpg">
+<link rel="icon" type="image/svg+xml" href="media/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1c3524;
+    --green-deep:#132518;
+    --cream:#f7f5ef;
+    --line:#c9c2ae;
+    --ink:#1c2b1f;
+    --ink-soft:#5a5343;
+    --gold:#8a7a3f;
+    --panel-bg:#fdfcf8;
+    --page-bg:var(--cream);
+    --grid-v:rgba(28,53,36,0.075);
+    --grid-h:rgba(28,53,36,0.05);
+    --muted:#9a9482;
+    --hairline:#e5e2d5;
+    --lbl:#8a7f66;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{width:100%;height:100%;overflow-x:hidden;}
+  body{overflow-y:scroll;}
+  /* every section after the hero needs explicit stacking + a solid opaque
+     background — the sticky hero has z-index:1, and any later section that
+     doesn't definitively paint above it (with real content covering the
+     viewport, not just relying on scroll position) can let it bleed
+     through wherever that section has gaps or a transparent background. */
+  .snap-section{
+    position:relative;z-index:2;
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    background:var(--page-bg);
+  }
+  body{
+    background:var(--page-bg);color:var(--ink);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    transition:background .35s ease, color .35s ease;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* ===== SCROLL PROGRESS — fixed right edge, fills as you move down the page ===== */
+  .feature-progress-vertical{
+    position:fixed;right:32px;top:50%;transform:translateY(-50%);
+    z-index:40;display:flex;flex-direction:column;gap:10px;
+    opacity:0;transition:opacity .4s ease;pointer-events:none;
+  }
+  .feature-progress-vertical.is-visible{opacity:1;}
+  .feature-progress-vertical .seg{width:3px;height:34px;background:var(--line);position:relative;overflow:hidden;}
+  .feature-progress-vertical .seg i{
+    position:absolute;left:0;bottom:0;width:100%;height:100%;display:block;
+    background:var(--gold);transform:scaleY(0);transform-origin:bottom;
+    transition:transform .1s linear;
+  }
+  @media(max-width:900px){
+    .feature-progress-vertical{display:none;}
+  }
+
+  /* ===== SITE NAV (fixed, transparent over hero, solid once scrolled) ===== */
+  .site-nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    padding:26px 60px;
+    display:flex;justify-content:space-between;align-items:center;
+    color:rgba(244,241,232,0.88);
+    transition:background .35s ease, border-color .35s ease, color .35s ease, padding .3s ease;
+    border-bottom:1px solid transparent;
+  }
+  .site-nav.scrolled{
+    background:rgba(11,18,13,0.55);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(244,241,232,0.12);
+    padding-top:18px;padding-bottom:18px;
+  }
+  .site-nav .mark{
+    font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.06em;color:var(--cream);
+    display:flex;align-items:center;gap:8px;
+    text-decoration:none;
+    transition:transform .25s ease, color .35s ease;
+    cursor:pointer;
+  }
+  .site-nav .mark:hover{
+    transform:translateY(-2px) scale(1.035);
+  }
+  .site-nav .mark svg{width:26px;height:26px;flex:0 0 auto;color:inherit;transition:transform .25s ease;}
+  .site-nav .mark:hover svg{transform:rotate(-4deg);}
+
+  .site-nav .mark span{color:var(--gold);}
+  .nav-links{display:flex;align-items:center;gap:34px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:inherit;}
+  .nav-links a{color:inherit;text-decoration:none;}
+  .nav-links a.nav-btn{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;letter-spacing:.08em;
+    color:var(--cream)!important;background:var(--green);padding:10px 18px;
+    transition:background .3s ease;
+  }
+  .nav-links a.nav-btn:hover{background:var(--green-deep);}
+  /* Get Started — same button shape as Client Access, distinguished by
+     color (gold fill vs. green) so it reads as the primary action */
+  .nav-links a.nav-btn-primary{
+    background:var(--gold);color:var(--green-deep)!important;
+  }
+  .nav-links a.nav-btn-primary:hover{background:#9c8a4a;}
+
+  /* ===== HERO — full-bleed animated background, minimal overlay copy ===== */
+  .hero-video{
+    position:sticky;top:0;height:100vh;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    z-index:1;
+  }
+  .hero-bg{
+    position:absolute;inset:0;overflow:hidden;
+  }
+  .hero-bg video{
+    position:absolute;top:50%;left:50%;width:100%;height:100%;
+    object-fit:cover;transform:translate(-50%,-50%);
+  }
+  .hero-bg-fallback{
+    position:absolute;inset:-12%;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(95,217,126,0.16), transparent 55%),
+      radial-gradient(circle at 78% 20%, rgba(138,122,63,0.14), transparent 50%),
+      radial-gradient(circle at 55% 75%, rgba(28,53,36,0.9), transparent 60%),
+      linear-gradient(135deg, #0b120d 0%, #132518 42%, #1c3524 68%, #0b120d 100%);
+    animation:heroDrift 24s ease-in-out infinite alternate;
+  }
+  @keyframes heroDrift{
+    0%{transform:scale(1) translate(0,0);}
+    100%{transform:scale(1.08) translate(-2%, -1.5%);}
+  }
+  .hero-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(11,18,13,0.25) 0%, rgba(11,18,13,0.55) 62%, rgba(11,18,13,0.88) 100%);
+  }
+  .hero-noise{
+    position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero-content{
+    position:relative;z-index:2;max-width:1400px;margin:0 auto;width:100%;
+    padding:0 60px;color:#f4f1e8;
+    text-align:center;
+  }
+  .hero-content .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    margin-bottom:24px;display:flex;align-items:center;gap:12px;
+    color:var(--gold);
+  }
+  .hero-content .eyebrow::before{content:"";width:28px;height:1px;background:var(--gold);}
+  .hero-content h1{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(46px,6.2vw,88px);line-height:1.03;color:#f4f1e8;letter-spacing:-.01em;
+    max-width:900px;margin:0 auto;
+  }
+  .hero-content h1 em{font-style:italic;color:var(--gold);font-weight:400;}
+  /* blur-to-sharp settle for #heroFuture — each character starts soft and
+     drifted, then sharpens and settles into place */
+  .decode-char{
+    display:inline-block;
+    filter:blur(6px);
+    opacity:0;
+    transform:translateY(6px);
+    transition:filter .5s ease, opacity .5s ease, transform .5s ease;
+  }
+  .decode-char.is-settled{
+    filter:blur(0);
+    opacity:1;
+    transform:translateY(0);
+  }
+  .hero-content p.lede{margin-top:26px;font-size:18px;line-height:1.7;color:rgba(244,241,232,0.7);max-width:460px;}
+  .hero-content .cta-row{margin-top:38px;display:flex;align-items:center;gap:28px;}
+  .hero-content .btn{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+    padding:16px 30px;text-decoration:none;border:1px solid #f4f1e8;
+    background:#f4f1e8;color:#132518;
+  }
+  .hero-content .btn-ghost{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+    text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:3px;
+    color:#f4f1e8;
+  }
+  .hero-scroll-cue{
+    position:absolute;left:60px;bottom:34px;z-index:2;
+    display:flex;align-items:center;gap:12px;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:rgba(244,241,232,0.55);
+  }
+  .hero-scroll-cue .line{width:1px;height:34px;background:rgba(244,241,232,0.35);position:relative;overflow:hidden;}
+  .hero-scroll-cue .line i{
+    position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--gold);
+    animation:scrollCue 2.2s ease-in-out infinite;
+  }
+  @keyframes scrollCue{
+    0%{top:-100%;} 60%{top:100%;} 100%{top:100%;}
+  }
+
+  /* facts slider — one large card at a time, right to left, on a timer */
+  .facts-wrap{
+    position:relative;z-index:3;height:76vh;overflow:hidden;
+  }
+  .marquee-track{position:relative;width:100%;height:100%;}
+  .marquee-card{
+    position:absolute;inset:0 60px;
+    border:1px solid var(--line);background:var(--panel-bg);
+    transform:translateX(112%);
+    transition:transform .9s cubic-bezier(.65,0,.35,1);
+  }
+  .marquee-card.no-transition{transition:none;}
+  .marquee-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
+  .marquee-card-inner{
+    height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
+    padding:0 64px 56px;
+  }
+  .marquee-card .mc-idx{
+    display:none;
+  }
+  .marquee-card h3{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(30px,3.6vw,50px);line-height:1.1;color:var(--green);max-width:640px;
+  }
+  .marquee-card p{
+    margin-top:0;font-size:16px;line-height:1.6;color:var(--ink-soft);max-width:460px;
+    max-height:0;opacity:0;overflow:hidden;transform:translateY(16px);
+    transition:max-height .5s cubic-bezier(.65,0,.35,1), opacity .4s ease, transform .5s cubic-bezier(.65,0,.35,1), margin-top .5s cubic-bezier(.65,0,.35,1);
+  }
+  .marquee-card.is-open p{
+    max-height:200px;opacity:1;transform:translateY(0);margin-top:16px;
+  }
+  .marquee-card.is-active{transform:translateX(0);}
+  .marquee-card.is-prev{transform:translateX(-112%);}
+
+  .marquee-card.has-bg{
+    background-size:cover;background-position:center;border-color:var(--green-deep);
+  }
+  .marquee-card.has-bg::before{background:var(--gold);}
+  .marquee-card.has-bg .mc-idx{color:var(--gold);}
+  .marquee-card.has-bg .mc-idx::before{background:var(--gold);}
+  .marquee-card.has-bg h3{color:var(--cream);}
+  .marquee-card.has-bg p{color:rgba(247,245,239,0.7);}
+  .marquee-card.bg-ledger{overflow:hidden;}
+  .marquee-card.bg-ledger video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-ledger::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-ledger .marquee-card-inner{position:relative;z-index:2;}
+  .marquee-card.bg-reporting{overflow:hidden;}
+  .marquee-card.bg-reporting video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-reporting::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-reporting .marquee-card-inner{position:relative;z-index:2;}
+  .marquee-card.bg-close{overflow:hidden;}
+  .marquee-card.bg-close video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-close::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-close .marquee-card-inner{position:relative;z-index:2;}
+  .marquee-card.bg-tax{overflow:hidden;}
+  .marquee-card.bg-tax video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-tax::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-tax .marquee-card-inner{position:relative;z-index:2;}
+  .marquee-card.bg-counsel{overflow:hidden;}
+  .marquee-card.bg-counsel video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-counsel::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-counsel .marquee-card-inner{position:relative;z-index:2;}
+  .marquee-card.bg-news{overflow:hidden;}
+  .marquee-card.bg-news video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  .marquee-card.bg-news::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
+  }
+  .marquee-card.bg-news .marquee-card-inner{position:relative;z-index:2;}
+
+  /* nav row above the marquee — one tab per card, timer fill shows time left */
+  .marquee-tabs{
+    max-width:1400px;margin:0 auto;padding:0 60px 24px;
+    display:flex;gap:28px;border-bottom:1px solid var(--line);
+    margin-top:48px;margin-bottom:28px;
+  }
+  .marquee-tab{
+    position:relative;flex:1;background:none;border:none;cursor:pointer;text-align:left;
+    padding:0 0 18px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);transition:color .3s ease;
+  }
+  .marquee-tab:hover{color:var(--ink-soft);}
+  .marquee-tab.is-active{color:var(--green);}
+  .marquee-tab .mt-track{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
+  .marquee-tab .mt-fill{width:100%;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;display:block;}
+
+  .rule{height:1px;background:var(--line);width:100%;}
+
+  /* right column: replaces the old portrait block with an operational "ledger" panel */
+  .panel{
+    border:1px solid var(--line);background:var(--panel-bg);
+  }
+  .panel-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 22px;border-bottom:1px solid var(--line);
+  }
+  .panel-head .t{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);}
+  .panel-head .p{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--muted);}
+  .panel-rows{padding:6px 22px;}
+  .panel-row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:15px 0;border-bottom:1px solid var(--hairline);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
+  .panel-row:last-child{border-bottom:none;}
+  .panel-row .k{font-size:13px;color:var(--ink-soft);}
+  .panel-row .v{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:19px;color:var(--green);font-weight:600;}
+  .panel-foot{
+    padding:14px 22px;border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.04em;
+    display:flex;justify-content:space-between;
+  }
+
+  /* ===== PRODUCT GALLERY — two cards, heading only, hover reveals body w/ Excel-formula scramble =====
+     sized to match the marquee cards: combined width spans the same edge-to-edge
+     area (60px side margins), same overall height, small gap between the two ===== */
+  .product-gallery{
+    margin:64px 0 0;padding:0 60px 100px;
+    display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  }
+  .product-card{
+    position:relative;height:76vh;overflow:hidden;
+    border:1px solid var(--line);background:var(--panel-bg);
+    display:block;text-decoration:none;color:inherit;
+    transition:transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s cubic-bezier(.16,1,.3,1);
+  }
+  /* slight "grow" on hover — real mouse hover only, so it never triggers
+     from a tap or from :hover being stuck active after a touch scroll */
+  @media(hover:hover) and (pointer:fine){
+    .product-card:hover{
+      transform:scale(1.025);
+      box-shadow:0 22px 44px rgba(19,37,24,0.22);
+      z-index:3;
+    }
+  }
+  .product-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
+  .product-card-inner{
+    height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
+    padding:0 44px 56px;
+  }
+  .product-card h3{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(30px,3.6vw,50px);line-height:1.1;color:var(--green);
+  }
+  .product-card .pg-body{
+    margin-top:0;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.6;color:var(--ink-soft);max-width:420px;
+    max-height:0;opacity:0;overflow:hidden;transform:translateY(16px);
+    transition:max-height .5s cubic-bezier(.65,0,.35,1), opacity .4s ease, transform .5s cubic-bezier(.65,0,.35,1), margin-top .5s cubic-bezier(.65,0,.35,1);
+  }
+  .product-card.is-open .pg-body{
+    max-height:200px;opacity:1;transform:translateY(0);margin-top:16px;
+  }
+
+  /* photo-backed product card — static image with a slow drift (not a
+     video loop, so it reads quieter than the marquee) plus a legibility
+     overlay, same visual language as the marquee's has-bg cards */
+  .product-card.has-bg{overflow:hidden;border-color:var(--green-deep);}
+  .product-card.has-bg::before{background:var(--gold);}
+  .product-card.has-bg h3{color:var(--cream);}
+  .product-card.has-bg .pg-body{color:rgba(247,245,239,0.7);}
+  .product-card.has-bg img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;z-index:0;
+    animation:productSlowDrift 28s ease-in-out infinite alternate;
+  }
+  .product-card.has-bg::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(20,32,26,0.55), rgba(20,32,26,0.86));
+  }
+  .product-card.has-bg .product-card-inner{position:relative;z-index:2;}
+  @keyframes productSlowDrift{
+    0%{transform:scale(1);}
+    100%{transform:scale(1.06);}
+  }
+
+  .feature-tabs{
+    max-width:1400px;margin:0 auto;padding:0 60px 28px;
+    display:flex;gap:36px;border-bottom:1px solid var(--line);
+  }
+  .feature-tab{
+    position:relative;flex:1;background:none;border:none;cursor:pointer;text-align:left;
+    padding:0 0 20px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);transition:color .3s ease;
+  }
+  .feature-tab:hover{color:var(--ink-soft);}
+  .feature-tab.is-active{color:var(--green);}
+  .feature-tab .ft-track{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
+  .feature-tab .ft-fill{width:100%;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;display:block;}
+
+  /* ===== FEATURE DECK — one card visible at a time, advances on a timer or by tab click ===== */
+  .feature-path{
+    max-width:1400px;margin:0 auto;padding:0 0 100px;
+  }
+  .feature-sticky{
+    position:relative;height:600px;
+    display:flex;flex-direction:column;
+  }
+  .feature-sticky-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 60px 34px;position:relative;z-index:3;
+  }
+  .feature-sticky-head h2{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:26px;color:var(--green);font-weight:500;}
+  .feature-sticky-head .fc-counter{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;color:var(--gold);}
+
+  .feature-frame-stack{position:relative;flex:1;}
+  .feature-frame{
+    position:absolute;inset:0;
+    display:grid;grid-template-columns:1fr 1fr;align-items:center;
+    padding:0 60px 60px;
+    opacity:0;transform:translateY(36px);
+    transition:opacity .5s ease, transform .5s ease;
+    pointer-events:none;
+  }
+  .feature-frame.is-active{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .feature-frame-text .fc-idx{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gold);
+    display:flex;align-items:center;gap:12px;margin-bottom:22px;text-transform:uppercase;
+  }
+  .feature-frame-text .fc-idx::before{content:"";width:26px;height:1px;background:var(--gold);}
+  .feature-frame-text h3{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(32px,3.4vw,48px);color:var(--green);
+    font-weight:500;line-height:1.1;margin-bottom:20px;max-width:460px;
+  }
+  .feature-frame-text p{font-size:17px;line-height:1.75;color:var(--ink-soft);max-width:420px;}
+  .feature-frame-text .fc-stat{
+    margin-top:30px;display:inline-flex;flex-direction:column;
+    border-left:2px solid var(--gold);padding-left:16px;
+  }
+  .feature-frame-text .fc-stat .n{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:28px;color:var(--green);font-weight:600;}
+  .feature-frame-text .fc-stat .l{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--lbl);margin-top:2px;}
+
+  .feature-frame-visual{
+    height:78%;border:1px solid var(--line);background:var(--panel-bg);
+    position:relative;overflow:hidden;
+  }
+  .feature-frame-visual::before{
+    content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);
+  }
+  .feature-frame-visual .fv-head{
+    display:flex;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;
+  }
+  .feature-frame-visual .fv-rows{padding:6px 22px;}
+  .feature-frame-visual .fv-row{
+    display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--hairline);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;color:var(--ink-soft);
+  }
+  .feature-frame-visual .fv-row:last-child{border-bottom:none;}
+  .feature-frame-visual .fv-row .v{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:17px;color:var(--green);font-weight:600;}
+
+  .feature-frame-visual.has-bg{
+    background-image:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88)), url('card-ledger-bg.jpg');
+    background-size:cover;background-position:center;
+  }
+  .feature-frame-visual.has-bg .fv-head{color:rgba(247,245,239,0.55);border-bottom-color:rgba(247,245,239,0.16);}
+  .feature-frame-visual.has-bg .fv-row{color:rgba(247,245,239,0.7);border-bottom-color:rgba(247,245,239,0.12);}
+  .feature-frame-visual.has-bg .fv-row .v{color:var(--cream);}
+  .feature-frame-visual.has-bg::before{background:var(--gold);}
+
+  .feature-frame:nth-child(even) .feature-frame-visual{background:var(--green-deep);border-color:var(--green-deep);}
+  .feature-frame:nth-child(even) .feature-frame-visual::before{background:var(--gold);}
+  .feature-frame:nth-child(even) .fv-head{color:rgba(247,245,239,0.4);border-bottom-color:rgba(247,245,239,0.14);}
+  .feature-frame:nth-child(even) .fv-row{color:rgba(247,245,239,0.55);border-bottom-color:rgba(247,245,239,0.1);}
+  .feature-frame:nth-child(even) .fv-row .v{color:var(--cream);}
+
+  .feature-progress-vertical{
+    position:fixed;right:28px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:10px;z-index:40;
+    opacity:0;pointer-events:none;transition:opacity .4s ease;
+  }
+  .feature-progress-vertical.is-visible{opacity:1;}
+  .feature-progress-vertical .seg{width:3px;height:34px;background:var(--line);position:relative;overflow:hidden;}
+  .feature-progress-vertical .seg i{
+    position:absolute;left:0;top:0;width:100%;height:100%;background:var(--green);
+    transform:scaleY(0);transform-origin:top;transition:transform .05s linear;
+  }
+
+
+
+  /* ===== CTA — one-line close, maximum restraint.
+     Structured like the hero's video background (.cta-bg / .cta-bg-fallback)
+     so a video can be dropped in later — just add a <video> inside .cta-bg
+     the same way the hero does, no other changes needed. ===== */
+  .cta-section{
+    position:relative;z-index:2;overflow:hidden;min-height:100vh;display:flex;align-items:center;
+    background:var(--green-deep);color:var(--cream);
+  }
+  .cta-bg{position:absolute;inset:0;overflow:hidden;}
+  .cta-bg video{
+    position:absolute;top:50%;left:50%;width:100%;height:100%;
+    object-fit:cover;transform:translate(-50%,-50%);
+  }
+  .cta-bg-fallback{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(90deg, rgba(247,245,239,0.08) 1px, transparent 1px),
+      linear-gradient(rgba(247,245,239,0.08) 1px, transparent 1px);
+    background-size:calc((100% - 120px)/6) 64px;
+    background-position:60px 0, 60px 0;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
+  }
+  .cta-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(11,18,13,0.35) 0%, rgba(11,18,13,0.65) 70%, rgba(11,18,13,0.85) 100%);
+  }
+  .cta-inner{position:relative;z-index:2;max-width:1200px;margin:0 auto;width:100%;padding:80px 60px;}
+
+  .cta-section h2{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-weight:500;font-size:clamp(30px,4.6vw,64px);line-height:1.28;letter-spacing:-.01em;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.3,1);
+  }
+  .cta-section.is-visible h2{opacity:1;transform:translateY(0);}
+  .cta-inline{
+    color:var(--gold);text-decoration:none;border-bottom:2px solid var(--gold);
+    transition:color .3s ease, border-color .3s ease;
+  }
+  .cta-inline:hover{color:var(--cream);border-color:var(--cream);}
+
+  .cta-tiny{
+    display:block;margin-top:40px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:rgba(247,245,239,0.5);
+    opacity:0;transform:translateY(12px);
+    transition:opacity .8s ease .12s, transform .8s cubic-bezier(.2,.7,.3,1) .12s;
+  }
+  .cta-section.is-visible .cta-tiny{opacity:1;transform:translateY(0);}
+
+  /* ===== FOOTER ===== */
+  .footer{position:relative;z-index:2;background:var(--page-bg);padding:44px 60px;}
+  .footer-inner{
+    max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
+  }
+  .footer .mark{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.14em;color:var(--green);}
+  .footer .fine{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.03em;}
+
+  @media(max-width:900px){
+    .site-nav{padding:18px 22px;}
+    .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
+    .nav-links{gap:0;}
+    .nav-links a:not(:last-child){display:none;}
+    .hero-content{padding:0 22px;}
+    .hero-scroll-cue{left:22px;bottom:26px;gap:14px;font-size:13px;letter-spacing:.1em;}
+    .hero-scroll-cue .line{width:2px;height:48px;}
+    /* the marquee/product sections use min-height:100vh + centered content on
+       desktop so the reveal reads as one deliberate "scene" per viewport —
+       on mobile the content is much shorter than the viewport, so that same
+       centering opens up a big empty gap above and below it. Let each
+       section size itself to its content instead, with a small fixed
+       breathing gap, so hero → marquee → products sit close together. */
+    .snap-section{min-height:0;justify-content:flex-start;}
+    #marqueeSection{padding-top:28px;}
+    .facts-wrap{height:52vh;}
+    .marquee-card{inset:0 22px;}
+    .marquee-card-inner{padding:0 26px 40px;}
+    .product-gallery{grid-template-columns:1fr;margin-top:36px;padding:0 22px 60px;}
+    .product-card{height:340px;}
+    .product-card-inner{padding:0 26px 30px;}
+    .feature-gap{height:32px;}
+    .feature-tabs{display:none;}
+    .marquee-tabs{
+      display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      gap:20px;padding:0 22px 16px;margin-top:28px;margin-bottom:16px;
+      scrollbar-width:none;
+    }
+    .marquee-tabs::-webkit-scrollbar{display:none;}
+    .marquee-tab{flex:0 0 auto;padding-bottom:12px;white-space:nowrap;}
+    .feature-path{padding:0 0 60px;}
+    .feature-sticky{position:relative;height:auto;}
+    .feature-sticky-head{padding:28px 22px 18px;}
+    .feature-frame-stack{position:static;}
+    .feature-frame{
+      position:static;opacity:1;transform:none;pointer-events:auto;
+      display:flex;flex-direction:column;gap:24px;padding:0 22px 56px;
+      border-bottom:1px solid var(--line);
+    }
+    .feature-frame:last-child{border-bottom:none;}
+    .feature-frame-visual{height:auto;}
+    .feature-progress-vertical{display:none;}
+    .cta-inner{padding:70px 22px;}
+    .footer{padding:32px 22px;}
+    .footer-inner{flex-direction:column;gap:12px;align-items:flex-start;}
+  }
+
+  /* ===== GET STARTED — slide-in panel form, modeled on Palantir's
+     contact/get-started split-panel: dark scrim over the page, a light
+     panel from the right with plain underline inputs (no boxes), a
+     small caps label above each field. Opens from the nav's Get
+     Started button and every "let's talk" link, on every page. ===== */
+  .gs-overlay{
+    position:fixed;inset:0;z-index:300;
+    visibility:hidden;
+    transition:visibility 0s linear .45s;
+  }
+  .gs-overlay.is-open{visibility:visible;transition-delay:0s;}
+  .gs-scrim{
+    position:absolute;inset:0;
+    background:rgba(11,18,13,0.55);
+    opacity:0;transition:opacity .4s ease;
+  }
+  .gs-overlay.is-open .gs-scrim{opacity:1;}
+  .gs-panel{
+    position:absolute;top:0;right:0;height:100%;width:min(600px,92vw);
+    background:var(--panel-bg);
+    box-shadow:-40px 0 90px rgba(0,0,0,0.35);
+    overflow-y:auto;
+    padding:64px 56px 60px;
+    transform:translateX(100%);
+    transition:transform .5s cubic-bezier(.2,.7,.3,1);
+  }
+  .gs-overlay.is-open .gs-panel{transform:translateX(0);}
+  .gs-meta{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:50px;
+  }
+  .gs-close{
+    background:none;border:none;cursor:pointer;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);padding:4px 0;
+    transition:color .3s ease;
+  }
+  .gs-close:hover{color:var(--gold);}
+  .gs-panel h2{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(26px,3vw,36px);line-height:1.25;color:var(--green);
+    max-width:440px;margin-bottom:48px;
+  }
+  .gs-field{margin-bottom:32px;}
+  .gs-field label{
+    display:block;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:10px;
+  }
+  .gs-field input,
+  .gs-field select,
+  .gs-field textarea{
+    width:100%;border:none;border-bottom:1px solid var(--line);background:transparent;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;color:var(--ink);
+    padding:6px 2px 10px;outline:none;
+    transition:border-color .3s ease;
+  }
+  .gs-field select{
+    appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='%235a5343'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 4px center;
+    cursor:pointer;
+  }
+  .gs-field textarea{resize:vertical;min-height:70px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+  .gs-field input:focus,
+  .gs-field select:focus,
+  .gs-field textarea:focus{border-color:var(--gold);}
+  .gs-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .gs-submit{
+    margin-top:16px;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--green-deep)!important;background:var(--gold);
+    border:none;padding:14px 30px;border-radius:2px;cursor:pointer;
+    transition:background .3s ease;
+  }
+  .gs-submit:hover{background:#9c8a4a;}
+  .gs-note{
+    margin-top:16px;font-size:12.5px;color:var(--muted);line-height:1.6;max-width:420px;
+  }
+
+  @media(max-width:640px){
+    .gs-panel{padding:50px 26px 40px;}
+    .gs-row{grid-template-columns:1fr;gap:0;}
+  }
+
+</style>
+</head>
+<body>
+
+<!-- SITE-WIDE NAV/LOGO PATTERN: keep this exact <header class="site-nav">…<a class="mark">
+     block (and its CSS rules .site-nav / .mark / .mark:hover above) identical on every
+     page so the logo always links home and gets the same hover "lift" effect. -->
+<header class="site-nav" id="siteNav">
+  <a class="mark" href="index.html" aria-label="HLW Financial — home">
+    <svg viewBox="0 0 303 302" role="img" aria-label="HLW Financial logo" fill="currentColor" fill-rule="evenodd">
+      <title>HLW Financial logo</title>
+      <path d="M157.42 24.15c-0.7 0.18 -1.13 0.48 -1.57 1.1 -0.38 0.58 -2.3 5.73 -13.02 35 -2.42 6.6 -10.75 29.33 -16.12 43.92 -1.97 5.37 -3.88 10.55 -4.23 11.55 -0.35 0.98 -1.88 5.13 -3.38 9.25 -15.1 41.05 -14.33 38.9 -14.22 39.75 0.17 1.25 0.9 1.65 4.03 2.2 35.25 6.28 68.65 20.07 98.17 40.47 18.73 12.97 30.53 22.8 52.42 43.7 8.18 7.83 9.38 8.92 9.92 8.92 0.9 0 -0.88 -2.78 -5.43 -8.45 -23.92 -29.8 -51.78 -56.25 -76.07 -72.13 -20.22 -13.23 -36.63 -21.08 -55.58 -26.58 -6.33 -1.85 -6.28 -1.75 -4.43 -7.45 0.6 -1.82 2.82 -8.63 4.93 -15.13 2.12 -6.52 4.27 -13.07 4.75 -14.58 1.35 -4.15 5.93 -18.22 7.42 -22.75 0.72 -2.2 2.9 -8.88 4.83 -14.83 1.93 -5.97 4.63 -14.25 6 -18.42 1.37 -4.17 3.23 -9.92 4.15 -12.75 2.58 -7.97 2.2 -7.7 9.25 -6.33 11.4 2.2 22.07 5.93 35.8 12.55 13.03 6.28 30.33 17.55 46.72 30.45 6.13 4.82 6.67 3.57 1.27 -2.88 -19.97 -23.82 -63.63 -50.42 -92.27 -56.2 -2.68 -0.53 -2.58 -0.52 -3.33 -0.35Z"/>
+      <path d="M116.55 54.9c-0.75 0.62 -1.02 1.27 -3.97 9.35 -1.45 3.93 -3.42 9.3 -4.37 11.92 -0.97 2.62 -1.92 5.23 -2.13 5.83 -0.2 0.6 -1.3 3.55 -2.42 6.58 -1.12 3.02 -3.97 10.78 -6.33 17.25 -10.55 28.82 -17.77 48.5 -18.87 51.42 -0.65 1.73 -1.5 4.07 -1.88 5.17 -0.4 1.1 -3.13 8.57 -6.08 16.58 -5.55 15.08 -5.8 15.92 -5.27 16.77 0.52 0.77 0.9 0.85 9.85 2.4 2.93 0.5 7.17 1.28 13.15 2.43 3.95 0.75 12.77 2.58 16.43 3.42 1.6 0.37 3.77 0.85 4.8 1.08 3.95 0.88 14.93 3.72 19.62 5.07 0.92 0.27 3.05 0.87 4.75 1.35 45.35 12.68 80.47 29.52 113.37 54.35 5.03 3.8 6.53 4.8 6.82 4.52 0.97 -0.97 -9.65 -11.93 -20.52 -21.23 -33.32 -28.45 -78.73 -49.92 -138.98 -65.67 -6.28 -1.65 -6.93 -1.9 -7.42 -2.88 -0.47 -0.95 -1.27 1.72 8.9 -29.43 2.67 -8.2 6.52 -19.98 8.53 -26.17 15.45 -47.42 17.25 -52.92 17.55 -53.5 0.77 -1.5 1.47 -1.55 5.78 -0.48 5.98 1.48 5.87 1.55 8.03 -4.45 2.12 -5.87 2.45 -5.57 -11.15 -10.1 -6.35 -2.13 -7.32 -2.32 -8.2 -1.57Z"/>
+      <path d="M76.9 84.97c-0.68 0.43 -1.07 1.1 -1.88 3.28 -1.52 4.12 -8.72 23.72 -13.52 36.83 -2.22 6.05 -8 21.82 -11.37 31 -3.12 8.48 -10.83 29.55 -13.97 38.08 -1 2.7 -2.48 6.75 -3.3 9 -0.83 2.25 -2.6 7.08 -3.95 10.75 -1.33 3.67 -2.7 7.38 -3.02 8.25 -0.73 1.98 -0.88 3 -0.5 3.57 0.58 0.92 0.7 0.93 8.85 1.68 4.63 0.43 15.55 1.55 22.75 2.33 6.03 0.65 17.17 2.1 22.33 2.92 4.98 0.78 14.1 2.28 17.17 2.83 1.52 0.27 4.1 0.72 5.75 1 21.32 3.7 42.97 8.67 62.55 14.35 26.53 7.68 43.05 14.07 65.95 25.5 7.6 3.78 8.42 4.13 8.42 3.5 0 -1.95 -16.4 -13.18 -31.42 -21.52 -23.02 -12.77 -52.37 -23.75 -86 -32.15 -21.32 -5.32 -40.37 -9.08 -69.75 -13.75 -3.35 -0.53 -3.87 -0.68 -4.43 -1.28 -0.88 -0.93 -1.12 -0.08 4.5 -17.23 2.28 -6.98 11.68 -35.82 14.88 -45.67 0.77 -2.38 3.07 -9.4 5.08 -15.58 2.02 -6.18 5.05 -15.53 6.75 -20.75 4.25 -13.1 3.37 -12.13 9.83 -10.68 5.45 1.23 5.28 1.33 7.5 -4.65 2.15 -5.82 2.2 -5.73 -4.2 -7.85 -10.75 -3.53 -14.05 -4.37 -15.02 -3.77Z"/>
+    </svg>
+    HLW <span>Financial</span>
+  </a>
+  <div class="nav-links">
+    <a href="#">Team</a>
+    <a href="client-access.html" class="nav-btn">Client Access</a>
+    <a href="get-started.html" class="nav-btn nav-btn-primary js-get-started">Get Started</a>
+  </div>
+</header>
+
+<div class="feature-progress-vertical" id="featureProgressVertical">
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+</div>
+
+<section class="hero-video">
+  <div class="hero-bg">
+    <div class="hero-bg-fallback"></div>
+    <video src="media/Website_hero.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+  </div>
+  <div class="hero-noise"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Laying the <em>foundations</em> of the <em id="heroFuture">future.</em></h1>
+  </div>
+  <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
+</section>
+
+<div class="snap-section" id="marqueeSection">
+  <div class="marquee-tabs" id="marqueeTabs">
+    <button class="marquee-tab" type="button">Ledger<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Close<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Tax<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Reporting<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">Counsel<span class="mt-track"><span class="mt-fill"></span></span></button>
+    <button class="marquee-tab" type="button">News<span class="mt-track"><span class="mt-fill"></span></span></button>
+  </div>
+
+  <div class="facts-wrap">
+    <div class="marquee-track" id="marqueeTrack">
+      <div class="marquee-card has-bg bg-ledger">
+        <video src="media/card-ledger-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Ledger</div>
+          <h3>Books, kept current.</h3>
+          <p>Transactions categorized as they clear, not reconstructed later.</p>
+        </div>
+      </div>
+      <div class="marquee-card has-bg bg-close">
+        <video src="media/card-close-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Close</div>
+          <h3>Close day, simplified.</h3>
+          <p>Adjusting entries surfaced early, so the close is a formality.</p>
+        </div>
+      </div>
+      <div class="marquee-card has-bg bg-tax">
+        <video src="media/card-tax-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Tax</div>
+          <h3>No surprises in April.</h3>
+          <p>Liability tracked year-round from books that are already right.</p>
+        </div>
+      </div>
+      <div class="marquee-card has-bg bg-reporting">
+        <video src="media/card-reporting-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Reporting</div>
+          <h3>Statements, on demand.</h3>
+          <p>Clean, branded reports ready to hand to a lender or partner.</p>
+        </div>
+      </div>
+      <div class="marquee-card has-bg bg-counsel">
+        <video src="media/card-counsel-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">Counsel</div>
+          <h3>One advisor, always.</h3>
+          <p>A single CPA across the personal and business side, in confidence.</p>
+        </div>
+      </div>
+      <div class="marquee-card has-bg bg-news">
+        <video src="media/card-news-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="marquee-card-inner">
+          <div class="mc-idx">News</div>
+          <h3>The latest from HLW.</h3>
+          <p></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="snap-section">
+  <div class="product-gallery">
+    <a class="product-card has-bg" id="prodBookkeeping" href="bookkeeping.html">
+      <img src="media/product-bookkeeping.PNG" alt="">
+      <div class="product-card-inner">
+        <h3>Bookkeeping</h3>
+        <p class="pg-body" data-final="Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.">Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.</p>
+      </div>
+    </a>
+    <a class="product-card has-bg" id="prodTax" href="tax-prep.html">
+      <img src="media/product-tax.png" alt="">
+      <div class="product-card-inner">
+        <h3>Tax Preparation</h3>
+        <p class="pg-body" data-final="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+<section class="cta-section" id="ctaSection">
+  <div class="cta-bg" id="ctaBg">
+    <div class="cta-bg-fallback"></div>
+    <!-- future: drop a <video autoplay muted loop playsinline webkit-playsinline preload="auto"> here, same as .hero-bg -->
+  </div>
+  <div class="cta-overlay"></div>
+  <div class="cta-inner">
+    <h2>Whatever it is — books, taxes, or something in between — <a href="mailto:harms.e.hayden@gmail.com" class="cta-inline js-get-started">let's talk.</a></h2>
+    <span class="cta-tiny">Dallas, Texas · Accepting New Engagements</span>
+  </div>
+</section>
+
+<div class="footer">
+  <div class="footer-inner">
+    <div class="mark">HLW FINANCIAL</div>
+    <div class="fine">DALLAS, TEXAS &nbsp;·&nbsp; BY REFERRAL &amp; INTRODUCTION</div>
+  </div>
+</div>
+
+
+<!-- ===== GET STARTED — slide-in panel, modeled on Palantir's contact
+     form: dark scrim + light panel from the right, plain underline
+     inputs, no boxes. Opens from the nav's Get Started button and
+     every "let's talk" link. Same block, unchanged, on every page. ===== -->
+<div class="gs-overlay" id="gsOverlay">
+  <div class="gs-scrim" id="gsScrim"></div>
+  <div class="gs-panel">
+    <div class="gs-meta">
+      <span>Get Started</span>
+      <button class="gs-close" id="gsClose" type="button">Close ✕</button>
+    </div>
+    <h2>Tell us a bit about what you need, and we'll take it from there.</h2>
+    <form id="gsForm">
+      <div class="gs-row">
+        <div class="gs-field">
+          <label for="gsFirst">First Name</label>
+          <input type="text" id="gsFirst" required>
+        </div>
+        <div class="gs-field">
+          <label for="gsLast">Last Name</label>
+          <input type="text" id="gsLast" required>
+        </div>
+      </div>
+      <div class="gs-field">
+        <label for="gsEmail">Email Address</label>
+        <input type="email" id="gsEmail" required>
+      </div>
+      <div class="gs-field">
+        <label for="gsPhone">Phone Number</label>
+        <input type="tel" id="gsPhone">
+      </div>
+      <div class="gs-field">
+        <label for="gsService">What do you need help with?</label>
+        <select id="gsService">
+          <option>Bookkeeping</option>
+          <option>Tax Preparation</option>
+          <option>Both</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="gs-field">
+        <label for="gsMessage">Tell us a bit about your situation</label>
+        <textarea id="gsMessage" rows="3"></textarea>
+      </div>
+      <button type="submit" class="gs-submit">Send</button>
+      <p class="gs-note">This opens a pre-filled email in your mail app, addressed to HLW Financial — nothing is sent until you hit send there.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ===== VIDEO AUTOPLAY HARDENING =====
+  // Some mobile browsers (older iOS Safari, Low Power Mode, some in-app
+  // webviews) ignore the autoplay attribute even when muted+playsinline
+  // are set, and only start playback once .play() is called explicitly.
+  function nudgeVideoPlayback(){
+    document.querySelectorAll('video').forEach(v=>{
+      v.muted = true;
+      if(v.paused){
+        const attempt = v.play();
+        if(attempt && attempt.catch) attempt.catch(()=>{});
+      }
+    });
+  }
+  nudgeVideoPlayback();
+  window.addEventListener('load', nudgeVideoPlayback);
+  // last-resort fallback: retry once on the first tap/click anywhere,
+  // in case the browser is still withholding autoplay until a user gesture
+  document.addEventListener('touchstart', nudgeVideoPlayback, {once:true, passive:true});
+  document.addEventListener('click', nudgeVideoPlayback, {once:true});
+
+  const siteNav = document.getElementById('siteNav');
+  // body is now the actual scroll container (see the scroll-snap CSS notes
+  // above), so scroll position reads from body.scrollTop, not window.scrollY,
+  // and the 'scroll' event fires on body, not window.
+  function updateNav(){
+    siteNav.classList.toggle('scrolled', document.body.scrollTop > window.innerHeight - 90);
+  }
+  document.body.addEventListener('scroll', updateNav, {passive:true});
+  updateNav();
+
+  // ===== SCROLL PROGRESS — right-edge segments fill as you move down the page =====
+  (function(){
+    const segs = document.querySelectorAll('.feature-progress-vertical .seg i');
+    const progressWrap = document.getElementById('featureProgressVertical');
+    const heroEl = document.querySelector('.hero-video');
+    if(!progressWrap || !segs.length) return;
+
+    function updatePageProgress(){
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      let progress = docHeight > 0 ? document.body.scrollTop / docHeight : 0;
+      progress = Math.min(Math.max(progress, 0), 0.9999);
+
+      const total = segs.length;
+      const activeIndex = Math.floor(progress * total);
+      const within = (progress * total) - activeIndex;
+      segs.forEach((s, i)=>{
+        if(i < activeIndex) s.style.transform = 'scaleY(1)';
+        else if(i === activeIndex) s.style.transform = `scaleY(${within})`;
+        else s.style.transform = 'scaleY(0)';
+      });
+
+      const heroHeight = heroEl ? heroEl.offsetHeight : window.innerHeight;
+      progressWrap.classList.toggle('is-visible', document.body.scrollTop > heroHeight - 40);
+    }
+    document.body.addEventListener('scroll', updatePageProgress, {passive:true});
+    window.addEventListener('resize', updatePageProgress);
+    updatePageProgress();
+  })();
+
+  const marqueeCards = document.querySelectorAll('#marqueeTrack .marquee-card');
+  const marqueeTabs = document.querySelectorAll('#marqueeTabs .marquee-tab');
+  const MARQUEE_DURATION = 3800; // ms each card stays active before advancing
+
+  if(marqueeCards.length){
+    let marqueeIndex = 0;
+    let marqueeTimer = null;
+
+    function paintMarqueeFills(i){
+      marqueeTabs.forEach((t)=>{
+        const fill = t.querySelector('.mt-fill');
+        fill.style.transition = 'none';
+        fill.style.transform = 'scaleX(0)'; // every tab starts empty — only the active one should ever show fill
+      });
+      if(!marqueeTabs.length) return;
+      // force reflow so the next transition actually animates from the reset state
+      void marqueeTabs[i].offsetWidth;
+      const activeFill = marqueeTabs[i].querySelector('.mt-fill');
+      activeFill.style.transition = `transform ${MARQUEE_DURATION}ms linear`;
+      requestAnimationFrame(()=>{ activeFill.style.transform = 'scaleX(1)'; });
+    }
+
+    function goToMarqueeCard(next){
+      const outgoing = marqueeCards[marqueeIndex];
+      const wasActive = outgoing.classList.contains('is-active');
+      if(wasActive){
+        outgoing.classList.remove('is-active');
+        outgoing.classList.add('is-prev');
+      }
+
+      marqueeIndex = ((next % marqueeCards.length) + marqueeCards.length) % marqueeCards.length;
+      const incoming = marqueeCards[marqueeIndex];
+      incoming.classList.remove('is-prev');
+      incoming.classList.add('is-active');
+
+      // mobile browsers often only honor autoplay for video that's actually
+      // in view — these cards move on/off screen via CSS transform, so
+      // nudge playback explicitly each time a card becomes active
+      const incomingVideo = incoming.querySelector('video');
+      if(incomingVideo){
+        const playAttempt = incomingVideo.play();
+        if(playAttempt && playAttempt.catch) playAttempt.catch(()=>{});
+      }
+      if(wasActive){
+        const outgoingVideo = outgoing.querySelector('video');
+        if(outgoingVideo) outgoingVideo.pause();
+      }
+
+      marqueeTabs.forEach((t, idx)=> t.classList.toggle('is-active', idx === marqueeIndex));
+      paintMarqueeFills(marqueeIndex);
+
+      if(wasActive){
+        // after the outgoing card finishes sliding off-screen left,
+        // snap it back to the waiting position (right) with no transition
+        setTimeout(()=>{
+          outgoing.classList.add('no-transition');
+          outgoing.classList.remove('is-prev');
+          // force reflow so the instant snap is applied before re-enabling transitions
+          void outgoing.offsetWidth;
+          outgoing.classList.remove('no-transition');
+        }, 950);
+      }
+    }
+
+    function startMarqueeAutoplay(){
+      clearInterval(marqueeTimer);
+      marqueeTimer = setInterval(()=> goToMarqueeCard(marqueeIndex + 1), MARQUEE_DURATION);
+    }
+
+    function stopMarqueeAutoplay(){
+      clearInterval(marqueeTimer);
+    }
+
+    marqueeTabs.forEach((tab, idx)=>{
+      tab.addEventListener('click', ()=>{
+        if(idx === marqueeIndex) return;
+        goToMarqueeCard(idx);
+        startMarqueeAutoplay();
+      });
+    });
+
+    goToMarqueeCard(0);
+    startMarqueeAutoplay();
+
+    // exposed so touch-tap handling (below) can pause/resume autoplay
+    window.__marqueeAutoplay = { start: startMarqueeAutoplay, stop: stopMarqueeAutoplay };
+  }
+
+  const frames = document.querySelectorAll('.feature-frame');
+  const counter = document.getElementById('fcCounter');
+  const tabs = document.querySelectorAll('.feature-tab');
+  const totalFrames = frames.length;
+  const CARD_DURATION = 6000; // ms each card stays active before advancing
+
+  if(totalFrames && tabs.length){
+    let activeIndex = 0;
+    let advanceTimer = null;
+
+    function paintFills(i){
+      tabs.forEach((t, idx)=>{
+        const fill = t.querySelector('.ft-fill');
+        fill.style.transition = 'none';
+        fill.style.transform = idx < i ? 'scaleX(1)' : 'scaleX(0)';
+      });
+      // force reflow so the next transition actually animates from the reset state
+      void tabs[i].offsetWidth;
+      const activeFill = tabs[i].querySelector('.ft-fill');
+      activeFill.style.transition = `transform ${CARD_DURATION}ms linear`;
+      requestAnimationFrame(()=>{ activeFill.style.transform = 'scaleX(1)'; });
+    }
+
+    function setActive(i){
+      activeIndex = ((i % totalFrames) + totalFrames) % totalFrames;
+      frames.forEach((f, idx)=> f.classList.toggle('is-active', idx === activeIndex));
+      tabs.forEach((t, idx)=> t.classList.toggle('is-active', idx === activeIndex));
+      if(counter) counter.textContent = String(activeIndex+1).padStart(2,'0') + ' / ' + String(totalFrames).padStart(2,'0');
+      paintFills(activeIndex);
+    }
+
+    function startAutoplay(){
+      clearTimeout(advanceTimer);
+      advanceTimer = setTimeout(()=>{ setActive(activeIndex+1); startAutoplay(); }, CARD_DURATION);
+    }
+
+    tabs.forEach((tab, idx)=>{
+      tab.addEventListener('click', ()=>{
+        setActive(idx);
+        startAutoplay();
+      });
+    });
+
+    setActive(0);
+    startAutoplay();
+  }
+
+  // ===== PRODUCT GALLERY — hover reveal, scrambling through random Excel formulas before settling =====
+  const FORMULA_POOL = [
+    '=SUMIFS(C:C,A:A,">0")','=VLOOKUP(B2,Sheet2!A:C,3,FALSE)','=INDEX(B:B,MATCH(D2,A:A,0))',
+    '=IFERROR(XLOOKUP(D2,A:A,B:B),"")','=COUNTIF(B:B,"Reconciled")','=TEXT(A1,"0.00%")',
+    '=OFFSET($A$1,0,0,COUNTA(A:A),1)','=ROUND(SUMPRODUCT(A1:A10,B1:B10),2)',
+    '=IF(AND(A1>0,B1<100),1,0)','=TRIM(CONCATENATE(A2," ",B2))','$B$2:$B$500',
+    '=SUM(A1:A10)','=AVERAGEIFS(C:C,B:B,"Q1")','=FILTER(A2:A100,B2:B100="Open")',
+    '=PMT(B2/12,C2,-D2)','=NPV(0.08,B2:B10)'
+  ].join('   ');
+
+  // plain matrix-style glyph pool for a "regular" decode (used by the hero,
+  // as opposed to the product cards' Excel-formula scramble)
+  const GLYPH_POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>/\\';
+
+  class FormulaScramble{
+    constructor(el, opts={}){
+      this.el = el;
+      this.queue = [];
+      this.frame = 0;
+      this.frameRequest = null;
+      this.resolve = null;
+      // frames between each character's start, and frames a character
+      // scrambles before locking in — defaults match the product-card pace,
+      // pass opts to run a different total duration (see heroFuture below)
+      this.stagger = opts.stagger != null ? opts.stagger : 0.567;
+      this.scrambleLen = opts.scrambleLen != null ? opts.scrambleLen : 4;
+      this.pool = opts.pool != null ? opts.pool : FORMULA_POOL;
+      this.update = this.update.bind(this);
+    }
+    setText(newText){
+      const oldText = this.el.textContent || '';
+      const length = Math.max(oldText.length, newText.length);
+      const promise = new Promise(res => this.resolve = res);
+      this.queue = [];
+      // left-to-right decode: each character's scramble window starts a
+      // little after the one before it, so they resolve in reading order
+      // instead of settling randomly
+      const STAGGER = this.stagger;
+      const SCRAMBLE_LEN = this.scrambleLen;
+      for(let i=0;i<length;i++){
+        const from = oldText[i] || '';
+        const to = newText[i] || '';
+        const start = i * STAGGER;
+        const end = start + SCRAMBLE_LEN;
+        this.queue.push({from, to, start, end, char:null});
+      }
+      cancelAnimationFrame(this.frameRequest);
+      this.frame = 0;
+      this.update();
+      return promise;
+    }
+    update(){
+      let output = '';
+      let complete = 0;
+      for(let i=0;i<this.queue.length;i++){
+        const q = this.queue[i];
+        if(this.frame >= q.end){
+          complete++;
+          output += q.to;
+        } else if(this.frame >= q.start){
+          if(!q.char || Math.random() < 0.3){
+            q.char = this.pool[Math.floor(Math.random()*this.pool.length)];
+          }
+          output += q.char;
+        } else {
+          output += q.from;
+        }
+      }
+      this.el.textContent = output;
+      if(complete === this.queue.length){
+        this.resolve();
+      } else {
+        this.frame++;
+        this.frameRequest = requestAnimationFrame(this.update);
+      }
+    }
+  }
+
+  // track the real input method live — more reliable than guessing device
+  // capability once at load (mobile browsers / devtools emulation can
+  // misreport hover support, which is why the touch-only branch was
+  // sometimes never running at all)
+  let lastPointerType = 'mouse';
+  document.addEventListener('pointerdown', (e)=>{
+    lastPointerType = e.pointerType || 'mouse';
+  }, {capture:true, passive:true});
+
+  function setupCardReveal(nodeList, onOpen, onClose, opts={}){
+    const cards = Array.from(nodeList);
+    // 'tap' (default): touch activates the animation on tap, like a click.
+    // 'scroll': touch activates the animation when the card scrolls into
+    // view instead — used for cards that will eventually be links, where
+    // a tap needs to be free to navigate rather than just toggle the reveal.
+    const touchMode = opts.touchMode || 'tap';
+
+    function closeCard(card){
+      if(!card.classList.contains('is-open')) return;
+      card.classList.remove('is-open');
+      // resume/pause decisions are tied to how the card was opened, not
+      // whatever the pointer state happens to be at the moment it closes —
+      // avoids drift between the open tap and the later close tap/outside-tap
+      const openedVia = card._openedVia;
+      card._openedVia = null;
+      if(onClose) onClose(card, openedVia);
+    }
+    function openCard(card){
+      cards.forEach(c=>{ if(c !== card) closeCard(c); });
+      card.classList.add('is-open');
+      card._openedVia = lastPointerType;
+      if(onOpen) onOpen(card);
+    }
+
+    cards.forEach(card=>{
+      // real mouse hover
+      card.addEventListener('mouseenter', ()=>{
+        if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
+        openCard(card);
+      });
+      card.addEventListener('mouseleave', ()=>{
+        if(lastPointerType === 'touch' || lastPointerType === 'pen') return;
+        closeCard(card);
+      });
+      // tap — toggle open/closed (mouse clicks are stopped here but otherwise ignored,
+      // so a click never bubbles up and triggers the outside-click "close" handler below).
+      // Skipped entirely in 'scroll' mode, where touch activation comes from the
+      // IntersectionObserver below instead, leaving taps free (e.g. to follow a link).
+      card.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(touchMode === 'scroll') return;
+        if(lastPointerType !== 'touch' && lastPointerType !== 'pen') return;
+        if(card.classList.contains('is-open')) closeCard(card);
+        else openCard(card);
+      });
+    });
+
+    if(touchMode === 'scroll'){
+      // touch-only: activate the decode animation as each card scrolls into
+      // view, and reset it once the card scrolls back out, so it replays on
+      // re-entry. Desktop hover (handled above) is unaffected.
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(lastPointerType !== 'touch' && lastPointerType !== 'pen') return;
+          if(entry.isIntersecting) openCard(entry.target);
+          else closeCard(entry.target);
+        });
+      }, {threshold:0.5});
+      cards.forEach(card=>io.observe(card));
+    } else {
+      // tapping/clicking outside any card in this group closes it
+      document.addEventListener('click', ()=>{
+        cards.forEach(closeCard);
+      });
+    }
+  }
+
+  document.querySelectorAll('.product-card').forEach(card=>{
+    const bodyEl = card.querySelector('.pg-body');
+    if(!bodyEl) return;
+    const finalText = bodyEl.getAttribute('data-final') || bodyEl.textContent;
+    bodyEl.textContent = '';
+    bodyEl._scrambler = new FormulaScramble(bodyEl);
+    bodyEl._finalText = finalText;
+  });
+
+  // ===== HERO — "future." blurs into focus, character by character, on load AND every time the user scrolls back up past it =====
+  (function(){
+    const el = document.getElementById('heroFuture');
+    if(!el) return;
+    const heroSection = document.querySelector('.hero-video');
+    const finalText = el.textContent;
+
+    // build one <span> per character so each can animate its own
+    // blur/opacity/position independently
+    el.textContent = '';
+    const spans = [];
+    for(const ch of finalText){
+      const s = document.createElement('span');
+      s.className = 'decode-char';
+      s.textContent = ch === ' ' ? '\u00A0' : ch;
+      el.appendChild(s);
+      spans.push(s);
+    }
+
+    let playTimer = null;
+    function play(){
+      clearTimeout(playTimer);
+      const STEP_MS = 55; // ms between each character starting to settle — ~.75s total for "future."
+      spans.forEach((s, i)=>{
+        s.classList.remove('is-settled');
+        void s.offsetWidth; // force reflow so the transition replays on repeat plays
+        playTimer = setTimeout(()=> s.classList.add('is-settled'), i*STEP_MS);
+      });
+    }
+    // small delay so the initial run reads as an intro beat once the hero
+    // is visible, rather than firing before the page has settled
+    setTimeout(play, 400);
+
+    // The hero is `position:sticky`, so once it's pinned it stays inside
+    // the viewport's bounding box for the whole scroll range where later
+    // sections overlay it — an IntersectionObserver on the element never
+    // sees it "leave" and re-enter, so it never fires again on scroll-back-up.
+    // Track raw scroll position instead: once the user has scrolled down
+    // far enough that the hero is fully covered, scrolling back up past
+    // that point replays the decode. This page's scroll container is
+    // document.body (see updateNav above), not window, so listen there —
+    // a window scroll listener never fires on this layout.
+    let pastHero = false;
+    let ticking = false;
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(()=>{
+        const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
+        const y = document.body.scrollTop;
+        if(y > heroHeight){
+          pastHero = true;
+        } else if(pastHero && y <= heroHeight * 0.5){
+          play();
+          pastHero = false;
+        }
+        ticking = false;
+      });
+    }
+    document.body.addEventListener('scroll', onScroll, {passive:true});
+  })();
+
+  setupCardReveal(
+    document.querySelectorAll('#marqueeTrack .marquee-card'),
+    ()=>{
+      // only pause autoplay for a touch tap (so mobile readers aren't cut off
+      // mid-sentence) — desktop hover should never interrupt the slide
+      if((lastPointerType === 'touch' || lastPointerType === 'pen') && window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
+    },
+    ()=>{
+      // resume based on actual DOM state — once nothing in the marquee is
+      // open anymore, always make sure autoplay is running. This is checked
+      // directly rather than inferred from history, so it can't get stuck
+      // paused however the card ended up closing.
+      const anyOpen = document.querySelector('#marqueeTrack .marquee-card.is-open');
+      if(!anyOpen && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
+    }
+  );
+
+  setupCardReveal(
+    document.querySelectorAll('.product-card'),
+    (card)=>{
+      const bodyEl = card.querySelector('.pg-body');
+      if(bodyEl && bodyEl._scrambler) bodyEl._scrambler.setText(bodyEl._finalText);
+    },
+    (card)=>{
+      const bodyEl = card.querySelector('.pg-body');
+      if(bodyEl && bodyEl._scrambler){
+        cancelAnimationFrame(bodyEl._scrambler.frameRequest);
+        bodyEl.textContent = '';
+      }
+    },
+    {touchMode:'scroll'}
+  );
+
+  // ===== CTA — fade/rise into view on scroll =====
+  (function(){
+    const section = document.getElementById('ctaSection');
+    if(!section) return;
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting) section.classList.add('is-visible');
+      });
+    }, {threshold:0.3});
+    io.observe(section);
+  })();
+
+  // ===== GET STARTED — open/close the panel from anywhere on the page,
+  // and build a prefilled mailto: on submit (no backend, no third
+  // party — same "middle option" as the rest of the site's CTAs) =====
+  (function(){
+    const overlay = document.getElementById('gsOverlay');
+    const scrim = document.getElementById('gsScrim');
+    const closeBtn = document.getElementById('gsClose');
+    const form = document.getElementById('gsForm');
+    if(!overlay || !form) return;
+
+    function openGS(){
+      overlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeGS(){
+      overlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    // any element marked .js-get-started opens the panel instead of
+    // following its href (nav's Get Started button, every "let's talk"
+    // CTA) — the href stays in place as a plain no-JS fallback
+    document.querySelectorAll('.js-get-started').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.preventDefault();
+        openGS();
+      });
+    });
+    scrim.addEventListener('click', closeGS);
+    closeBtn.addEventListener('click', closeGS);
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeGS();
+    });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const first = document.getElementById('gsFirst').value.trim();
+      const last = document.getElementById('gsLast').value.trim();
+      const email = document.getElementById('gsEmail').value.trim();
+      const phone = document.getElementById('gsPhone').value.trim();
+      const service = document.getElementById('gsService').value;
+      const message = document.getElementById('gsMessage').value.trim();
+
+      const subject = 'Get Started — ' + first + ' ' + last + ' (' + service + ')';
+      const bodyLines = [
+        'Name: ' + first + ' ' + last,
+        'Email: ' + email,
+        'Phone: ' + (phone || '—'),
+        'Interested in: ' + service,
+        '',
+        'Message:',
+        message || '—'
+      ];
+      const body = bodyLines.join('\n');
+      const mailto = 'mailto:harms.e.hayden@gmail.com'
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+      window.location.href = mailto;
+    });
+  })();
+
+</script>
+
+</body>
+</html>
