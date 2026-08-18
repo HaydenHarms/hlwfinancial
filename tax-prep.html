@@ -69,36 +69,42 @@
   .nav-links{display:flex;align-items:center;gap:34px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:inherit;}
   .nav-links a{color:inherit;text-decoration:none;}
 
-  /* ===== OVERVIEW HERO ===== */
-  .overview-hero{
-    min-height:100vh;display:flex;align-items:center;
-    padding:140px 60px 100px;
-    background:var(--green-deep);color:var(--cream);
-    position:relative;overflow:hidden;
+  /* ===== PRODUCT HERO — full-bleed background image, bottom-left copy,
+     same visual language as index.html's .hero-video / product cards ===== */
+  .product-hero{
+    position:relative;height:100vh;overflow:hidden;
+    display:flex;align-items:flex-end;justify-content:flex-start;
+    color:var(--cream);
   }
-  .overview-hero::before{
-    content:"";position:absolute;inset:0;
-    background-image:
-      linear-gradient(90deg, rgba(247,245,239,0.06) 1px, transparent 1px),
-      linear-gradient(rgba(247,245,239,0.06) 1px, transparent 1px);
-    background-size:calc((100% - 120px)/6) 64px;
-    background-position:60px 0, 60px 0;
-    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 30% 40%, black 0%, transparent 75%);
-    mask-image:radial-gradient(ellipse 70% 60% at 30% 40%, black 0%, transparent 75%);
+  .product-hero-bg{position:absolute;inset:0;}
+  .product-hero-bg img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;
+    animation:heroSlowDrift 28s ease-in-out infinite alternate;
   }
-  .overview-hero-inner{position:relative;z-index:2;max-width:720px;}
-  .overview-hero .eyebrow{
-    display:flex;align-items:center;gap:10px;
-    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--gold);margin-bottom:26px;
+  @keyframes heroSlowDrift{
+    0%{transform:scale(1);}
+    100%{transform:scale(1.06);}
   }
-  .overview-hero .eyebrow::before{content:"";width:28px;height:1px;background:var(--gold);}
-  .overview-hero h1{
-    font-weight:500;font-size:clamp(36px,5.4vw,60px);line-height:1.15;letter-spacing:-.01em;
+  .product-hero-noise{
+    position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  .overview-hero h1 em{font-style:italic;color:var(--gold);font-weight:400;}
-  .overview-hero p{
-    margin:26px 0 0;font-size:18px;line-height:1.7;color:rgba(247,245,239,0.75);max-width:560px;
+  .product-hero-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(11,18,13,0.2) 0%, rgba(11,18,13,0.5) 55%, rgba(11,18,13,0.92) 100%);
+  }
+  .product-hero-inner{
+    position:relative;z-index:2;max-width:900px;
+    padding:0 60px 80px;
+  }
+  .product-hero-inner h1{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(48px,7.5vw,110px);line-height:1.02;letter-spacing:-.01em;color:var(--cream);
+  }
+  .product-hero-inner p{
+    margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:15px;line-height:1.7;
+    color:rgba(247,245,239,0.75);max-width:480px;
   }
 
   /* ===== FEATURE HIGHLIGHTS ===== */
@@ -182,7 +188,7 @@
     .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
     .nav-links{gap:0;}
     .nav-links a:not(:last-child){display:none;}
-    .overview-hero{padding:120px 22px 70px;}
+    .product-hero-inner{padding:0 22px 60px;}
     .features{padding:60px 22px;grid-template-columns:1fr;gap:32px;}
     .pricing-note{padding:0 22px;margin-bottom:60px;}
     .pricing-note-inner{padding:28px 26px;}
@@ -197,7 +203,7 @@
 <!-- SITE-WIDE NAV/LOGO PATTERN: keep this exact <header class="site-nav">…<a class="mark">
      block (and its CSS rules .site-nav / .mark / .mark:hover above) identical on every
      page so the logo always links home and gets the same hover "lift" effect. -->
-<header class="site-nav scrolled" id="siteNav">
+<header class="site-nav" id="siteNav">
   <a class="mark" href="index.html" aria-label="HLW Financial — home">
     <svg viewBox="0 0 303 302" role="img" aria-label="HLW Financial logo" fill="currentColor" fill-rule="evenodd">
       <title>HLW Financial logo</title>
@@ -215,11 +221,15 @@
   </div>
 </header>
 
-<section class="overview-hero">
-  <div class="overview-hero-inner">
-    <div class="eyebrow">Tax Preparation</div>
-    <h1>No surprises in <em>April.</em></h1>
-    <p>Individual and entity returns prepared from books that are already right — liability tracked year-round from a continuous close, not assembled from scratch the week before the deadline.</p>
+<section class="product-hero">
+  <div class="product-hero-bg">
+    <img src="media/product-tax.png" alt="">
+  </div>
+  <div class="product-hero-noise"></div>
+  <div class="product-hero-overlay"></div>
+  <div class="product-hero-inner">
+    <h1>Tax Preparation</h1>
+    <p>Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.</p>
   </div>
 </section>
 
@@ -267,7 +277,7 @@
 <script>
   const siteNav = document.getElementById('siteNav');
   function updateNav(){
-    siteNav.classList.toggle('scrolled', window.scrollY > 40 || true);
+    siteNav.classList.toggle('scrolled', window.scrollY > 40);
   }
   window.addEventListener('scroll', updateNav, {passive:true});
   updateNav();
