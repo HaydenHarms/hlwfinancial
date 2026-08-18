@@ -46,6 +46,13 @@
     padding:150px 60px 50px;
     max-width:1400px;margin:0 auto;
   }
+  .news-back{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);text-decoration:none;margin-bottom:22px;
+    transition:color .25s ease;
+  }
+  .news-back:hover{color:var(--gold);}
   .news-crumb{
     font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;
     color:var(--muted);margin-bottom:34px;
@@ -54,15 +61,16 @@
   .news-crumb a:hover{color:var(--gold);}
   .news-crumb span{color:var(--muted);}
 
+  /* tabs are used inline inside the "Read the Latest" row now, not as
+     their own standalone bordered row up top — no bottom border/margin
+     of their own here, since .news-latest-head already draws that line */
   .news-tabs{
-    display:flex;flex-wrap:wrap;gap:36px;
-    border-bottom:1px solid var(--line);
-    padding-bottom:22px;margin-bottom:46px;
+    display:flex;flex-wrap:wrap;gap:28px;
   }
   .news-tab{
     background:none;border:none;cursor:pointer;padding:0;
-    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;
-    color:var(--ink-soft);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;
+    color:var(--ink-soft);white-space:nowrap;
     transition:color .25s ease;
   }
   .news-tab:hover{color:var(--ink);}
@@ -116,16 +124,16 @@
     white-space:nowrap;
   }
 
-  /* ===== "READ THE LATEST" section header ===== */
+  /* ===== "READ THE LATEST" section header — now also hosts the
+     category filter tabs, on the right where the arrow used to be ===== */
   .news-latest-head{
     max-width:1400px;margin:70px auto 0;padding:0 60px;
-    display:flex;justify-content:space-between;align-items:baseline;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
     border-bottom:1px solid var(--line);padding-bottom:18px;
   }
   .news-latest-head h3{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;font-size:22px;color:var(--ink);
   }
-  .news-latest-head .arrow{color:var(--gold);font-size:20px;}
 
   /* ===== ARTICLE GRID — same card language as the marquee/product
      cards: thin top accent, hover lift, JetBrains Mono meta text ===== */
@@ -230,7 +238,7 @@
 
   @media(max-width:900px){
     .news-header{padding:120px 22px 40px;}
-    .news-tabs{gap:22px;padding-bottom:18px;margin-bottom:34px;}
+    .news-tabs{gap:18px;}
     .news-featured{padding:0 22px 24px;}
     .news-latest-head{padding:0 22px;margin-top:50px;}
     .news-grid{padding:36px 22px 80px;grid-template-columns:1fr;gap:20px;}
@@ -245,14 +253,8 @@
 <header class="site-nav" id="siteNav" data-nav-mode="light"></header>
 
 <div class="news-header">
+  <a href="index.html" class="news-back">← Back</a>
   <div class="news-crumb"><a href="index.html">HLW Financial</a> <span>/ Newsroom</span></div>
-
-  <div class="news-tabs" id="newsTabs">
-    <button class="news-tab is-active" data-filter="all">All</button>
-    <button class="news-tab" data-filter="firm">Firm News</button>
-    <button class="news-tab" data-filter="insights">Insights</button>
-    <button class="news-tab" data-filter="press">Press</button>
-  </div>
 
   <div class="news-title-row">
     <h1>The <em>Newsroom.</em></h1>
@@ -279,7 +281,12 @@
 
 <div class="news-latest-head">
   <h3>Read the Latest</h3>
-  <span class="arrow">→</span>
+  <div class="news-tabs" id="newsTabs">
+    <button class="news-tab is-active" data-filter="all">All</button>
+    <button class="news-tab" data-filter="firm">Firm News</button>
+    <button class="news-tab" data-filter="insights">Insights</button>
+    <button class="news-tab" data-filter="press">Press</button>
+  </div>
 </div>
 
 <div class="news-grid" id="newsGrid"></div>
