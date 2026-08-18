@@ -779,20 +779,37 @@
   // ===== MARQUEE — borrow the most recent newsroom posts' title +
   // excerpt for the first N marquee cards, leaving everything else
   // (background video, position, the rest of the cards) exactly as it
-  // is. If there aren't enough posts to fill every card, only the
-  // first N get replaced — the remaining cards keep their original
+  // is. The matching tab label above the marquee (Ledger/Close/Tax/
+  // etc.) is swapped too, using each article's one-word tabWord. If
+  // there aren't enough posts to fill every card, only the first N
+  // get replaced — the remaining cards and tabs keep their original
   // copy. Reads from the same ARTICLES array the newsroom page uses
   // (see hlw-articles.js) — publish a new post there and it shows up
   // here automatically, no edits needed on this page. =====
   (function(){
     if (typeof ARTICLES === 'undefined' || !ARTICLES.length) return;
     const cards = document.querySelectorAll('#marqueeTrack .marquee-card');
+    const tabs = document.querySelectorAll('#marqueeTabs .marquee-tab');
     const count = Math.min(ARTICLES.length, cards.length);
     for (let i = 0; i < count; i++) {
+      const article = ARTICLES[i];
       const h3 = cards[i].querySelector('h3');
       const p = cards[i].querySelector('p');
-      if (h3) h3.textContent = ARTICLES[i].title;
-      if (p) p.textContent = ARTICLES[i].excerpt;
+      if (h3) h3.textContent = article.title;
+      if (p) p.textContent = article.excerpt;
+
+      // the tab button's label is a bare text node sitting before its
+      // .mt-track progress-fill span — replace just that text node so
+      // the progress-fill markup underneath stays intact
+      const tab = tabs[i];
+      if (tab && article.tabWord) {
+        for (const node of tab.childNodes) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            node.nodeValue = article.tabWord;
+            break;
+          }
+        }
+      }
     }
   })();
 
