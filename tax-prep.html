@@ -136,16 +136,61 @@
     0%,49%{opacity:1;} 50%,100%{opacity:0;}
   }
 
-  /* ===== FEATURE HIGHLIGHTS ===== */
-  .features{
-    padding:90px 60px;max-width:1200px;margin:0 auto;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:40px;
+  /* ===== CLIENT-OUTCOME SHOWCASE — open layout, alternating left/right
+     thirds, plain-text numbered beats, visual offset toward center and
+     lower than its text. Framed entirely around what the client sees
+     and gets, not internal process. ===== */
+  .showcase{position:relative;max-width:1600px;margin:0 auto;padding:40px 0 60px;}
+  .beat{position:relative;min-height:88vh;display:flex;align-items:center;}
+  .beat-text{position:relative;z-index:2;width:30%;min-width:320px;}
+  .beat:nth-child(odd) .beat-text{margin-left:9%;}
+  .beat:nth-child(even){justify-content:flex-end;}
+  .beat:nth-child(even) .beat-text{margin-right:9%;text-align:right;}
+
+  .beat-num{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+    margin-bottom:22px;
+    opacity:0;transform:translateY(10px);
+    transition:opacity .6s ease, transform .6s ease;
   }
-  .feature-item{border-top:1px solid var(--line);padding-top:22px;}
-  .feature-item h3{
-    font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:var(--green);margin-bottom:10px;
+  .beat-title{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(26px,2.8vw,40px);line-height:1.18;color:var(--green);letter-spacing:-.01em;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .7s ease .08s, transform .7s cubic-bezier(.2,.7,.3,1) .08s;
   }
-  .feature-item p{font-size:15px;line-height:1.65;color:var(--ink-soft);}
+  .beat-body{
+    margin-top:20px;font-size:16px;line-height:1.7;color:var(--ink-soft);max-width:380px;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .7s ease .16s, transform .7s cubic-bezier(.2,.7,.3,1) .16s;
+  }
+  .beat:nth-child(even) .beat-body{margin-left:auto;}
+  .beat.in-view .beat-num,
+  .beat.in-view .beat-title,
+  .beat.in-view .beat-body{opacity:1;transform:translateY(0);}
+
+  .beat-visual{
+    position:absolute;z-index:1;
+    width:32%;min-width:280px;aspect-ratio:4/3;
+    top:56%;
+    background:var(--panel-bg);border:1px solid var(--line);border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;
+    opacity:0;transform:translateY(24px);
+    transition:opacity .8s ease .2s, transform .8s cubic-bezier(.2,.7,.3,1) .2s;
+    box-shadow:0 30px 60px rgba(19,37,24,0.1);
+  }
+  .beat.in-view .beat-visual{opacity:1;transform:translateY(0);}
+  .beat:nth-child(odd) .beat-visual{left:38%;}
+  .beat:nth-child(even) .beat-visual{right:38%;}
+
+  @media(max-width:1000px){
+    .beat{min-height:auto;padding:60px 22px;flex-direction:column;align-items:flex-start;}
+    .beat:nth-child(even){align-items:flex-start;justify-content:flex-start;}
+    .beat-text{width:100%;min-width:0;margin:0 0 32px!important;text-align:left!important;}
+    .beat-body{margin-left:0!important;}
+    .beat-visual{position:relative;top:0;left:0!important;right:0!important;width:100%;min-width:0;}
+  }
 
   /* ===== PRICING PLACEHOLDER ===== */
   .pricing-note{
@@ -220,7 +265,6 @@
     .product-hero-inner{padding:0 22px 60px;}
     .hero-scroll-cue{right:22px;bottom:26px;gap:14px;font-size:13px;letter-spacing:.1em;}
     .hero-scroll-cue .line{width:2px;height:48px;}
-    .features{padding:60px 22px;grid-template-columns:1fr;gap:32px;}
     .pricing-note{padding:0 22px;margin-bottom:60px;}
     .pricing-note-inner{padding:28px 26px;}
     .cta-inner{padding:70px 22px;}
@@ -265,20 +309,45 @@
   <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
 
-<section class="features">
-  <div class="feature-item">
-    <h3>Individual & entity returns</h3>
-    <p>Personal and business filings handled together, by one advisor who already knows both sides.</p>
+<div class="showcase" id="showcase">
+
+  <div class="beat">
+    <div class="beat-text">
+      <div class="beat-num">01 / 04</div>
+      <h2 class="beat-title">Know your number months before it's due.</h2>
+      <p class="beat-body">Your estimated liability is tracked all year — not calculated cold the week of the deadline. No April surprises.</p>
+    </div>
+    <div class="beat-visual">Estimated liability snapshot</div>
   </div>
-  <div class="feature-item">
-    <h3>Liability, tracked year-round</h3>
-    <p>Estimated taxes tracked from a continuous close, not calculated cold in the final weeks.</p>
+
+  <div class="beat">
+    <div class="beat-text">
+      <div class="beat-num">02 / 04</div>
+      <h2 class="beat-title">File without the scramble.</h2>
+      <p class="beat-body">Your return is built from books that are already right — no shoebox, no spreadsheet to reconstruct a year later.</p>
+    </div>
+    <div class="beat-visual">Return status timeline</div>
   </div>
-  <div class="feature-item">
-    <h3>One advisor, always</h3>
-    <p>A single CPA across the personal and business side, in confidence, all year.</p>
+
+  <div class="beat">
+    <div class="beat-text">
+      <div class="beat-num">03 / 04</div>
+      <h2 class="beat-title">One advisor for both sides of your life.</h2>
+      <p class="beat-body">Personal and business returns, handled by the same person — who already knows both, in confidence.</p>
+    </div>
+    <div class="beat-visual">Direct line / contact card</div>
   </div>
-</section>
+
+  <div class="beat">
+    <div class="beat-text">
+      <div class="beat-num">04 / 04</div>
+      <h2 class="beat-title">A straight answer, and a filed return.</h2>
+      <p class="beat-body">Not a stack of forms to interpret yourself. A clear explanation, and confirmation it's done.</p>
+    </div>
+    <div class="beat-visual">Filed &amp; confirmed status</div>
+  </div>
+
+</div>
 
 <div class="pricing-note">
   <div class="pricing-note-inner">
@@ -345,6 +414,22 @@
         typeInto(heroBody, heroBody.dataset.text, 16);
       }, 250);
     });
+  })();
+
+  // ===== CLIENT-OUTCOME SHOWCASE — each beat (number, title, body,
+  // visual) fades/slides in the first time it's ~40% into view =====
+  (function(){
+    const beats = document.querySelectorAll('.beat');
+    if(!beats.length) return;
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.4});
+    beats.forEach(b=>io.observe(b));
   })();
 </script>
 
