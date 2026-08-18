@@ -725,6 +725,7 @@
 <div id="gsModalMount"></div>
 
 <script src="hlw-chrome.js"></script>
+<script src="hlw-articles.js"></script>
 <script>
   // ===== VIDEO AUTOPLAY HARDENING =====
   // Some mobile browsers (older iOS Safari, Low Power Mode, some in-app
@@ -773,6 +774,26 @@
     document.body.addEventListener('scroll', updatePageProgress, {passive:true});
     window.addEventListener('resize', updatePageProgress);
     updatePageProgress();
+  })();
+
+  // ===== MARQUEE — borrow the most recent newsroom posts' title +
+  // excerpt for the first N marquee cards, leaving everything else
+  // (background video, position, the rest of the cards) exactly as it
+  // is. If there aren't enough posts to fill every card, only the
+  // first N get replaced — the remaining cards keep their original
+  // copy. Reads from the same ARTICLES array the newsroom page uses
+  // (see hlw-articles.js) — publish a new post there and it shows up
+  // here automatically, no edits needed on this page. =====
+  (function(){
+    if (typeof ARTICLES === 'undefined' || !ARTICLES.length) return;
+    const cards = document.querySelectorAll('#marqueeTrack .marquee-card');
+    const count = Math.min(ARTICLES.length, cards.length);
+    for (let i = 0; i < count; i++) {
+      const h3 = cards[i].querySelector('h3');
+      const p = cards[i].querySelector('p');
+      if (h3) h3.textContent = ARTICLES[i].title;
+      if (p) p.textContent = ARTICLES[i].excerpt;
+    }
   })();
 
   const marqueeCards = document.querySelectorAll('#marqueeTrack .marquee-card');

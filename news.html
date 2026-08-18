@@ -312,28 +312,12 @@
 <div id="gsModalMount"></div>
 
 <script src="hlw-chrome.js"></script>
+<script src="hlw-articles.js"></script>
 <script>
-  // ===== NEWSROOM ARTICLES — single source of truth. To add a new
-  // article later: duplicate one object below with a new id/content —
-  // the card grid, the featured slot (if you flag one), and the reader
-  // panel all render from this same data, so nothing else needs to
-  // change by hand. =====
-  const ARTICLES = [
-    {
-      id: 'founding-clients',
-      category: 'Firm News',
-      filterKey: 'firm',
-      date: 'Aug 2026',
-      title: 'Taking a small number of founding clients — at a discount, in exchange for real feedback.',
-      excerpt: 'A limited number of engagements at a discounted rate, for business owners willing to help shape how we build the firm\u2019s tools and workflows.',
-      featured: true,
-      body: [
-        'HLW Financial is opening a limited number of founding-client engagements at a discounted rate \u2014 for business owners willing to work closely with us while we build out the firm\u2019s tools and workflows.',
-        'In practice, that means shorter feedback loops than a typical client relationship: you\u2019ll see draft reports before they\u2019re finalized, weigh in on how your dashboard is organized, and flag what\u2019s confusing or missing as we go. Nothing experimental touches your actual filings \u2014 the discount is for your time and input, not for cutting corners on the work itself.',
-        'Spots are limited, and we\u2019re prioritizing businesses whose books need to get current \u2014 bookkeeping, tax prep, or both. If that sounds like you, reach out through Get Started and mention you\u2019re interested in the founding-client rate.'
-      ]
-    }
-  ];
+  // ===== NEWSROOM ARTICLES — loaded from hlw-articles.js (see that
+  // file's header comment for how to publish a new post). The card
+  // grid, the featured slot, and the reader panel below all render
+  // from that same shared ARTICLES array. =====
 
   // ===== render cards from ARTICLES =====
   (function(){
