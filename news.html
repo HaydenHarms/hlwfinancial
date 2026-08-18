@@ -99,30 +99,38 @@
   .news-featured-media{
     position:relative;
     height:52vh;min-height:340px;
-    background:var(--cream);
-    display:flex;align-items:center;justify-content:center;
+    background:var(--green-deep);
     overflow:hidden;
   }
   .news-featured-media img{
     position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;object-position:center;
+    object-fit:cover;object-position:center;z-index:0;
+  }
+  /* dims the image and keeps it from reading as the centerpiece —
+     same technique as the homepage's photo-backed product cards */
+  .news-featured-media::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg, rgba(19,37,24,0.35) 0%, rgba(19,37,24,0.55) 55%, rgba(19,37,24,0.88) 100%);
   }
   .news-featured-tag{
     position:absolute;top:20px;left:24px;z-index:2;
     font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--cream);background:rgba(19,37,24,0.72);
-    padding:6px 12px;border-radius:2px;
+    color:rgba(247,245,239,0.75);
   }
+  /* title + date overlaid bottom-left, matching the product cards'
+     inner layout exactly */
   .news-featured-cap{
-    padding:24px 2px 0;
-    display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;
+    position:relative;z-index:2;height:100%;
+    display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
+    padding:0 40px 34px;
   }
   .news-featured-cap h2{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
-    font-size:clamp(24px,2.6vw,34px);line-height:1.25;color:var(--green);max-width:720px;
+    font-size:clamp(26px,3vw,40px);line-height:1.2;color:var(--cream);max-width:760px;
   }
   .news-featured-cap .date{
-    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:var(--muted);
+    margin-top:12px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:rgba(247,245,239,0.7);
     white-space:nowrap;
   }
 
@@ -269,10 +277,10 @@
     <div class="news-featured-media">
       <img src="media/hlwinitials.PNG" alt="HLW Financial — Harms, Lindsey, Wigley">
       <div class="news-featured-tag">Featured</div>
-    </div>
-    <div class="news-featured-cap">
-      <h2 id="newsFeaturedTitle"></h2>
-      <span class="date" id="newsFeaturedMeta"></span>
+      <div class="news-featured-cap">
+        <h2 id="newsFeaturedTitle"></h2>
+        <span class="date" id="newsFeaturedMeta"></span>
+      </div>
     </div>
   </button>
 </div>
