@@ -68,6 +68,18 @@
   .site-nav .mark span{color:var(--gold);}
   .nav-links{display:flex;align-items:center;gap:34px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:inherit;}
   .nav-links a{color:inherit;text-decoration:none;}
+  .nav-links a.nav-btn{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;letter-spacing:.08em;
+    color:var(--cream)!important;background:var(--green);padding:10px 18px;
+    transition:background .3s ease;
+  }
+  .nav-links a.nav-btn:hover{background:var(--green-deep);}
+  /* Get Started — same button shape as Client Access, distinguished by
+     color (gold fill vs. green) so it reads as the primary action */
+  .nav-links a.nav-btn-primary{
+    background:var(--gold);color:var(--green-deep)!important;
+  }
+  .nav-links a.nav-btn-primary:hover{background:#9c8a4a;}
 
   /* ===== PRODUCT HERO — full-bleed background image, bottom-left copy,
      same visual language as index.html's .hero-video / product cards ===== */
@@ -287,10 +299,9 @@
     HLW <span>Financial</span>
   </a>
   <div class="nav-links">
-    <a href="index.html#">Practice</a>
-    <a href="index.html#">Approach</a>
     <a href="index.html#">Team</a>
-    <a href="client-access.html">Client Access</a>
+    <a href="client-access.html" class="nav-btn">Client Access</a>
+    <a href="get-started.html" class="nav-btn nav-btn-primary">Get Started</a>
   </div>
 </header>
 
