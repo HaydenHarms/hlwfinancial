@@ -41,6 +41,24 @@
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
   }
 
+  /* ===== SCROLL PROGRESS — fixed right edge, fills as you move down the
+     page. Same component as index.html: 5 segments, green fill growing
+     from the top, hidden until past the hero, hidden on mobile. ===== */
+  .feature-progress-vertical{
+    position:fixed;right:28px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:10px;z-index:40;
+    opacity:0;pointer-events:none;transition:opacity .4s ease;
+  }
+  .feature-progress-vertical.is-visible{opacity:1;}
+  .feature-progress-vertical .seg{width:3px;height:34px;background:var(--line);position:relative;overflow:hidden;}
+  .feature-progress-vertical .seg i{
+    position:absolute;left:0;top:0;width:100%;height:100%;background:var(--green);
+    transform:scaleY(0);transform-origin:top;transition:transform .05s linear;
+  }
+  @media(max-width:900px){
+    .feature-progress-vertical{display:none;}
+  }
+
   /* ===== SITE-WIDE NAV/LOGO PATTERN — identical to index.html ===== */
   /* Get Started — same button shape as Client Access, distinguished by
      color (gold fill vs. green) so it reads as the primary action */
@@ -259,6 +277,14 @@
      page so the logo always links home and gets the same hover "lift" effect. -->
 <header class="site-nav" id="siteNav"></header>
 
+<div class="feature-progress-vertical" id="featureProgressVertical">
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+  <div class="seg"><i></i></div>
+</div>
+
 <section class="product-hero">
   <div class="product-hero-bg">
     <img src="media/product-bookkeeping.PNG" alt="">
@@ -338,10 +364,42 @@
      form: dark scrim + light panel from the right, plain underline
      inputs, no boxes. Opens from the nav's Get Started button and
      every "let's talk" link. Same block, unchanged, on every page. ===== -->
-<div id="gsModalMount"></div>
+<div id="gsModalMount" data-default-service="Bookkeeping"></div>
 
 <script src="hlw-chrome.js"></script>
 <script>
+
+  // ===== SCROLL PROGRESS — right-edge segments fill as you move down the
+  // page. This page scrolls normally (window/documentElement), not via
+  // document.body like the homepage's scroll-snap layout, so it reads
+  // window.scrollY instead of body.scrollTop. =====
+  (function(){
+    const segs = document.querySelectorAll('.feature-progress-vertical .seg i');
+    const progressWrap = document.getElementById('featureProgressVertical');
+    const heroEl = document.querySelector('.product-hero');
+    if(!progressWrap || !segs.length) return;
+
+    function updatePageProgress(){
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      let progress = docHeight > 0 ? window.scrollY / docHeight : 0;
+      progress = Math.min(Math.max(progress, 0), 0.9999);
+
+      const total = segs.length;
+      const activeIndex = Math.floor(progress * total);
+      const within = (progress * total) - activeIndex;
+      segs.forEach((s, i)=>{
+        if(i < activeIndex) s.style.transform = 'scaleY(1)';
+        else if(i === activeIndex) s.style.transform = `scaleY(${within})`;
+        else s.style.transform = 'scaleY(0)';
+      });
+
+      const heroHeight = heroEl ? heroEl.offsetHeight : window.innerHeight;
+      progressWrap.classList.toggle('is-visible', window.scrollY > heroHeight - 40);
+    }
+    window.addEventListener('scroll', updatePageProgress, {passive:true});
+    window.addEventListener('resize', updatePageProgress);
+    updatePageProgress();
+  })();
 
   // ===== HERO TYPEWRITER — title + body type out with a blinking "|"
   // cursor immediately on load =====

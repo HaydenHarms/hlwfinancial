@@ -92,6 +92,16 @@
   var modalMount = document.getElementById('gsModalMount');
   if(modalMount) modalMount.innerHTML = MODAL_HTML;
 
+  // pages can set data-default-service on their #gsModalMount div (e.g.
+  // "Bookkeeping" on bookkeeping.html, "Tax Preparation" on tax-prep.html)
+  // so the form opens pre-selected to the product that page is about,
+  // instead of always defaulting to the first <option>
+  var serviceSelect = document.getElementById('gsService');
+  if(serviceSelect && modalMount){
+    var defaultService = modalMount.getAttribute('data-default-service');
+    if(defaultService) serviceSelect.value = defaultService;
+  }
+
   var footerMount = document.getElementById('siteFooter');
   if(footerMount) footerMount.innerHTML = FOOTER_HTML;
 
