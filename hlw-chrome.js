@@ -45,16 +45,16 @@
           '<div class="gs-row">' +
             '<div class="gs-field">' +
               '<label for="gsFirst">First Name</label>' +
-              '<input type="text" id="gsFirst" required>' +
+              '<input type="text" id="gsFirst">' +
             '</div>' +
             '<div class="gs-field">' +
               '<label for="gsLast">Last Name</label>' +
-              '<input type="text" id="gsLast" required>' +
+              '<input type="text" id="gsLast">' +
             '</div>' +
           '</div>' +
           '<div class="gs-field">' +
             '<label for="gsEmail">Email Address</label>' +
-            '<input type="email" id="gsEmail" required>' +
+            '<input type="email" id="gsEmail">' +
           '</div>' +
           '<div class="gs-field">' +
             '<label for="gsPhone">Phone Number</label>' +
