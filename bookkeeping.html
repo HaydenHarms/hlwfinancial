@@ -163,8 +163,8 @@
 
   .beat-visual{
     position:absolute;z-index:1;
-    width:32%;min-width:280px;aspect-ratio:4/3;
-    top:56%;
+    width:52%;min-width:460px;aspect-ratio:4/3;
+    top:50%;
     background:var(--panel-bg);border:1px solid var(--line);border-radius:3px;
     display:flex;align-items:center;justify-content:center;
     font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;
@@ -173,8 +173,8 @@
     box-shadow:0 30px 60px rgba(19,37,24,0.1);
   }
   .beat.in-view .beat-visual{opacity:1;transform:translateY(0);}
-  .beat:nth-child(odd) .beat-visual{left:38%;}
-  .beat:nth-child(even) .beat-visual{right:38%;}
+  .beat:nth-child(odd) .beat-visual{left:30%;}
+  .beat:nth-child(even) .beat-visual{right:30%;}
   /* the one beat-visual with a real clip in it (see .has-video below)
      needs to actually crop/fill instead of centering placeholder text.
      It also drops the border/shadow/background box the plain
