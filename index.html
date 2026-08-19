@@ -216,6 +216,19 @@
   .marquee-card.has-bg .mc-idx::before{background:var(--gold);}
   .marquee-card.has-bg h3{color:var(--cream);}
   .marquee-card.has-bg p{color:rgba(247,245,239,0.7);}
+  /* small "News" callout — injected by JS only onto cards that have
+     borrowed a real newsroom post (see the marquee-swap script below),
+     so visitors know that specific card links to a real story rather
+     than a generic service highlight */
+  .marquee-card .mc-news-tag{
+    position:absolute;top:24px;left:64px;z-index:3;
+    display:flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--gold);
+  }
+  .marquee-card .mc-news-tag::before{
+    content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);
+  }
   .marquee-card.bg-ledger{overflow:hidden;}
   .marquee-card.bg-ledger video{
     position:absolute;inset:0;width:100%;height:100%;
@@ -554,6 +567,7 @@
     .facts-wrap{height:52vh;}
     .marquee-card{inset:0 22px;}
     .marquee-card-inner{padding:0 26px 40px;}
+    .marquee-card .mc-news-tag{left:26px;top:20px;}
     .product-gallery{grid-template-columns:1fr;margin-top:36px;padding:0 22px 60px;}
     .product-card{height:340px;}
     .product-card-inner{padding:0 26px 30px;}
@@ -797,6 +811,16 @@
       const p = cards[i].querySelector('p');
       if (h3) h3.textContent = article.title;
       if (p) p.textContent = article.excerpt;
+
+      // flag this card as a real newsroom post with a small "News"
+      // callout, so it doesn't read as just another generic service
+      // card — inserted once, before the card's inner content block
+      if (!cards[i].querySelector('.mc-news-tag')) {
+        const tag = document.createElement('span');
+        tag.className = 'mc-news-tag';
+        tag.textContent = 'News';
+        cards[i].insertBefore(tag, cards[i].querySelector('.marquee-card-inner'));
+      }
 
       // the tab button's label is a bare text node sitting before its
       // .mt-track progress-fill span — replace just that text node so
