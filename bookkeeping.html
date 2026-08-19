@@ -176,8 +176,15 @@
   .beat:nth-child(odd) .beat-visual{left:38%;}
   .beat:nth-child(even) .beat-visual{right:38%;}
   /* the one beat-visual with a real clip in it (see .has-video below)
-     needs to actually crop/fill instead of centering placeholder text */
-  .beat-visual.has-video{overflow:hidden;padding:0;}
+     needs to actually crop/fill instead of centering placeholder text.
+     It also drops the border/shadow/background box the plain
+     placeholders use — the clip's own background now matches the page
+     exactly, so the goal is no visible card at all, just the report
+     itself sitting on the page. */
+  .beat-visual.has-video{
+    overflow:hidden;padding:0;
+    background:none;border:none;box-shadow:none;
+  }
   .beat-visual.has-video video{
     position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   }
@@ -340,7 +347,7 @@
       <p class="beat-body">No shoebox, no spreadsheet to reconstruct, no scramble in March. Everything your return needs is already sitting there, done.</p>
     </div>
     <div class="beat-visual has-video">
-      <video src="media/coa-convergence-animation.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+      <video src="media/coa-convergence-animation.mp4" poster="media/coa-poster.jpg" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
     </div>
   </div>
 
