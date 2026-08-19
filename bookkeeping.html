@@ -184,9 +184,15 @@
   .beat-visual.has-video{
     overflow:hidden;padding:0;
     background:none;border:none;box-shadow:none;
+    /* the box's own ratio was 4:3, but the recorded clip is 1040x620
+       (~1.68:1) — object-fit:cover on a mismatched ratio was cropping
+       the sides, chopping the spreadsheets that fly in near the
+       edges. Matching the ratio + switching to contain guarantees the
+       full frame is always visible, never cropped. */
+    aspect-ratio:1040/620;
   }
   .beat-visual.has-video video{
-    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
   }
 
   @media(max-width:1000px){
