@@ -184,6 +184,11 @@
     .beat-text{width:100%;min-width:0;margin:0 0 32px!important;text-align:left!important;}
     .beat-body{margin-left:0!important;}
     .beat-visual{position:relative;top:0;left:0!important;right:0!important;width:100%;min-width:0;}
+    /* the desktop reveal animation applies translateY(-50%) to vertically
+       center the absolutely-positioned box — on mobile the box is back
+       in normal flow, so that same transform just drags it upward into
+       the text above it instead of centering anything */
+    .beat-visual, .beat.in-view .beat-visual{transform:none!important;}
   }
 
   /* ===== PRICING PLACEHOLDER ===== */
