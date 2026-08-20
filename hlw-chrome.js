@@ -27,7 +27,7 @@
       'HLW <span>Financial</span>' +
     '</a>' +
     '<div class="nav-links">' +
-      '<a href="index.html#">Team</a>' +
+      '<a href="index.html#">About Us</a>' +
       '<a href="client-access.html" class="nav-btn">Client Access</a>' +
       '<a href="get-started.html" class="nav-btn nav-btn-primary js-get-started">Get Started</a>' +
     '</div>';
