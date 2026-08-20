@@ -177,6 +177,18 @@
   .beat.in-view .beat-visual{opacity:1;transform:translateY(-50%);}
   .beat:nth-child(odd) .beat-visual{left:44%;}
   .beat:nth-child(even) .beat-visual{right:44%;}
+  /* the box's own ratio is 4:3, but recorded clips are 1040x620
+     (~1.68:1) — object-fit:cover on a mismatched ratio crops the
+     sides. Matching the ratio + switching to contain guarantees the
+     full frame is always visible, never cropped. */
+  .beat-visual.has-video{
+    overflow:hidden;padding:0;
+    background:none;border:none;box-shadow:none;
+    aspect-ratio:1040/620;
+  }
+  .beat-visual.has-video video{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  }
 
   @media(max-width:1000px){
     .beat{min-height:auto;padding:60px 22px;flex-direction:column;align-items:flex-start;}
@@ -331,7 +343,9 @@
       <h2 class="beat-title">Combine with your business.</h2>
       <p class="beat-body">For an LLC owner with pass-through income, handle both from one place, with us.</p>
     </div>
-    <div class="beat-visual">Direct line / contact card</div>
+    <div class="beat-visual has-video">
+      <video src="media/hlw-merge-loop.mp4" poster="media/hlw-merge-poster.jpeg" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+    </div>
   </div>
 
   <div class="beat">
@@ -340,7 +354,9 @@
       <h2 class="beat-title">A straight answer, and a filed return.</h2>
       <p class="beat-body">Not a stack of forms to interpret yourself. A clear explanation, and confirmation it's done.</p>
     </div>
-    <div class="beat-visual">Filed &amp; confirmed status</div>
+    <div class="beat-visual has-video">
+      <video src="media/efile-confirmation.mp4" poster="media/efile-confirmation-poster.jpeg" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+    </div>
   </div>
 
 </div>
@@ -375,6 +391,24 @@
 
 <script src="hlw-chrome.js"></script>
 <script>
+
+  // ===== VIDEO AUTOPLAY HARDENING =====
+  // Some mobile browsers (older iOS Safari, Low Power Mode, some in-app
+  // webviews) ignore the autoplay attribute even when muted+playsinline
+  // are set, and only start playback once .play() is called explicitly.
+  function nudgeVideoPlayback(){
+    document.querySelectorAll('video').forEach(v=>{
+      v.muted = true;
+      if(v.paused){
+        const attempt = v.play();
+        if(attempt && attempt.catch) attempt.catch(()=>{});
+      }
+    });
+  }
+  nudgeVideoPlayback();
+  window.addEventListener('load', nudgeVideoPlayback);
+  document.addEventListener('touchstart', nudgeVideoPlayback, {once:true, passive:true});
+  document.addEventListener('click', nudgeVideoPlayback, {once:true});
 
   // ===== SCROLL PROGRESS — right-edge segments fill as you move down the
   // page. This page scrolls normally (window/documentElement), not via
