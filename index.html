@@ -648,6 +648,7 @@
     <div class="marquee-track" id="marqueeTrack">
       <a class="marquee-card has-bg bg-ledger" href="news.html">
         <video src="media/card-ledger-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <span class="mc-news-tag">News</span>
         <div class="marquee-card-inner">
           <div class="mc-idx">Ledger</div>
           <h3>Books, kept current.</h3>
@@ -656,6 +657,7 @@
       </a>
       <a class="marquee-card has-bg bg-close" href="news.html">
         <video src="media/card-close-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <span class="mc-news-tag">News</span>
         <div class="marquee-card-inner">
           <div class="mc-idx">Close</div>
           <h3>Close day, simplified.</h3>
@@ -664,6 +666,7 @@
       </a>
       <a class="marquee-card has-bg bg-tax" href="news.html">
         <video src="media/card-tax-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <span class="mc-news-tag">News</span>
         <div class="marquee-card-inner">
           <div class="mc-idx">Tax</div>
           <h3>No surprises in April.</h3>
@@ -672,6 +675,7 @@
       </a>
       <a class="marquee-card has-bg bg-reporting" href="news.html">
         <video src="media/card-reporting-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <span class="mc-news-tag">News</span>
         <div class="marquee-card-inner">
           <div class="mc-idx">Reporting</div>
           <h3>Statements, on demand.</h3>
@@ -680,6 +684,7 @@
       </a>
       <a class="marquee-card has-bg bg-counsel" href="news.html">
         <video src="media/card-counsel-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <span class="mc-news-tag">News</span>
         <div class="marquee-card-inner">
           <div class="mc-idx">Counsel</div>
           <h3>One advisor, always.</h3>
@@ -688,6 +693,7 @@
       </a>
       <a class="marquee-card has-bg bg-news" href="news.html">
         <video src="media/card-news-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <span class="mc-news-tag">News</span>
         <div class="marquee-card-inner">
           <div class="mc-idx">News</div>
           <h3>The latest from HLW.</h3>
@@ -792,14 +798,15 @@
 
   // ===== MARQUEE — borrow the most recent newsroom posts' title +
   // excerpt for the first N marquee cards, leaving everything else
-  // (background video, position, the rest of the cards) exactly as it
-  // is. The matching tab label above the marquee (Ledger/Close/Tax/
-  // etc.) is swapped too, using each article's one-word tabWord. If
-  // there aren't enough posts to fill every card, only the first N
-  // get replaced — the remaining cards and tabs keep their original
-  // copy. Reads from the same ARTICLES array the newsroom page uses
-  // (see hlw-articles.js) — publish a new post there and it shows up
-  // here automatically, no edits needed on this page. =====
+  // (background video, position, the News badge, the rest of the
+  // cards) exactly as it is. The matching tab label above the marquee
+  // (Ledger/Close/Tax/etc.) is swapped too, using each article's
+  // one-word tabWord. If there aren't enough posts to fill every card,
+  // only the first N get replaced — the remaining cards and tabs keep
+  // their original copy. Reads from the same ARTICLES array the
+  // newsroom page uses (see hlw-articles.js) — publish a new post
+  // there and it shows up here automatically, no edits needed on this
+  // page. =====
   (function(){
     if (typeof ARTICLES === 'undefined' || !ARTICLES.length) return;
     const cards = document.querySelectorAll('#marqueeTrack .marquee-card');
@@ -811,16 +818,6 @@
       const p = cards[i].querySelector('p');
       if (h3) h3.textContent = article.title;
       if (p) p.textContent = article.excerpt;
-
-      // flag this card as a real newsroom post with a small "News"
-      // callout, so it doesn't read as just another generic service
-      // card — inserted once, before the card's inner content block
-      if (!cards[i].querySelector('.mc-news-tag')) {
-        const tag = document.createElement('span');
-        tag.className = 'mc-news-tag';
-        tag.textContent = 'News';
-        cards[i].insertBefore(tag, cards[i].querySelector('.marquee-card-inner'));
-      }
 
       // the tab button's label is a bare text node sitting before its
       // .mt-track progress-fill span — replace just that text node so
