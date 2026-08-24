@@ -226,6 +226,33 @@
   }
   .pricing-note-inner .cta-link:hover{color:var(--gold);border-color:var(--gold);}
 
+  /* ===== SWITCH PRODUCT — a small cross-sell nudge above pricing, so
+     visitors comparing services don't have to go back to the homepage
+     to see the other product page ===== */
+  .switch-product{
+    display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+    max-width:1200px;margin:0 auto 20px;padding:22px 40px;
+    border:1px solid var(--line);border-radius:4px;
+    background:var(--panel-bg);
+    text-decoration:none;color:inherit;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .switch-product:hover{border-color:var(--gold);background:#fdfaf2;}
+  .switch-product-label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  }
+  .switch-product-name{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Cormorant Garamond',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--green);
+    white-space:nowrap;
+  }
+  .switch-arrow{color:var(--gold);display:inline-block;transition:transform .3s ease;}
+  .switch-product:hover .switch-arrow{transform:translateX(6px);}
+
+  @media(max-width:900px){
+    .switch-product{padding:20px 22px;margin:0 22px 16px;}
+  }
+
   /* ===== CTA — same pattern as index.html's cta-section, no video ===== */
   .cta-section{
     position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;
@@ -365,13 +392,18 @@
 
 </div>
 
+<a href="bookkeeping.html" class="switch-product">
+  <span class="switch-product-label">Need your books handled too?</span>
+  <span class="switch-product-name">Bookkeeping <span class="switch-arrow">→</span></span>
+</a>
+
 <div class="pricing-note">
   <div class="pricing-note-inner">
     <div>
       <div class="label">Pricing</div>
       <h4>Scoped to your return — details coming soon.</h4>
     </div>
-    <a href="mailto:harms.e.hayden@gmail.com" class="cta-link">Ask for a Quote</a>
+    <a href="mailto:harms.e.hayden@gmail.com" class="cta-link js-get-started">Ask for a Quote</a>
   </div>
 </div>
 
