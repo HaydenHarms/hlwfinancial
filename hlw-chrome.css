@@ -43,8 +43,8 @@
   animation:diagonalWipeIn .6s cubic-bezier(.4,0,.2,1) forwards;
 }
 @keyframes diagonalWipeIn{
-  0%{clip-path:polygon(0% 0%, 0% 0%, 0% 0%);}
-  100%{clip-path:polygon(0% 0%, 220% 0%, 0% 220%);}
+  0%{clip-path:polygon(0 0, 0 0, 0 0);}
+  100%{clip-path:polygon(0 0, 300vmin 0, 0 300vmin);}
 }
 
 /* typewriter cursor — blinking "|" that trails whichever line is
