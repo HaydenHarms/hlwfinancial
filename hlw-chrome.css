@@ -6,6 +6,42 @@
    second shared file is ever needed for something else.
    ===================================================================== */
 
+/* ===== UNIVERSAL PAGE TRANSITION =====
+   Native browser cross-document View Transitions — when someone clicks
+   an internal link to another page on this site, the browser smoothly
+   dissolves the old page out and the new page in, instead of an
+   instant hard cut. This is a single rule that applies to every page
+   automatically (no JS router, no per-page setup) because every page
+   loads this shared stylesheet.
+   Whatever entrance animation the destination page already has (the
+   typewriter hero on the product pages and About, the homepage's own
+   hero reveal) plays normally right after this crossfade finishes —
+   this rule only owns the dissolve between pages, not what happens
+   once you've arrived.
+   Support: shipped in Chromium-based browsers (Chrome/Edge). Not yet
+   supported in Safari or Firefox — those browsers simply navigate
+   normally with no crossfade, which is a safe, unbroken fallback, not
+   an error. */
+@view-transition{
+  navigation:auto;
+}
+::view-transition-old(root),
+::view-transition-new(root){
+  animation-duration:.45s;
+  animation-timing-function:ease;
+}
+
+/* typewriter cursor — blinking "|" that trails whichever line is
+   currently being typed on hero-typewriter pages (bookkeeping.html,
+   tax-prep.html, about.html) */
+.type-cursor{
+  display:inline-block;color:var(--gold);margin-left:1px;
+  animation:cursorBlink .9s steps(1) infinite;
+}
+@keyframes cursorBlink{
+  0%,49%{opacity:1;} 50%,100%{opacity:0;}
+}
+
 /* ===== SITE NAV (fixed, transparent over hero, solid once scrolled) ===== */
 .site-nav{
   position:fixed;top:0;left:0;right:0;z-index:50;

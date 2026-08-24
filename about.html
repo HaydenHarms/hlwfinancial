@@ -58,27 +58,14 @@
   }
   .about-hero-statement{
     font-size:19px;line-height:1.65;color:var(--ink-soft);max-width:380px;
+    opacity:0;transition:opacity .6s ease;
   }
+  .about-hero-statement.is-visible{opacity:1;}
   /* ===== TEAM — sits in the hero photo's old slot: a full-width band
      under the headline/statement row, three placeholder headshots so
      real photos can drop in later without touching layout ===== */
-  /* ===== TEAM BAND — full-bleed photo (same one used on the tax-prep
-     hero, reused here for now), dimmed the same way the product-hero
-     dims its background image, with the team grid sitting on top ===== */
-  .about-team-band{
-    position:relative;width:100%;overflow:hidden;
-    padding:70px 0 80px;
-  }
-  .about-team-bg{position:absolute;inset:0;z-index:0;}
-  .about-team-bg img{
-    width:100%;height:100%;object-fit:cover;object-position:center 30%;
-  }
-  .about-team-overlay{
-    position:absolute;inset:0;z-index:1;
-    background:linear-gradient(180deg, rgba(11,18,13,0.55) 0%, rgba(11,18,13,0.72) 100%);
-  }
   .about-team{
-    position:relative;z-index:2;width:100%;
+    width:100%;padding:10px 0 60px;
     display:grid;grid-template-columns:repeat(3,1fr);gap:50px;
   }
   .team-card{text-align:left;}
@@ -102,7 +89,7 @@
     color:var(--muted);
   }
   .team-card h3{
-    font-weight:500;font-size:20px;color:var(--cream);
+    font-weight:500;font-size:20px;color:var(--ink);
   }
   .team-card .role{
     margin-top:4px;
@@ -192,8 +179,7 @@
     .about-wrap{padding:0 22px;}
     .about-hero{padding:120px 0 0;}
     .about-hero-top{grid-template-columns:1fr;gap:26px;padding-bottom:30px;}
-    .about-team-band{padding:40px 0 50px;}
-    .about-team{grid-template-columns:1fr;gap:32px;}
+    .about-team{grid-template-columns:1fr;gap:32px;padding:6px 0 40px;}
     .mission-block{padding:50px 0 40px;}
     .section-head{padding:40px 0 26px;}
     .belief-row{grid-template-columns:1fr;gap:14px;padding:36px 0;}
@@ -211,33 +197,24 @@
 <div class="about-hero">
   <div class="about-wrap">
     <div class="about-hero-top">
-      <h1>Why We're Here</h1>
-      <p class="about-hero-statement">[DRAFT — needs your review] We believe good books shouldn't be a once-a-year event.</p>
+      <h1 id="aboutHeroTitle" data-text="Why We're Here"></h1>
+      <p class="about-hero-statement" id="aboutHeroStatement">[DRAFT — needs your review] We believe good books shouldn't be a once-a-year event.</p>
     </div>
-  </div>
-
-  <div class="about-team-band">
-    <div class="about-team-bg">
-      <img src="media/product-tax.png" alt="">
-    </div>
-    <div class="about-team-overlay"></div>
-    <div class="about-wrap">
-      <div class="about-team">
-        <div class="team-card">
-          <div class="team-headshot"><span class="tag">Photo TK</span><div class="head"></div></div>
-          <h3>Hayden Harms</h3>
-          <div class="role">Founding Partner</div>
-        </div>
-        <div class="team-card">
-          <div class="team-headshot"><span class="tag">Photo TK</span><div class="head"></div></div>
-          <h3>Landon Lindsey</h3>
-          <div class="role">Founding Partner</div>
-        </div>
-        <div class="team-card">
-          <div class="team-headshot"><span class="tag">Photo TK</span><div class="head"></div></div>
-          <h3>Drew Wigley</h3>
-          <div class="role">Founding Partner</div>
-        </div>
+    <div class="about-team">
+      <div class="team-card">
+        <div class="team-headshot"><span class="tag">Photo TK</span><div class="head"></div></div>
+        <h3>Hayden Harms</h3>
+        <div class="role">Founding Partner</div>
+      </div>
+      <div class="team-card">
+        <div class="team-headshot"><span class="tag">Photo TK</span><div class="head"></div></div>
+        <h3>Landon Lindsey</h3>
+        <div class="role">Founding Partner</div>
+      </div>
+      <div class="team-card">
+        <div class="team-headshot"><span class="tag">Photo TK</span><div class="head"></div></div>
+        <h3>Drew Wigley</h3>
+        <div class="role">Founding Partner</div>
       </div>
     </div>
   </div>
@@ -300,6 +277,44 @@
 
 <script src="hlw-chrome.js"></script>
 <script>
+  // ===== HERO TYPEWRITER — title types out with a blinking "|" cursor
+  // immediately on load; same pattern as the product pages, moved to
+  // this page too since a page transition now leads here. The
+  // statement fades in afterward rather than typing — it's not the
+  // headline, so a quieter reveal reads better. =====
+  (function(){
+    const heroTitle = document.getElementById('aboutHeroTitle');
+    const heroStatement = document.getElementById('aboutHeroStatement');
+    if(!heroTitle) return;
+
+    const cursor = document.createElement('span');
+    cursor.className = 'type-cursor';
+    cursor.textContent = '|';
+    heroTitle.appendChild(cursor);
+
+    function typeInto(el, text, speed, onDone){
+      let i = 0;
+      el.appendChild(cursor);
+      (function step(){
+        if(i < text.length){
+          cursor.insertAdjacentText('beforebegin', text[i]);
+          i++;
+          setTimeout(step, speed);
+        } else if(onDone){
+          onDone();
+        }
+      })();
+    }
+
+    typeInto(heroTitle, heroTitle.dataset.text, 55, function(){
+      if(heroStatement){
+        setTimeout(function(){
+          heroStatement.classList.add('is-visible');
+        }, 200);
+      }
+    });
+  })();
+
   // ===== BELIEF ROWS — fade/rise into view on scroll =====
   (function(){
     const rows = document.querySelectorAll('.belief-row');
