@@ -25,10 +25,26 @@
 @view-transition{
   navigation:auto;
 }
-::view-transition-old(root),
+
+/* diagonal reveal, top-left corner sweeping toward bottom-right — the
+   old page stays put and the new page grows in over it as a wedge
+   with a straight diagonal edge, rather than a flat crossfade. The
+   old snapshot's own default fade is switched off (animation:none) so
+   it just sits still while the new snapshot's wedge expands on top of
+   it — new sits above old by default in the view-transition stack, so
+   nothing else has to change for that layering to work. */
+::view-transition-group(root){
+  animation-duration:.6s;
+}
+::view-transition-old(root){
+  animation:none;
+}
 ::view-transition-new(root){
-  animation-duration:.45s;
-  animation-timing-function:ease;
+  animation:diagonalWipeIn .6s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes diagonalWipeIn{
+  0%{clip-path:polygon(0% 0%, 0% 0%, 0% 0%);}
+  100%{clip-path:polygon(0% 0%, 220% 0%, 0% 220%);}
 }
 
 /* typewriter cursor — blinking "|" that trails whichever line is
