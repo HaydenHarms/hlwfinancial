@@ -44,7 +44,7 @@
 }
 @keyframes diagonalWipeIn{
   0%{clip-path:polygon(0 0, 0 0, 0 0);}
-  100%{clip-path:polygon(0 0, 300vmin 0, 0 300vmin);}
+  100%{clip-path:polygon(0 0, 200vmin 0, 0 550vmin);}
 }
 
 /* typewriter cursor — blinking "|" that trails whichever line is
