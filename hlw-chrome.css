@@ -34,13 +34,13 @@
    it — new sits above old by default in the view-transition stack, so
    nothing else has to change for that layering to work. */
 ::view-transition-group(root){
-  animation-duration:.6s;
+  animation-duration:.3s;
 }
 ::view-transition-old(root){
   animation:none;
 }
 ::view-transition-new(root){
-  animation:diagonalWipeIn .6s cubic-bezier(.4,0,.2,1) forwards;
+  animation:diagonalWipeIn .3s cubic-bezier(.4,0,.2,1) forwards;
 }
 @keyframes diagonalWipeIn{
   0%{clip-path:polygon(0 0, 0 0, 0 0);}
