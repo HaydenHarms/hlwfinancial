@@ -104,8 +104,11 @@
 @media(max-width:900px){
   .site-nav{padding:18px 22px;}
   .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
-  .nav-links{gap:0;}
-  .nav-links a:not(:last-child){display:none;}
+  .nav-links{gap:20px;}
+  /* Client Access (the 2nd link, a bulkier pill button) drops off on
+     mobile to save space; About Us (plain text, lightweight) and Get
+     Started (the primary action) both stay */
+  .nav-links a:nth-child(2){display:none;}
 }
 
 /* ===== GET STARTED — slide-in panel form, modeled on Palantir's
