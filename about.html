@@ -97,7 +97,6 @@
   }
   .team-headshot img{
     position:relative;z-index:2;width:100%;height:100%;object-fit:cover;
-    object-position:50% 8%;
     display:block;
   }
   .team-headshot .tag{
@@ -172,10 +171,10 @@
   }
   .bio-close:hover{color:var(--gold);}
   .bio-photo{
-    width:100%;aspect-ratio:1/1.05;overflow:hidden;
+    width:100%;aspect-ratio:1/1.3;overflow:hidden;
     background:var(--line);border:1px solid var(--line);
   }
-  .bio-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 8%;display:block;}
+  .bio-photo img{width:100%;height:100%;object-fit:cover;display:block;}
   .bio-role{
     font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--gold);margin-bottom:8px;padding-right:40px;
@@ -308,19 +307,19 @@
     <div class="about-wrap">
       <div class="about-team">
         <div class="team-card" id="teamHayden" data-member="hayden" role="button" tabindex="0" aria-haspopup="dialog">
-          <div class="team-headshot"><img src="media/harms_profile.JPG" alt="Hayden Harms"></div>
+          <div class="team-headshot"><img src="media/harms_profile.JPG" alt="Hayden Harms" style="object-position:50% 33.1%;"></div>
           <h3>Hayden Harms</h3>
           <div class="role">Founding Partner</div>
           <span class="view-bio">View Bio &rarr;</span>
         </div>
         <div class="team-card" id="teamLandon" data-member="landon" role="button" tabindex="0" aria-haspopup="dialog">
-          <div class="team-headshot"><img src="media/lindsey_profile.PNG" alt="Landon Lindsey"></div>
+          <div class="team-headshot"><img src="media/lindsey_profile.PNG" alt="Landon Lindsey" style="object-position:50% 96.5%;"></div>
           <h3>Landon Lindsey</h3>
           <div class="role">Founding Partner</div>
           <span class="view-bio">View Bio &rarr;</span>
         </div>
         <div class="team-card" id="teamDrew" data-member="drew" role="button" tabindex="0" aria-haspopup="dialog">
-          <div class="team-headshot"><img src="media/wigley_profile.JPEG" alt="Drew Wigley"></div>
+          <div class="team-headshot"><img src="media/wigley_profile.JPEG" alt="Drew Wigley" style="object-position:50% 8%;"></div>
           <h3>Drew Wigley</h3>
           <div class="role">Founding Partner</div>
           <span class="view-bio">View Bio &rarr;</span>
@@ -411,6 +410,7 @@
         name: 'Hayden Harms',
         role: 'Founding Partner',
         photo: 'media/harms_profile.JPG',
+        pos: '50% 42.6%',
         bio: [
           '[DRAFT — needs your review] Hayden leads client relationships and oversees the firm\'s day-to-day advisory work, working directly with founders and families to keep their books current year-round instead of reconstructed at tax time.',
           '[DRAFT] Add background, credentials, and what he focuses on here.'
@@ -420,6 +420,7 @@
         name: 'Landon Lindsey',
         role: 'Founding Partner',
         photo: 'media/lindsey_profile.PNG',
+        pos: '50% 100%',
         bio: [
           '[DRAFT — needs your review] Landon focuses on the firm\'s bookkeeping and continuous-close process, making sure transactions are categorized as they clear rather than pieced back together months later.',
           '[DRAFT] Add background, credentials, and what he focuses on here.'
@@ -429,6 +430,7 @@
         name: 'Drew Wigley',
         role: 'Founding Partner',
         photo: 'media/wigley_profile.JPEG',
+        pos: '50% 0%',
         bio: [
           '[DRAFT — needs your review] Drew leads tax preparation and planning, working across both the personal and business side of a client\'s finances so nothing gets re-explained between separate advisors.',
           '[DRAFT] Add background, credentials, and what he focuses on here.'
@@ -446,6 +448,7 @@
       if(!m) return;
       document.getElementById('bioPhoto').src = m.photo;
       document.getElementById('bioPhoto').alt = m.name;
+      document.getElementById('bioPhoto').style.objectPosition = m.pos || '50% 50%';
       document.getElementById('bioRole').textContent = m.role;
       document.getElementById('bioName').textContent = m.name;
       document.getElementById('bioBody').innerHTML = m.bio.map(p => '<p>' + p + '</p>').join('');
