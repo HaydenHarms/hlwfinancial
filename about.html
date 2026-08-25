@@ -97,6 +97,7 @@
   }
   .team-headshot img{
     position:relative;z-index:2;width:100%;height:100%;object-fit:cover;
+    object-position:50% 8%;
     display:block;
   }
   .team-headshot .tag{
@@ -111,6 +112,86 @@
     margin-top:4px;
     font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--gold);
+  }
+  .team-card{
+    cursor:pointer;border-radius:2px;
+    transition:transform .3s ease;
+  }
+  .team-card:hover .team-headshot,
+  .team-card:focus-visible .team-headshot{
+    border-color:var(--gold);
+  }
+  .team-card:hover,
+  .team-card:focus-visible{transform:translateY(-4px);}
+  .team-card:focus-visible{outline:2px solid var(--gold);outline-offset:6px;}
+  .team-headshot{transition:border-color .3s ease;}
+  .team-card .view-bio{
+    margin-top:2px;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);opacity:0;transform:translateY(-4px);
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .team-card:hover .view-bio,
+  .team-card:focus-visible .view-bio{opacity:1;transform:translateY(0);}
+
+  /* ===== TEAM BIO — dimmed scrim behind, centered reading panel in
+     front. Same open/close pattern as the newsroom's article reader
+     (scrim click, close button, Escape, centered scale/fade). ===== */
+  .bio-overlay{
+    position:fixed;inset:0;z-index:250;
+    display:flex;align-items:center;justify-content:center;
+    padding:40px 24px;
+    visibility:hidden;
+    transition:visibility 0s linear .4s;
+  }
+  .bio-overlay.is-open{visibility:visible;transition-delay:0s;}
+  .bio-scrim{
+    position:absolute;inset:0;
+    background:rgba(11,18,13,0.62);
+    opacity:0;transition:opacity .4s ease;
+  }
+  .bio-overlay.is-open .bio-scrim{opacity:1;}
+  .bio-panel{
+    position:relative;z-index:2;
+    width:100%;max-width:680px;max-height:85vh;overflow-y:auto;
+    background:var(--panel-bg);border:1px solid var(--line);
+    box-shadow:0 40px 90px rgba(11,18,13,0.35);
+    padding:52px 52px 60px;
+    display:grid;grid-template-columns:180px 1fr;gap:36px;
+    opacity:0;transform:translateY(18px) scale(.97);
+    transition:opacity .4s cubic-bezier(.2,.7,.3,1), transform .4s cubic-bezier(.2,.7,.3,1);
+  }
+  .bio-overlay.is-open .bio-panel{opacity:1;transform:translateY(0) scale(1);}
+  .bio-panel::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
+  .bio-close{
+    position:absolute;top:22px;right:24px;
+    background:none;border:none;cursor:pointer;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);padding:4px;
+    transition:color .3s ease;
+  }
+  .bio-close:hover{color:var(--gold);}
+  .bio-photo{
+    width:100%;aspect-ratio:1/1.05;overflow:hidden;
+    background:var(--line);border:1px solid var(--line);
+  }
+  .bio-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 8%;display:block;}
+  .bio-role{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:8px;padding-right:40px;
+  }
+  .bio-panel h2{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(24px,2.8vw,32px);line-height:1.2;color:var(--green);margin-bottom:18px;
+  }
+  .bio-body p{
+    font-size:15.5px;line-height:1.75;color:var(--ink-soft);margin-bottom:14px;
+  }
+  .bio-body p:last-child{margin-bottom:0;}
+
+  @media(max-width:640px){
+    .bio-panel{padding:60px 26px 40px;grid-template-columns:1fr;max-height:88vh;}
+    .bio-photo{max-width:180px;margin:0 auto;}
   }
 
   /* ===== MISSION STATEMENT — single column, left-aligned big
@@ -226,20 +307,23 @@
     <div class="about-team-overlay"></div>
     <div class="about-wrap">
       <div class="about-team">
-        <div class="team-card">
+        <div class="team-card" id="teamHayden" data-member="hayden" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="team-headshot"><img src="media/harms_profile.JPG" alt="Hayden Harms"></div>
           <h3>Hayden Harms</h3>
           <div class="role">Founding Partner</div>
+          <span class="view-bio">View Bio &rarr;</span>
         </div>
-        <div class="team-card">
+        <div class="team-card" id="teamLandon" data-member="landon" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="team-headshot"><img src="media/lindsey_profile.PNG" alt="Landon Lindsey"></div>
           <h3>Landon Lindsey</h3>
           <div class="role">Founding Partner</div>
+          <span class="view-bio">View Bio &rarr;</span>
         </div>
-        <div class="team-card">
+        <div class="team-card" id="teamDrew" data-member="drew" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="team-headshot"><img src="media/wigley_profile.JPEG" alt="Drew Wigley"></div>
           <h3>Drew Wigley</h3>
           <div class="role">Founding Partner</div>
+          <span class="view-bio">View Bio &rarr;</span>
         </div>
       </div>
     </div>
@@ -297,11 +381,101 @@
   </div>
 </section>
 
+<div class="bio-overlay" id="bioOverlay">
+  <div class="bio-scrim" id="bioScrim"></div>
+  <div class="bio-panel">
+    <button class="bio-close" id="bioClose" type="button">Close &#10005;</button>
+    <div class="bio-photo"><img id="bioPhoto" src="" alt=""></div>
+    <div>
+      <div class="bio-role" id="bioRole"></div>
+      <h2 id="bioName"></h2>
+      <div class="bio-body" id="bioBody"></div>
+    </div>
+  </div>
+</div>
+
 <div class="footer" id="siteFooter"></div>
 
 <div id="gsModalMount"></div>
 
 <script src="hlw-chrome.js"></script>
+<script>
+  // ===== TEAM BIO PANEL — click (or Enter/Space) any team card to
+  // open a centered reader with the full photo and a short bio, same
+  // open/close pattern as the newsroom's article reader. Bio copy
+  // below is a first pass — flagged [DRAFT] like the rest of this
+  // page's placeholder copy, swap in the real thing whenever ready.
+  (function(){
+    const TEAM = {
+      hayden: {
+        name: 'Hayden Harms',
+        role: 'Founding Partner',
+        photo: 'media/harms_profile.JPG',
+        bio: [
+          '[DRAFT — needs your review] Hayden leads client relationships and oversees the firm\'s day-to-day advisory work, working directly with founders and families to keep their books current year-round instead of reconstructed at tax time.',
+          '[DRAFT] Add background, credentials, and what he focuses on here.'
+        ]
+      },
+      landon: {
+        name: 'Landon Lindsey',
+        role: 'Founding Partner',
+        photo: 'media/lindsey_profile.PNG',
+        bio: [
+          '[DRAFT — needs your review] Landon focuses on the firm\'s bookkeeping and continuous-close process, making sure transactions are categorized as they clear rather than pieced back together months later.',
+          '[DRAFT] Add background, credentials, and what he focuses on here.'
+        ]
+      },
+      drew: {
+        name: 'Drew Wigley',
+        role: 'Founding Partner',
+        photo: 'media/wigley_profile.JPEG',
+        bio: [
+          '[DRAFT — needs your review] Drew leads tax preparation and planning, working across both the personal and business side of a client\'s finances so nothing gets re-explained between separate advisors.',
+          '[DRAFT] Add background, credentials, and what he focuses on here.'
+        ]
+      }
+    };
+
+    const overlay = document.getElementById('bioOverlay');
+    const scrim = document.getElementById('bioScrim');
+    const closeBtn = document.getElementById('bioClose');
+    if(!overlay) return;
+
+    function openBio(id){
+      const m = TEAM[id];
+      if(!m) return;
+      document.getElementById('bioPhoto').src = m.photo;
+      document.getElementById('bioPhoto').alt = m.name;
+      document.getElementById('bioRole').textContent = m.role;
+      document.getElementById('bioName').textContent = m.name;
+      document.getElementById('bioBody').innerHTML = m.bio.map(p => '<p>' + p + '</p>').join('');
+      overlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeBio(){
+      overlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.team-card').forEach(function(card){
+      card.addEventListener('click', function(){
+        openBio(card.dataset.member);
+      });
+      card.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          openBio(card.dataset.member);
+        }
+      });
+    });
+
+    scrim.addEventListener('click', closeBio);
+    closeBtn.addEventListener('click', closeBio);
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeBio();
+    });
+  })();
+</script>
 <script>
   // ===== HERO TYPEWRITER — title types out with a blinking "|" cursor
   // immediately on load; same pattern as the product pages, moved to
