@@ -23,6 +23,13 @@
 
 * { box-sizing: border-box; }
 
+/* Belt-and-suspenders: some rules below set `display` unconditionally on
+   elements that are also toggled with the `hidden` attribute (e.g. .dashboard,
+   .card-modal-overlay). An author rule setting `display` beats the browser's
+   built-in `[hidden] { display: none }` rule regardless of specificity, so
+   without this override those elements stay visible while hidden. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--green-deep);
