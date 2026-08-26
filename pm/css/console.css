@@ -1,11 +1,11 @@
 /* HLW Partner Console — design tokens
-   Approved style direction: reference/style-preview.html
+   Approved style direction: reference/style-preview.html (black variant, chosen Aug 2026)
    Tokens pulled from live site repo (github.com/HaydenHarms/hlwfinancial), Aug 2026
 */
 
 :root {
-  --green: #1c3524;
-  --green-deep: #132518;
+  --green: #141414;      /* background — black, not the original dark green */
+  --green-deep: #0a0a0a; /* background — black, not the original dark green */
   --cream: #f7f5ef;
   --line: #c9c2ae;
   --ink: #1c2b1f;
@@ -86,9 +86,82 @@ body {
 
 .table-empty { font-family: var(--mono); font-size: 10.5px; color: rgba(247,245,239,0.35); padding: 18px 10px; letter-spacing: 0.04em; }
 
+/* ---- Cards (click to expand into a modal "window") ---- */
+
+.dashboard { display: flex; flex-direction: column; gap: 0; }
+
+.card {
+  cursor: pointer;
+  padding: 24px;
+  margin: 0 0 8px;
+  border-radius: 3px;
+  border: 1px solid rgba(247,245,239,0.08);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.card:hover, .card:focus-visible { background: rgba(247,245,239,0.025); border-color: rgba(247,245,239,0.16); outline: none; }
+
+.card-head { display: flex; justify-content: space-between; align-items: baseline; }
+.card-head .section-label { margin-bottom: 18px; flex: 1; }
+.card-expand-hint {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(247,245,239,0.28); white-space: nowrap; margin-left: 16px; transition: color 0.15s ease;
+}
+.card:hover .card-expand-hint, .card:focus-visible .card-expand-hint { color: var(--gold); }
+
+.row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin-bottom: 8px; }
+.row .card { margin: 0; }
+
+/* ---- Modal ("window") ---- */
+
+.card-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 5vh 5vw;
+}
+.card-modal {
+  background: var(--green-deep);
+  border: 1px solid rgba(247,245,239,0.16);
+  width: min(1100px, 100%); max-height: 90vh; overflow-y: auto;
+  padding: 48px 52px 44px;
+  position: relative;
+}
+.card-modal-close {
+  position: absolute; top: 22px; right: 22px;
+  width: 34px; height: 34px;
+  background: transparent; border: 1px solid rgba(247,245,239,0.25); color: var(--cream);
+  font-family: var(--mono); font-size: 13px; cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.card-modal-close:hover { border-color: var(--gold); color: var(--gold); }
+
+.card-modal-head { margin-bottom: 28px; }
+.card-modal-head .section-label { margin-bottom: 0; padding-bottom: 0; border-bottom: none; font-size: 13px; }
+.card-modal-head .modal-subtitle { font-family: var(--mono); font-size: 10px; color: rgba(247,245,239,0.4); margin-top: 6px; letter-spacing: 0.04em; }
+
+.card-modal-chart { height: 240px; margin-bottom: 36px; }
+.card-modal-chart canvas { width: 100% !important; height: 100% !important; }
+
+.card-modal-body table.data-table td, .card-modal-body table.data-table th { padding: 13px 14px; }
+.card-modal-body table.data-table td { font-size: 14px; }
+.card-modal-body .partner { padding: 22px 0; }
+.card-modal-body .partner-name { font-size: 19px; }
+.card-modal-body .snapshot { grid-template-columns: repeat(5, 1fr); margin-bottom: 4px; }
+.card-modal-body .metric-value { font-size: 32px; }
+
+.modal-section-sub {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(247,245,239,0.4); margin: 34px 0 14px;
+}
+.modal-section-sub:first-child { margin-top: 0; }
+.modal-totals table.data-table td.hi { color: var(--gold); }
+
+.breakdown-list { display: flex; gap: 28px; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; }
+.breakdown-list .breakdown-item { color: rgba(247,245,239,0.5); }
+.breakdown-list .breakdown-item b { color: var(--cream); font-weight: 500; }
+
 /* ---- Snapshot ---- */
 
-.snapshot { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(247,245,239,0.12); border: 1px solid rgba(247,245,239,0.12); margin-bottom: 44px; }
+.snapshot { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(247,245,239,0.12); border: 1px solid rgba(247,245,239,0.12); }
 .snapshot > div { background: var(--green-deep); padding: 20px 18px; }
 .metric-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(247,245,239,0.45); }
 .metric-value { font-family: var(--sans); font-weight: 500; font-size: 26px; margin-top: 10px; color: var(--cream); }
@@ -99,8 +172,6 @@ body {
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--gold); margin: 0 0 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(247,245,239,0.12);
 }
-
-.row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 44px; margin-bottom: 52px; }
 
 /* ---- Tables ---- */
 
@@ -136,4 +207,6 @@ td.amount { text-align: right; font-variant-numeric: tabular-nums; color: var(--
   .hero { padding: 40px 24px 32px; }
   .main { padding: 28px 24px 48px; }
   .hero h1 { font-size: 30px; }
+  .card-modal { padding: 36px 24px 32px; }
+  .card-modal-body .snapshot { grid-template-columns: repeat(2, 1fr); }
 }

@@ -41,14 +41,27 @@ fill in incrementally.
 
 ## Style direction
 
-Dark green (`var(--green-deep)`) background, cream text, gold accent used
-sparingly. Helvetica Neue for headings/body, JetBrains Mono for
+Black (`var(--green-deep)`) background, cream text, gold accent used
+sparingly. Variable names kept as `--green` / `--green-deep` for now even
+though the values are black, to avoid touching every reference. Helvetica Neue for headings/body, JetBrains Mono for
 labels/data/eyebrows, Cormorant Garamond reserved for the "HLW Financial"
 wordmark only — matches the live site's actual typography
 (github.com/HaydenHarms/hlwfinancial).
 
+## UI
+
+Each section is a card on the main page; clicking one (or focusing + Enter)
+opens an expanded "window" modal with the full data and, for the waterfall
+card, a bar chart of total dollars earned this month per partner
+(aggregated across their procurer/preparer/reviewer/bookkeeper roles,
+purely derived from the Waterfall sheet -- no extra data entry). Close via
+the X, clicking the backdrop, or Escape. Charts for the other three cards
+(pipeline by stage, hours by partner, snapshot revenue/expenses/net) are a
+later pass.
+
 ## Status
 
-v1 functional build complete: connect/reconnect/refresh flow, all five
-sheet types parsed, waterfall math applied, empty/error states styled.
-Not yet tested against a real workbook or deployed to `/pm` — do that next.
+v1 functional build complete: connect/reconnect/refresh flow, all four
+sheet types parsed, waterfall math applied, card/modal UI, one chart
+(waterfall earnings by partner), empty/error states styled.
+Not yet tested against a real workbook or deployed to `/pm` -- do that next.

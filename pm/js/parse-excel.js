@@ -1,6 +1,6 @@
 // Parses the connected .xlsx workbook (via SheetJS) into the plain JS shape
-// render.js expects. Expected workbook structure — see reference/TEMPLATE.md
-// or reference/HLW_PM_Template.xlsx:
+// render.js expects. Expected workbook structure — see
+// reference/HLW_PM_Template.xlsx:
 //
 //   Sheet "Snapshot"   — two columns, Key / Value. Recognized keys (case-insensitive):
 //                        Period, Revenue, Expenses, Net Income, Cash On Hand,
@@ -141,6 +141,35 @@ function hlwParseWaterfall(workbook) {
       }
     };
   }).filter(Boolean);
+}
+
+// Aggregates waterfall $ by the partner name in each role column, across all
+// engagements — "who's actually getting paid what this month". Named people
+// only; blank role cells are ignored, capital-account dollars are summed
+// separately since they aren't attributed to one partner. Powers the bar
+// chart in the expanded waterfall card.
+function hlwAggregateEarningsByPartner(waterfallRows) {
+  const totals = {};
+  let capitalTotal = 0;
+  const add = (name, amount) => {
+    const key = String(name).trim();
+    if (!key) return;
+    totals[key] = (totals[key] || 0) + amount;
+  };
+  waterfallRows.forEach(row => {
+    capitalTotal += row.amounts.capital || 0;
+    if (row.type === 'Bookkeeping') {
+      add(row.bookkeeper, row.amounts.bookkeeper);
+    } else {
+      add(row.procurer, row.amounts.procurer);
+      add(row.preparer, row.amounts.preparer);
+      add(row.reviewer, row.amounts.reviewer);
+    }
+  });
+  return {
+    byPartner: Object.entries(totals).map(([partner, amount]) => ({ partner, amount })).sort((a, b) => b.amount - a.amount),
+    capitalTotal
+  };
 }
 
 // Top-level entry point: File -> parsed data object for render.js.

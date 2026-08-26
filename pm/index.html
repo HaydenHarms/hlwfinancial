@@ -42,13 +42,20 @@
 
     <div id="dashboard" class="dashboard" hidden>
 
-      <div class="snapshot" id="snapshot-grid">
-        <!-- populated by render.js -->
+      <div class="card" id="card-snapshot" data-card="snapshot" tabindex="0" role="button" aria-haspopup="dialog">
+        <div class="card-head">
+          <div class="section-label">Firm snapshot</div>
+          <span class="card-expand-hint">Expand ⤢</span>
+        </div>
+        <div class="snapshot" id="snapshot-grid"></div>
       </div>
 
       <div class="row">
-        <div>
-          <div class="section-label">Client pipeline</div>
+        <div class="card" id="card-pipeline" data-card="pipeline" tabindex="0" role="button" aria-haspopup="dialog">
+          <div class="card-head">
+            <div class="section-label">Client pipeline</div>
+            <span class="card-expand-hint">Expand ⤢</span>
+          </div>
           <table class="data-table" id="pipeline-table">
             <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Procurer</th></tr></thead>
             <tbody id="pipeline-body"></tbody>
@@ -56,15 +63,21 @@
           <div id="pipeline-empty" class="table-empty" hidden>No pipeline data in the workbook.</div>
         </div>
 
-        <div>
-          <div class="section-label">Hours &amp; capital</div>
+        <div class="card" id="card-partners" data-card="partners" tabindex="0" role="button" aria-haspopup="dialog">
+          <div class="card-head">
+            <div class="section-label">Hours &amp; capital</div>
+            <span class="card-expand-hint">Expand ⤢</span>
+          </div>
           <div id="partners-list"></div>
           <div id="partners-empty" class="table-empty" hidden>No hours/capital data in the workbook.</div>
         </div>
       </div>
 
-      <div>
-        <div class="section-label">Profit-split waterfall — this month</div>
+      <div class="card" id="card-waterfall" data-card="waterfall" tabindex="0" role="button" aria-haspopup="dialog">
+        <div class="card-head">
+          <div class="section-label">Profit-split waterfall — this month</div>
+          <span class="card-expand-hint">Expand ⤢</span>
+        </div>
         <table class="data-table" id="waterfall-table">
           <thead><tr><th>Client</th><th>Type</th><th>Gross profit</th><th id="wf-col-a">Procurer 10%</th><th id="wf-col-b">Preparer 45%</th><th id="wf-col-c">Reviewer 15%</th><th id="wf-col-d">Capital accts 30%</th></tr></thead>
           <tbody id="waterfall-body"></tbody>
@@ -77,7 +90,23 @@
 
   </div>
 
+  <!-- Expanded "window" for whichever card was clicked -->
+  <div id="card-modal-overlay" class="card-modal-overlay" hidden>
+    <div class="card-modal" id="card-modal" role="dialog" aria-modal="true">
+      <button class="card-modal-close" id="card-modal-close" aria-label="Close">✕</button>
+      <div class="card-modal-head">
+        <div class="section-label" id="modal-title"></div>
+        <div class="modal-subtitle" id="modal-subtitle"></div>
+      </div>
+      <div class="card-modal-chart" id="modal-chart-wrap" hidden>
+        <canvas id="modal-chart"></canvas>
+      </div>
+      <div class="card-modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
   <script src="js/file-connect.js"></script>
   <script src="js/parse-excel.js"></script>
   <script src="js/render.js"></script>
