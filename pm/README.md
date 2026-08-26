@@ -50,6 +50,11 @@ wordmark only — matches the live site's actual typography
 
 ## UI
 
+File connect/refresh/status live behind a small gear icon in the hero
+(top right), opening a "Data connection" modal — keeps the main page to
+just the dashboard. A red dot on the gear flags an error or a
+permission that needs re-granting.
+
 Each section is a card on the main page; clicking one (or focusing + Enter)
 opens an expanded "window" modal with the full data and, for the waterfall
 card, a bar chart of total dollars earned this month per partner
