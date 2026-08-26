@@ -6,11 +6,16 @@
 (function () {
   const btnConnect = document.getElementById('btn-connect');
   const btnRefresh = document.getElementById('btn-refresh');
-  const connectNote = document.getElementById('connect-note');
   const errorBanner = document.getElementById('error-banner');
   const metaStatus = document.getElementById('meta-status');
   const emptyState = document.getElementById('empty-state');
   const dashboard = document.getElementById('dashboard');
+
+  const btnSettings = document.getElementById('btn-settings');
+  const settingsDot = document.getElementById('settings-dot');
+  const settingsOverlay = document.getElementById('settings-modal-overlay');
+  const settingsClose = document.getElementById('settings-modal-close');
+  const settingsStatus = document.getElementById('settings-status');
 
   const modalOverlay = document.getElementById('card-modal-overlay');
   const modalClose = document.getElementById('card-modal-close');
@@ -24,21 +29,47 @@
   let currentData = null;
   let modalChart = null;
   let needsPermissionReconnect = false; // set when a stored handle needs its permission re-granted
-  const defaultConnectNote = connectNote.textContent;
 
   function setStatus(text, cls) {
     metaStatus.textContent = text;
     metaStatus.className = cls || '';
+    settingsStatus.textContent = text;
+  }
+
+  function updateSettingsDot() {
+    settingsDot.hidden = !(needsPermissionReconnect || !errorBanner.hidden);
   }
 
   function showError(msg) {
     errorBanner.hidden = false;
     errorBanner.textContent = msg;
+    updateSettingsDot();
   }
   function clearError() {
     errorBanner.hidden = true;
     errorBanner.textContent = '';
+    updateSettingsDot();
   }
+
+  // ---- Settings modal ----
+
+  function openSettings() {
+    settingsOverlay.hidden = false;
+    document.addEventListener('keydown', onSettingsKeydown);
+  }
+  function closeSettings() {
+    settingsOverlay.hidden = true;
+    document.removeEventListener('keydown', onSettingsKeydown);
+  }
+  function onSettingsKeydown(e) {
+    if (e.key === 'Escape') closeSettings();
+  }
+
+  btnSettings.addEventListener('click', openSettings);
+  settingsClose.addEventListener('click', closeSettings);
+  settingsOverlay.addEventListener('click', e => {
+    if (e.target === settingsOverlay) closeSettings();
+  });
 
   // ---- Card -> modal ("window") ----
 
@@ -97,7 +128,7 @@
     const data = await hlwParseWorkbook(file);
     currentData = data;
     needsPermissionReconnect = false;
-    connectNote.textContent = defaultConnectNote;
+    updateSettingsDot();
     hlwRenderDashboard(data);
     emptyState.hidden = true;
     dashboard.hidden = false;
@@ -164,8 +195,8 @@
       if (result.needsPermission) {
         currentHandle = result.handle;
         needsPermissionReconnect = true;
-        setStatus('Permission needed — click Connect', '');
-        connectNote.textContent = 'A previously connected file needs permission re-granted. Click "Connect Excel file" to confirm access.';
+        setStatus('Permission needed', '');
+        updateSettingsDot();
         return;
       }
       currentHandle = result.handle;
