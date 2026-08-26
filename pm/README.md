@@ -9,14 +9,17 @@ re-granting the permission itself occasionally, by design. Data never leaves
 the browser — the empty shell is the only thing that's public.
 
 ## Structure
+Flat — everything lives directly in `/pm`, no subfolders (easier to
+maintain via the GitHub web UI).
 - `index.html` — page shell, served as `/pm`
-- `css/console.css` — approved design tokens + full component styles
-- `js/file-connect.js` — file picker, IndexedDB handle persistence, permission handling
-- `js/parse-excel.js` — SheetJS parsing + waterfall math, workbook schema documented inline
-- `js/render.js` — renders parsed data into the dashboard DOM
-- `js/app.js` — wires it all together (connect/refresh buttons, connection state, errors)
-- `reference/style-preview.html` — approved visual direction (static mockup, not wired to data)
-- `reference/HLW_PM_Template.xlsx` — sample workbook matching the expected schema; copy this to start the real shared tracker
+- `console.css` — approved design tokens + full component styles
+- `file-connect.js` — file picker, IndexedDB handle persistence, permission handling
+- `parse-excel.js` — SheetJS parsing + waterfall math, workbook schema documented inline
+- `render.js` — renders parsed data into the dashboard DOM
+- `app.js` — wires it all together (connect/refresh buttons, connection state, errors)
+- `style-preview.html` — approved visual direction (static mockup, not wired to data)
+- `HLW_PM_Template.xlsx` — sample workbook matching the expected schema; copy this to start the real shared tracker
+- `HLW_PM_Mock_Data.xlsx` — filled-in mock data for dev/testing away from the real tracker
 
 ## Workbook schema
 
