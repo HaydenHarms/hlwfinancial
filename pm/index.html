@@ -35,9 +35,10 @@
               <div class="period-divider"></div>
               <div class="period-custom-label">Custom range</div>
               <div class="period-custom">
-                <input type="date" id="period-start" class="period-date-input" aria-label="Start date">
-                <span class="period-custom-sep">–</span>
-                <input type="date" id="period-end" class="period-date-input" aria-label="End date">
+                <label class="period-date-label" for="period-start">From</label>
+                <input type="date" id="period-start" class="period-date-input">
+                <label class="period-date-label" for="period-end">To</label>
+                <input type="date" id="period-end" class="period-date-input">
               </div>
               <button type="button" id="btn-period-apply" class="btn-period-apply">Apply range</button>
             </div>

@@ -116,7 +116,8 @@ body {
   border: 1px solid rgba(247,245,239,0.2);
   box-shadow: 0 12px 32px rgba(0,0,0,0.4);
   padding: 8px;
-  width: 190px;
+  width: 220px;
+  overflow: hidden;
 }
 .period-option {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: none;
@@ -135,15 +136,19 @@ body {
   color: rgba(247,245,239,0.4); padding: 2px 10px 6px;
 }
 
-.period-custom { display: flex; align-items: center; gap: 6px; padding: 0 10px 8px; }
+.period-custom { display: flex; flex-direction: column; gap: 4px; padding: 0 10px 10px; }
+.period-date-label {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(247,245,239,0.35); margin-top: 4px;
+}
+.period-date-label:first-child { margin-top: 0; }
 .period-date-input {
-  flex: 1; min-width: 0;
-  font-family: var(--mono); font-size: 9.5px;
+  width: 100%; box-sizing: border-box;
+  font-family: var(--mono); font-size: 11px;
   background: rgba(247,245,239,0.05); border: 1px solid rgba(247,245,239,0.18);
-  color: var(--cream); padding: 5px 6px; border-radius: 2px;
+  color: var(--cream); padding: 6px 8px; border-radius: 2px;
   color-scheme: dark;
 }
-.period-custom-sep { color: rgba(247,245,239,0.35); font-family: var(--mono); font-size: 10px; }
 
 .btn-period-apply {
   margin: 0 10px 10px;
