@@ -67,16 +67,16 @@ body {
 
 .settings-popout {
   position: absolute; left: 100%; top: 50%;
-  margin-left: 10px;
+  padding-left: 10px;
   display: flex; align-items: center; gap: 8px;
   white-space: nowrap;
-  opacity: 0; pointer-events: none;
+  opacity: 0;
   transform: translate(-6px, -50%);
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 .settings-control:hover .settings-popout,
 .settings-control:focus-within .settings-popout {
-  opacity: 1; pointer-events: auto;
+  opacity: 1;
   transform: translate(0, -50%);
 }
 .settings-popout .btn-connect,
