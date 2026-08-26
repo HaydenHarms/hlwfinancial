@@ -1,2 +1,86 @@
-<!-- HLW Partner Console — v1 skeleton -->
-<!-- Structure only. No styling, data, or logic yet. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HLW Partner Console</title>
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/console.css">
+</head>
+<body>
+
+  <div class="hero">
+    <div class="wordmark">HLW <em>Financial</em></div>
+    <div class="eyebrow">Internal // Partner console</div>
+    <h1>Partner console</h1>
+    <div class="meta">
+      <div>Period <b id="meta-period">—</b></div>
+      <div>Entities <b id="meta-entities">—</b></div>
+      <div>Data <b id="meta-status">Not connected</b></div>
+    </div>
+    <div class="connect-row">
+      <button id="btn-connect" class="btn-connect">Connect Excel file</button>
+      <button id="btn-refresh" class="btn-refresh" hidden>Refresh</button>
+      <span id="connect-note" class="connect-note">Grants local, read-only access to your synced tracker workbook. Nothing leaves this browser.</span>
+    </div>
+    <div id="error-banner" class="error-banner" hidden></div>
+  </div>
+
+  <div class="main">
+
+    <div id="empty-state" class="empty-state">
+      <div class="empty-state-inner">
+        <div class="section-label">No file connected</div>
+        <p>Connect the shared partner tracker workbook to load the firm snapshot, pipeline, hours, capital accounts, and profit-split waterfall. Each partner grants access once per browser — the file is read directly from your local OneDrive sync folder and never uploaded anywhere.</p>
+      </div>
+    </div>
+
+    <div id="dashboard" class="dashboard" hidden>
+
+      <div class="snapshot" id="snapshot-grid">
+        <!-- populated by render.js -->
+      </div>
+
+      <div class="row">
+        <div>
+          <div class="section-label">Client pipeline</div>
+          <table class="data-table" id="pipeline-table">
+            <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Procurer</th></tr></thead>
+            <tbody id="pipeline-body"></tbody>
+          </table>
+          <div id="pipeline-empty" class="table-empty" hidden>No pipeline data in the workbook.</div>
+        </div>
+
+        <div>
+          <div class="section-label">Hours &amp; capital</div>
+          <div id="partners-list"></div>
+          <div id="partners-empty" class="table-empty" hidden>No hours/capital data in the workbook.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Profit-split waterfall — this month</div>
+        <table class="data-table" id="waterfall-table">
+          <thead><tr><th>Client</th><th>Type</th><th>Gross profit</th><th id="wf-col-a">Procurer 10%</th><th id="wf-col-b">Preparer 45%</th><th id="wf-col-c">Reviewer 15%</th><th id="wf-col-d">Capital accts 30%</th></tr></thead>
+          <tbody id="waterfall-body"></tbody>
+        </table>
+        <div id="waterfall-empty" class="table-empty" hidden>No waterfall data in the workbook.</div>
+        <div class="waterfall-note">Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts. Bookkeeping: 60% guaranteed payment to assigned bookkeeper, remaining 40% to capital accounts.</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="js/file-connect.js"></script>
+  <script src="js/parse-excel.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
