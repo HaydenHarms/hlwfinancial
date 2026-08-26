@@ -23,6 +23,8 @@
   let currentHandle = null;
   let currentData = null;
   let modalChart = null;
+  let needsPermissionReconnect = false; // set when a stored handle needs its permission re-granted
+  const defaultConnectNote = connectNote.textContent;
 
   function setStatus(text, cls) {
     metaStatus.textContent = text;
@@ -94,6 +96,8 @@
   async function loadAndRender(file) {
     const data = await hlwParseWorkbook(file);
     currentData = data;
+    needsPermissionReconnect = false;
+    connectNote.textContent = defaultConnectNote;
     hlwRenderDashboard(data);
     emptyState.hidden = true;
     dashboard.hidden = false;
@@ -107,11 +111,20 @@
   async function handleConnectClick() {
     clearError();
     try {
+      if (needsPermissionReconnect && currentHandle) {
+        // A previously connected file just needs its permission re-granted --
+        // this surfaces Chrome's lightweight "Allow access again?" prompt on
+        // the same file, rather than sending them through the full browse dialog.
+        const { handle, file } = await HlwFileConnect.reconnectWithPrompt(currentHandle);
+        currentHandle = handle;
+        await loadAndRender(file);
+        return;
+      }
       const { handle, file } = await HlwFileConnect.pickFile();
       currentHandle = handle;
       await loadAndRender(file);
     } catch (err) {
-      if (err.name === 'AbortError') return; // user cancelled the picker
+      if (err.name === 'AbortError') return; // user cancelled the picker/prompt
       console.error(err);
       showError('Could not connect the file: ' + err.message);
       setStatus('Connection failed', 'status-error');
@@ -150,8 +163,9 @@
       if (!result) return; // nothing stored yet
       if (result.needsPermission) {
         currentHandle = result.handle;
+        needsPermissionReconnect = true;
         setStatus('Permission needed — click Connect', '');
-        connectNote.textContent = 'A previously connected file needs permission re-granted. Click "Connect Excel file" and choose the same file again.';
+        connectNote.textContent = 'A previously connected file needs permission re-granted. Click "Connect Excel file" to confirm access.';
         return;
       }
       currentHandle = result.handle;
