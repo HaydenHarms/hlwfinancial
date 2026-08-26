@@ -20,7 +20,6 @@ function hlwEsc(str) {
 
 function hlwRenderMeta(data) {
   document.getElementById('meta-period').textContent = data.snapshot.period || '—';
-  document.getElementById('meta-entities').textContent = data.snapshot.entities || '—';
 }
 
 function hlwSnapshotCellsHtml(s) {
@@ -72,14 +71,12 @@ function hlwRenderPipeline(data) {
 
 function hlwPartnersListHtml(partners) {
   return partners.map(p => {
-    const statusIsActive = String(p.capitalStatus).trim().toLowerCase() === 'active';
     const balanceRow = p.capitalBalance !== null
       ? `<div class="partner-row"><span>Capital balance</span><span>${hlwEsc(hlwFmtMoney(p.capitalBalance))}</span></div>`
       : '';
     return `<div class="partner">
       <div class="partner-name">${hlwEsc(p.partner)}</div>
       <div class="partner-row"><span>Hours logged</span><span>${hlwEsc(hlwFmtHours(p.hours))}</span></div>
-      <div class="partner-row"><span>Capital account</span><span class="${statusIsActive ? 'capital-active' : ''}">${hlwEsc(p.capitalStatus || '—')}</span></div>
       ${balanceRow}
     </div>`;
   }).join('');
@@ -145,7 +142,6 @@ function hlwRenderDashboard(data) {
 // ---- Expanded card ("window") content — see app.js for open/close wiring ----
 
 const HLW_MODAL_META = {
-  snapshot: { title: 'Firm snapshot' },
   pipeline: { title: 'Client pipeline' },
   partners: { title: 'Hours & capital' },
   waterfall: { title: 'Profit-split waterfall — this month' }
@@ -153,7 +149,6 @@ const HLW_MODAL_META = {
 
 function hlwModalSubtitle(cardKey, data) {
   switch (cardKey) {
-    case 'snapshot': return [data.snapshot.period, data.snapshot.entities].filter(Boolean).join(' · ') || 'No period set in Snapshot sheet';
     case 'pipeline': return data.pipeline.length + ' engagement' + (data.pipeline.length === 1 ? '' : 's');
     case 'partners': return data.partners.length + ' partner' + (data.partners.length === 1 ? '' : 's') + ' tracked';
     case 'waterfall': return data.waterfall.length + ' engagement' + (data.waterfall.length === 1 ? '' : 's') + ' this period';
@@ -176,9 +171,6 @@ function hlwPipelineBreakdownHtml(rows) {
 // Builds the HTML for the expanded body of whichever card was clicked.
 function hlwBuildModalBody(cardKey, data) {
   switch (cardKey) {
-    case 'snapshot':
-      return `<div class="snapshot">${hlwSnapshotCellsHtml(data.snapshot)}</div>`;
-
     case 'pipeline':
       if (!data.pipeline.length) return '<div class="table-empty">No pipeline data in the workbook.</div>';
       return `

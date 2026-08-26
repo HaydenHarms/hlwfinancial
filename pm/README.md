@@ -51,20 +51,32 @@ labels/data/eyebrows, Cormorant Garamond reserved for the "HLW Financial"
 wordmark only — matches the live site's actual typography
 (github.com/HaydenHarms/hlwfinancial).
 
+## Title
+
+Now branded "Practice Management" in the hero (was "Partner console");
+the top-of-page "Internal // Partner console" eyebrow and the
+"Entities" meta callout were both dropped for a cleaner header —
+`Entities` is still read from the Snapshot sheet and stored in the
+parsed data, just not displayed.
+
 ## UI
 
-File connect/refresh/status live behind a small gear icon in the hero
-(top right), opening a "Data connection" modal — keeps the main page to
-just the dashboard. A red dot on the gear flags an error or a
-permission that needs re-granting.
+File connect/refresh live behind a small gear icon in the hero, next to
+the "Data" status. Hover (or tab-focus into) the gear and the two
+buttons pop out to the side into the open header space — no modal, no
+click needed to reveal them. The red dot on the gear still flags an
+error or a permission that needs re-granting even when not hovered.
+The error banner sits directly in the hero when something goes wrong.
 
-Each section is a card on the main page; clicking one (or focusing + Enter)
+The Firm snapshot card is static — it doesn't open a modal (there's
+nothing more to show that isn't already on the card). The other three
+cards are still clickable (or focus + Enter); doing so
 opens an expanded "window" modal with the full data and, for the waterfall
 card, a bar chart of total dollars earned this month per partner
 (aggregated across their procurer/preparer/reviewer/bookkeeper roles,
 purely derived from the Waterfall sheet -- no extra data entry). Close via
-the X, clicking the backdrop, or Escape. Charts for the other three cards
-(pipeline by stage, hours by partner, snapshot revenue/expenses/net) are a
+the X, clicking the backdrop, or Escape. Charts for the other two
+modal-enabled cards (pipeline by stage, hours by partner) are a
 later pass.
 
 ## Status

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HLW Partner Console</title>
+<title>HLW Practice Management</title>
 <meta name="robots" content="noindex">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,20 +16,25 @@
 
   <div class="hero">
     <div class="wordmark">HLW <em>Financial</em></div>
-    <div class="eyebrow">Internal // Partner console</div>
-    <h1>Partner console</h1>
+    <h1>Practice Management</h1>
     <div class="meta">
       <div>Period <b id="meta-period">—</b></div>
-      <div>Entities <b id="meta-entities">—</b></div>
       <div>Data <b id="meta-status">Not connected</b>
-        <button id="btn-settings" class="btn-settings" aria-haspopup="dialog" aria-label="Data connection settings">
-          <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor">
-            <path d="M19.14,12.94a7.14,7.14,0,0,0,.05-1,7.14,7.14,0,0,0-.05-1l2.11-1.65a.5.5,0,0,0,.12-.64l-2-3.46a.5.5,0,0,0-.6-.22l-2.49,1a7.31,7.31,0,0,0-1.72-1L14.19,2.1a.49.49,0,0,0-.49-.41h-4a.49.49,0,0,0-.49.41L8.87,4.83a7.31,7.31,0,0,0-1.72,1l-2.49-1a.5.5,0,0,0-.6.22l-2,3.46a.5.5,0,0,0,.12.64L4.29,10.94a7.14,7.14,0,0,0-.05,1,7.14,7.14,0,0,0,.05,1L2.18,14.59a.5.5,0,0,0-.12.64l2,3.46a.5.5,0,0,0,.6.22l2.49-1a7.31,7.31,0,0,0,1.72,1l.34,2.73a.49.49,0,0,0,.49.41h4a.49.49,0,0,0,.49-.41l.34-2.73a7.31,7.31,0,0,0,1.72-1l2.49,1a.5.5,0,0,0,.6-.22l2-3.46a.5.5,0,0,0-.12-.64ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
-          </svg>
-          <span id="settings-dot" class="settings-dot" hidden></span>
-        </button>
+        <div class="settings-control">
+          <button id="btn-settings" class="btn-settings" aria-label="Data connection">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+              <path d="M19.14,12.94a7.14,7.14,0,0,0,.05-1,7.14,7.14,0,0,0-.05-1l2.11-1.65a.5.5,0,0,0,.12-.64l-2-3.46a.5.5,0,0,0-.6-.22l-2.49,1a7.31,7.31,0,0,0-1.72-1L14.19,2.1a.49.49,0,0,0-.49-.41h-4a.49.49,0,0,0-.49.41L8.87,4.83a7.31,7.31,0,0,0-1.72,1l-2.49-1a.5.5,0,0,0-.6.22l-2,3.46a.5.5,0,0,0,.12.64L4.29,10.94a7.14,7.14,0,0,0-.05,1,7.14,7.14,0,0,0,.05,1L2.18,14.59a.5.5,0,0,0-.12.64l2,3.46a.5.5,0,0,0,.6.22l2.49-1a7.31,7.31,0,0,0,1.72,1l.34,2.73a.49.49,0,0,0,.49.41h4a.49.49,0,0,0,.49-.41l.34-2.73a7.31,7.31,0,0,0,1.72-1l2.49,1a.5.5,0,0,0,.6-.22l2-3.46a.5.5,0,0,0-.12-.64ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+            </svg>
+            <span id="settings-dot" class="settings-dot" hidden></span>
+          </button>
+          <div class="settings-popout">
+            <button id="btn-connect" class="btn-connect">Connect</button>
+            <button id="btn-refresh" class="btn-refresh" hidden>Refresh</button>
+          </div>
+        </div>
       </div>
     </div>
+    <div id="error-banner" class="error-banner" hidden></div>
   </div>
 
   <div class="main">
@@ -51,10 +56,9 @@
 
     <div id="dashboard" class="dashboard" hidden>
 
-      <div class="card" id="card-snapshot" data-card="snapshot" tabindex="0" role="button" aria-haspopup="dialog">
+      <div class="card card-static" id="card-snapshot">
         <div class="card-head">
           <div class="section-label">Firm snapshot</div>
-          <span class="card-expand-hint">Expand ⤢</span>
         </div>
         <div class="snapshot" id="snapshot-grid"></div>
       </div>
@@ -97,23 +101,6 @@
 
     </div>
 
-  </div>
-
-  <!-- Data connection settings -->
-  <div id="settings-modal-overlay" class="card-modal-overlay" hidden>
-    <div class="card-modal settings-modal" id="settings-modal" role="dialog" aria-modal="true">
-      <button class="card-modal-close" id="settings-modal-close" aria-label="Close">✕</button>
-      <div class="card-modal-head">
-        <div class="section-label">Data connection</div>
-        <div class="modal-subtitle" id="settings-status">Not connected</div>
-      </div>
-      <p class="settings-copy">Grants local, read-only access to your synced tracker workbook. Nothing leaves this browser.</p>
-      <div class="connect-row">
-        <button id="btn-connect" class="btn-connect">Connect Excel file</button>
-        <button id="btn-refresh" class="btn-refresh" hidden>Refresh</button>
-      </div>
-      <div id="error-banner" class="error-banner" hidden></div>
-    </div>
   </div>
 
   <!-- Expanded "window" for whichever card was clicked -->
