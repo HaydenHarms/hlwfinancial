@@ -11,11 +11,7 @@
   const emptyState = document.getElementById('empty-state');
   const dashboard = document.getElementById('dashboard');
 
-  const btnSettings = document.getElementById('btn-settings');
   const settingsDot = document.getElementById('settings-dot');
-  const settingsOverlay = document.getElementById('settings-modal-overlay');
-  const settingsClose = document.getElementById('settings-modal-close');
-  const settingsStatus = document.getElementById('settings-status');
 
   const modalOverlay = document.getElementById('card-modal-overlay');
   const modalClose = document.getElementById('card-modal-close');
@@ -33,7 +29,6 @@
   function setStatus(text, cls) {
     metaStatus.textContent = text;
     metaStatus.className = cls || '';
-    settingsStatus.textContent = text;
   }
 
   function updateSettingsDot() {
@@ -50,26 +45,6 @@
     errorBanner.textContent = '';
     updateSettingsDot();
   }
-
-  // ---- Settings modal ----
-
-  function openSettings() {
-    settingsOverlay.hidden = false;
-    document.addEventListener('keydown', onSettingsKeydown);
-  }
-  function closeSettings() {
-    settingsOverlay.hidden = true;
-    document.removeEventListener('keydown', onSettingsKeydown);
-  }
-  function onSettingsKeydown(e) {
-    if (e.key === 'Escape') closeSettings();
-  }
-
-  btnSettings.addEventListener('click', openSettings);
-  settingsClose.addEventListener('click', closeSettings);
-  settingsOverlay.addEventListener('click', e => {
-    if (e.target === settingsOverlay) closeSettings();
-  });
 
   // ---- Card -> modal ("window") ----
 
@@ -135,7 +110,7 @@
     clearError();
     const stamp = new Date(file.lastModified).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
     setStatus('Local — connected (' + stamp + ')', 'status-connected');
-    btnConnect.textContent = 'Reconnect a different file';
+    btnConnect.textContent = 'Reconnect';
     btnRefresh.hidden = false;
   }
 
