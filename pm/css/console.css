@@ -1,0 +1,26 @@
+/* HLW Partner Console — design tokens
+   Approved style direction: reference/style-preview.html
+   Tokens pulled from live site repo (github.com/HaydenHarms/hlwfinancial), Aug 2026
+*/
+
+:root {
+  --green: #1c3524;
+  --green-deep: #132518;
+  --cream: #f7f5ef;
+  --line: #c9c2ae;
+  --ink: #1c2b1f;
+  --ink-soft: #5a5343;
+  --gold: #8a7a3f;
+  --panel-bg: #fdfcf8;
+  --muted: #9a9482;
+  --hairline: #e5e2d5;
+  --lbl: #8a7f66;
+
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Cormorant Garamond', serif; /* wordmark only — not for body/headings */
+}
+
+/* Component styles TBD — see reference/style-preview.html for the approved
+   layout (hero, snapshot strip, pipeline table, hours/capital panel,
+   profit-split waterfall) to build these against. */

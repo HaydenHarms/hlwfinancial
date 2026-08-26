@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HLW Console — brand-accurate preview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --green: #1c3524; --green-deep: #132518;
+    --cream: #f7f5ef; --line: #c9c2ae;
+    --ink: #1c2b1f; --ink-soft: #5a5343;
+    --gold: #8a7a3f; --panel-bg: #fdfcf8;
+    --muted: #9a9482; --hairline: #e5e2d5; --lbl: #8a7f66;
+    --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Cormorant Garamond', serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--green-deep); color: var(--cream); font-family: var(--sans); }
+
+  .hero { padding: 60px 44px 44px; border-bottom: 1px solid rgba(247,245,239,0.12); }
+  .hero .wordmark { font-family: var(--serif); font-weight: 600; font-size: 15px; color: var(--cream); margin-bottom: 20px; }
+  .hero .wordmark em { font-style: italic; color: var(--gold); font-weight: 400; }
+  .hero .eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .hero .eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--gold); }
+  .hero h1 { font-family: var(--sans); font-weight: 500; font-size: 40px; line-height: 1.05; margin: 0; color: var(--cream); }
+  .hero .meta { display: flex; gap: 30px; margin-top: 26px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; color: rgba(247,245,239,0.5); text-transform: uppercase; }
+  .hero .meta b { color: rgba(247,245,239,0.85); font-weight: 500; }
+
+  .main { padding: 36px 44px 64px; }
+
+  .snapshot { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(247,245,239,0.12); border: 1px solid rgba(247,245,239,0.12); margin-bottom: 44px; }
+  .snapshot > div { background: var(--green-deep); padding: 20px 18px; }
+  .metric-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(247,245,239,0.45); }
+  .metric-value { font-family: var(--sans); font-weight: 500; font-size: 26px; margin-top: 10px; color: var(--cream); }
+
+  .section-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); margin: 0 0 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(247,245,239,0.12);
+  }
+
+  .row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 44px; margin-bottom: 52px; }
+
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--sans); }
+  table.data-table th { text-align: left; color: rgba(247,245,239,0.4); font-weight: 500; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 10px; border-bottom: 1px solid rgba(247,245,239,0.12); }
+  table.data-table td { padding: 11px 10px; border-bottom: 1px solid rgba(247,245,239,0.08); color: rgba(247,245,239,0.65); }
+  table.data-table td.hi { color: var(--cream); }
+  td.amount { text-align: right; font-variant-numeric: tabular-nums; color: var(--cream); }
+  .rec-chip { font-family: var(--mono); font-size: 9px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid rgba(247,245,239,0.15); color: rgba(247,245,239,0.5); }
+  .rec-chip.recurring { border-color: var(--gold); color: var(--gold); }
+  .stage-chip { font-family: var(--mono); font-size: 9px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(247,245,239,0.5); }
+  .stage-chip.active-eng { color: var(--cream); }
+  .stage-chip.active-eng::before { content: "● "; color: var(--gold); }
+
+  .partner { padding: 18px 0; border-bottom: 1px solid rgba(247,245,239,0.08); }
+  .partner:last-child { border-bottom: none; }
+  .partner-name { font-family: var(--sans); font-weight: 500; font-size: 16px; color: var(--cream); }
+  .partner-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: rgba(247,245,239,0.45); margin-top: 9px; }
+  .partner-row span:last-child { color: var(--cream); }
+
+  .waterfall-note { font-family: var(--mono); font-size: 10px; color: rgba(247,245,239,0.4); margin-top: 14px; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="wordmark">HLW <em>Financial</em></div>
+    <div class="eyebrow">Internal // Partner console</div>
+    <h1>Partner console</h1>
+    <div class="meta">
+      <div>Period <b>Aug 2026</b></div>
+      <div>Entities <b>4 active</b></div>
+      <div>Data <b>Local — connected</b></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="snapshot">
+      <div><div class="metric-label">Revenue</div><div class="metric-value">$18,400</div></div>
+      <div><div class="metric-label">Expenses</div><div class="metric-value">$6,120</div></div>
+      <div><div class="metric-label">Net income</div><div class="metric-value">$12,280</div></div>
+      <div><div class="metric-label">Cash on hand</div><div class="metric-value">$41,900</div></div>
+      <div><div class="metric-label">Active clients</div><div class="metric-value">4</div></div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="section-label">Client pipeline</div>
+        <table class="data-table">
+          <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Procurer</th></tr></thead>
+          <tbody>
+            <tr><td class="hi">Revelation Auto Detailing</td><td>Bookkeeping</td><td><span class="rec-chip recurring">Recurring</span></td><td><span class="stage-chip active-eng">Active</span></td><td>Hayden</td></tr>
+            <tr><td class="hi">Cortland Realty Group</td><td>Tax prep</td><td><span class="rec-chip">One-off</span></td><td><span class="stage-chip">Onboarding</span></td><td>Landon</td></tr>
+            <tr><td class="hi">Marsh &amp; Vale LLC</td><td>Advisory</td><td><span class="rec-chip recurring">Recurring</span></td><td><span class="stage-chip active-eng">Active</span></td><td>Drew</td></tr>
+            <tr><td class="hi">Northpoint Dental</td><td>Tax prep</td><td><span class="rec-chip">One-off</span></td><td><span class="stage-chip">Lead</span></td><td>Hayden</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <div class="section-label">Hours &amp; capital</div>
+        <div class="partner">
+          <div class="partner-name">Hayden Harms</div>
+          <div class="partner-row"><span>Hours logged</span><span>58.5</span></div>
+          <div class="partner-row"><span>Capital account</span><span>Active</span></div>
+        </div>
+        <div class="partner">
+          <div class="partner-name">Landon Lindsey</div>
+          <div class="partner-row"><span>Hours logged</span><span>37.0</span></div>
+          <div class="partner-row"><span>Capital account</span><span>Active</span></div>
+        </div>
+        <div class="partner">
+          <div class="partner-name">Drew Wigley</div>
+          <div class="partner-row"><span>Hours logged</span><span>64.2</span></div>
+          <div class="partner-row"><span>Capital account</span><span>Active</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Profit-split waterfall — this month</div>
+      <table class="data-table">
+        <thead><tr><th>Client</th><th>Type</th><th>Gross profit</th><th>Procurer 10%</th><th>Preparer 45%</th><th>Reviewer 15%</th><th>Capital accts 30%</th></tr></thead>
+        <tbody>
+          <tr><td class="hi">Cortland Realty Group</td><td>Tax prep</td><td class="amount">$2,400</td><td class="amount">$240</td><td class="amount">$1,080</td><td class="amount">$360</td><td class="amount">$720</td></tr>
+          <tr><td class="hi">Northpoint Dental</td><td>Tax prep</td><td class="amount">$640</td><td class="amount">$64</td><td class="amount">$288</td><td class="amount">$96</td><td class="amount">$192</td></tr>
+        </tbody>
+      </table>
+      <div class="waterfall-note">Bookkeeping engagements: 60% guaranteed payment to assigned bookkeeper, remainder to capital accounts.</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
