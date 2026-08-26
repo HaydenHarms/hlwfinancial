@@ -15,20 +15,21 @@
 <body>
 
   <div class="hero">
-    <button id="btn-settings" class="btn-settings" aria-haspopup="dialog" aria-label="Data connection settings">
-      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4">
-        <circle cx="10" cy="10" r="2.6"/>
-        <path d="M10 2.6v2.1M10 15.3v2.1M17.4 10h-2.1M4.7 10H2.6M15.1 4.9l-1.5 1.5M6.4 13.6l-1.5 1.5M15.1 15.1l-1.5-1.5M6.4 6.4L4.9 4.9"/>
-      </svg>
-      <span id="settings-dot" class="settings-dot" hidden></span>
-    </button>
     <div class="wordmark">HLW <em>Financial</em></div>
     <div class="eyebrow">Internal // Partner console</div>
     <h1>Partner console</h1>
     <div class="meta">
       <div>Period <b id="meta-period">—</b></div>
       <div>Entities <b id="meta-entities">—</b></div>
-      <div>Data <b id="meta-status">Not connected</b></div>
+      <div>Data <b id="meta-status">Not connected</b>
+        <button id="btn-settings" class="btn-settings" aria-haspopup="dialog" aria-label="Data connection settings">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4">
+            <circle cx="10" cy="10" r="2.6"/>
+            <path d="M10 2.6v2.1M10 15.3v2.1M17.4 10h-2.1M4.7 10H2.6M15.1 4.9l-1.5 1.5M6.4 13.6l-1.5 1.5M15.1 15.1l-1.5-1.5M6.4 6.4L4.9 4.9"/>
+          </svg>
+          <span id="settings-dot" class="settings-dot" hidden></span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -37,7 +38,6 @@
     <div id="empty-state" class="empty-state">
       <div class="empty-state-inner">
         <div class="section-label">No file connected</div>
-        <p>Connect the shared partner tracker workbook to load the firm snapshot, pipeline, hours, capital accounts, and profit-split waterfall. Each partner grants access once per browser — the file is read directly from your local OneDrive sync folder and never uploaded anywhere.</p>
       </div>
     </div>
 
