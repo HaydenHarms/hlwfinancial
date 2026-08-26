@@ -39,7 +39,22 @@ body {
 
 /* ---- Hero ---- */
 
-.hero { padding: 60px 44px 44px; border-bottom: 1px solid rgba(247,245,239,0.12); }
+.hero { position: relative; padding: 60px 44px 44px; border-bottom: 1px solid rgba(247,245,239,0.12); }
+
+.btn-settings {
+  position: absolute; top: 24px; right: 44px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid rgba(247,245,239,0.16); border-radius: 3px;
+  color: rgba(247,245,239,0.5); cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.btn-settings:hover, .btn-settings:focus-visible { color: var(--gold); border-color: var(--gold); outline: none; }
+.settings-dot {
+  position: absolute; top: -3px; right: -3px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #c96a5a; border: 1px solid var(--green-deep);
+}
 .hero .wordmark { font-family: var(--serif); font-weight: 600; font-size: 15px; color: var(--cream); margin-bottom: 20px; }
 .hero .wordmark em { font-style: italic; color: var(--gold); font-weight: 400; }
 .hero .eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
@@ -50,7 +65,7 @@ body {
 .hero .meta b.status-connected { color: var(--gold); }
 .hero .meta b.status-error { color: #c96a5a; }
 
-.connect-row { display: flex; align-items: center; gap: 18px; margin-top: 30px; flex-wrap: wrap; }
+.connect-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 .btn-connect, .btn-refresh {
   font-family: var(--mono);
@@ -68,7 +83,8 @@ body {
 .btn-refresh { border-color: rgba(247,245,239,0.3); color: rgba(247,245,239,0.7); }
 .btn-refresh:hover { background: rgba(247,245,239,0.85); color: var(--green-deep); }
 
-.connect-note { font-family: var(--mono); font-size: 10px; color: rgba(247,245,239,0.4); letter-spacing: 0.02em; max-width: 440px; line-height: 1.5; }
+.settings-modal { width: min(460px, 100%); padding: 40px 40px 36px; }
+.settings-copy { font-family: var(--mono); font-size: 10px; color: rgba(247,245,239,0.4); letter-spacing: 0.02em; line-height: 1.6; margin: 0 0 26px; }
 
 .error-banner {
   margin-top: 22px;
@@ -212,6 +228,8 @@ td.amount { text-align: right; font-variant-numeric: tabular-nums; color: var(--
   .snapshot { grid-template-columns: repeat(2, 1fr); }
   .row { grid-template-columns: 1fr; }
   .hero { padding: 40px 24px 32px; }
+  .btn-settings { top: 18px; right: 24px; }
+  .settings-modal { padding: 32px 24px 28px; }
   .main { padding: 28px 24px 48px; }
   .hero h1 { font-size: 30px; }
   .card-modal { padding: 36px 24px 32px; }
