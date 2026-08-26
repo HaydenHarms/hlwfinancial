@@ -104,9 +104,28 @@ body {
 
 .main { padding: 36px 44px 64px; }
 
-.empty-state { border: 1px dashed rgba(247,245,239,0.18); padding: 90px 44px; text-align: center; }
-.empty-state-inner { max-width: 480px; margin: 0 auto; }
-.empty-state .section-label { border-bottom: none; padding-bottom: 0; justify-content: center; display: flex; font-size: 20px; letter-spacing: 0.16em; margin: 0; }
+.empty-state { border: 1px solid rgba(247,245,239,0.14); padding: 0; text-align: center; overflow: hidden; }
+.empty-state-inner { max-width: 100%; margin: 0; padding: 34px 44px; }
+
+.caution-stripe {
+  height: 9px;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--gold) 0px, var(--gold) 10px,
+    transparent 10px, transparent 20px
+  );
+  opacity: 0.55;
+}
+
+.empty-state-warning {
+  display: inline-flex; align-items: center; gap: 14px;
+  margin: 30px auto;
+  padding: 16px 30px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.empty-state-warning .warning-icon { flex-shrink: 0; color: var(--gold); }
+.empty-state-warning .section-label { border-bottom: none; padding-bottom: 0; margin: 0; font-size: 20px; letter-spacing: 0.16em; color: var(--gold); }
 
 .table-empty { font-family: var(--mono); font-size: 10.5px; color: rgba(247,245,239,0.35); padding: 18px 10px; letter-spacing: 0.04em; }
 
