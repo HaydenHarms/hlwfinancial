@@ -13,6 +13,12 @@
 
   const settingsDot = document.getElementById('settings-dot');
 
+  const metaPeriod = document.getElementById('meta-period');
+  const periodOptions = document.querySelectorAll('.period-option');
+  const periodStartInput = document.getElementById('period-start');
+  const periodEndInput = document.getElementById('period-end');
+  const btnPeriodApply = document.getElementById('btn-period-apply');
+
   const modalOverlay = document.getElementById('card-modal-overlay');
   const modalClose = document.getElementById('card-modal-close');
   const modalTitle = document.getElementById('modal-title');
@@ -44,6 +50,63 @@
     errorBanner.hidden = true;
     errorBanner.textContent = '';
     updateSettingsDot();
+  }
+
+  // ---- Period selector ----
+  // Display-only: sets what the "Period" label shows. The workbook has no
+  // per-row dates on Pipeline/Waterfall entries, so this does not filter
+  // the dashboard data -- it only relabels the period. Reconnecting or
+  // refreshing the file resets the label back to the Snapshot sheet's
+  // own Period value (see hlwRenderMeta in render.js).
+
+  const HLW_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const hlwFmtShort = d => (HLW_MONTHS[d.getMonth()].slice(0, 3)) + ' ' + d.getDate() + ', ' + d.getFullYear();
+
+  function hlwComputePeriodLabel(key) {
+    const now = new Date();
+    const y = now.getFullYear(), m = now.getMonth();
+    switch (key) {
+      case 'this-month':
+        return HLW_MONTHS[m] + ' ' + y;
+      case 'last-month': {
+        const lm = new Date(y, m - 1, 1);
+        return HLW_MONTHS[lm.getMonth()] + ' ' + lm.getFullYear();
+      }
+      case 'ytd':
+        return hlwFmtShort(new Date(y, 0, 1)) + ' – ' + hlwFmtShort(now);
+      case 'ttm': {
+        const start = new Date(y, m, now.getDate());
+        start.setFullYear(start.getFullYear() - 1);
+        start.setDate(start.getDate() + 1);
+        return hlwFmtShort(start) + ' – ' + hlwFmtShort(now);
+      }
+      default:
+        return null;
+    }
+  }
+
+  function wirePeriodControl() {
+    periodOptions.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const label = hlwComputePeriodLabel(btn.dataset.period);
+        periodOptions.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        metaPeriod.textContent = label;
+      });
+    });
+
+    btnPeriodApply.addEventListener('click', () => {
+      const startVal = periodStartInput.value;
+      const endVal = periodEndInput.value;
+      if (!startVal || !endVal) return;
+      // Parse as local dates (not UTC) so the displayed range matches what was picked.
+      const [sy, sm, sd] = startVal.split('-').map(Number);
+      const [ey, em, ed] = endVal.split('-').map(Number);
+      const start = new Date(sy, sm - 1, sd);
+      const end = new Date(ey, em - 1, ed);
+      periodOptions.forEach(b => b.classList.remove('active'));
+      metaPeriod.textContent = hlwFmtShort(start) + ' – ' + hlwFmtShort(end);
+    });
   }
 
   // ---- Card -> modal ("window") ----
@@ -152,6 +215,7 @@
 
   async function init() {
     wireCards();
+    wirePeriodControl();
 
     if (!HlwFileConnect.supported) {
       showError('This browser does not support the File System Access API. Open this page in a recent Chrome or Edge on desktop.');

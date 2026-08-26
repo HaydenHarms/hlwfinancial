@@ -84,6 +84,75 @@ body {
   padding: 6px 12px;
   font-size: 9px;
 }
+
+.period-control { position: relative; display: inline-flex; align-items: center; }
+
+.btn-period {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: none; padding: 0; margin: 0;
+  color: rgba(247,245,239,0.55); cursor: pointer; line-height: 0;
+}
+.period-control:hover .btn-period svg,
+.period-control:focus-within .btn-period svg { color: var(--gold); }
+.btn-period:focus-visible { outline: none; }
+.btn-period svg { transition: color 0.15s ease; }
+
+.period-popout {
+  position: absolute; left: 0; top: 100%;
+  padding-top: 10px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 20;
+}
+.period-control:hover .period-popout,
+.period-control:focus-within .period-popout {
+  opacity: 1;
+  transform: translateY(0);
+}
+.period-popout-inner {
+  display: flex; flex-direction: column;
+  background: var(--green);
+  border: 1px solid rgba(247,245,239,0.2);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  padding: 8px;
+  width: 190px;
+}
+.period-option {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: none;
+  text-align: left;
+  background: none; border: none; color: rgba(247,245,239,0.75);
+  padding: 8px 10px; cursor: pointer; border-radius: 2px;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.period-option:hover, .period-option:focus-visible { background: rgba(247,245,239,0.07); color: var(--cream); outline: none; }
+.period-option.active { color: var(--gold); }
+
+.period-divider { height: 1px; background: rgba(247,245,239,0.14); margin: 6px 4px; }
+
+.period-custom-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(247,245,239,0.4); padding: 2px 10px 6px;
+}
+
+.period-custom { display: flex; align-items: center; gap: 6px; padding: 0 10px 8px; }
+.period-date-input {
+  flex: 1; min-width: 0;
+  font-family: var(--mono); font-size: 9.5px;
+  background: rgba(247,245,239,0.05); border: 1px solid rgba(247,245,239,0.18);
+  color: var(--cream); padding: 5px 6px; border-radius: 2px;
+  color-scheme: dark;
+}
+.period-custom-sep { color: rgba(247,245,239,0.35); font-family: var(--mono); font-size: 10px; }
+
+.btn-period-apply {
+  margin: 0 10px 10px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  background: transparent; border: 1px solid var(--gold); color: var(--gold);
+  padding: 7px 10px; cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.btn-period-apply:hover { background: var(--gold); color: var(--green-deep); }
 .hero .wordmark { font-family: var(--serif); font-weight: 600; font-size: 15px; color: var(--cream); margin-bottom: 20px; }
 .hero .wordmark em { font-style: italic; color: var(--gold); font-weight: 400; }
 .hero .eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }

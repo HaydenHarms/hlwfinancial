@@ -18,7 +18,32 @@
     <div class="wordmark">HLW <em>Financial</em></div>
     <h1>Practice Management</h1>
     <div class="meta">
-      <div>Period <b id="meta-period">—</b></div>
+      <div>Period <b id="meta-period">—</b>
+        <div class="period-control">
+          <button id="btn-period" class="btn-period" aria-label="Change period">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="16" rx="2"/>
+              <path d="M3 10h18M8 3v4M16 3v4"/>
+            </svg>
+          </button>
+          <div class="period-popout">
+            <div class="period-popout-inner">
+              <button type="button" class="period-option" data-period="this-month">This month</button>
+              <button type="button" class="period-option" data-period="last-month">Last month</button>
+              <button type="button" class="period-option" data-period="ytd">YTD</button>
+              <button type="button" class="period-option" data-period="ttm">TTM</button>
+              <div class="period-divider"></div>
+              <div class="period-custom-label">Custom range</div>
+              <div class="period-custom">
+                <input type="date" id="period-start" class="period-date-input" aria-label="Start date">
+                <span class="period-custom-sep">–</span>
+                <input type="date" id="period-end" class="period-date-input" aria-label="End date">
+              </div>
+              <button type="button" id="btn-period-apply" class="btn-period-apply">Apply range</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div>Data <b id="meta-status">Not connected</b>
         <div class="settings-control">
           <button id="btn-settings" class="btn-settings" aria-label="Data connection">

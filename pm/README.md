@@ -68,6 +68,15 @@ click needed to reveal them. The red dot on the gear still flags an
 error or a permission that needs re-granting even when not hovered.
 The error banner sits directly in the hero when something goes wrong.
 
+The Period selector (calendar icon next to "Period") works the same
+way — hover/focus reveals a dropdown of This month / Last month / YTD
+/ TTM, plus a custom date-range picker with an Apply button. It is
+display-only for now: it relabels the "Period" text but does not
+filter Pipeline/Waterfall rows, since the workbook schema has no
+per-row dates to filter by (only an aggregate Period value on the
+Snapshot sheet). Reconnecting or refreshing the file resets the label
+back to whatever the Snapshot sheet's Period value says.
+
 The Firm snapshot card is static — it doesn't open a modal (there's
 nothing more to show that isn't already on the card). The other three
 cards are still clickable (or focus + Enter); doing so
