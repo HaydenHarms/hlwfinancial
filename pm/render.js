@@ -23,15 +23,16 @@ function hlwRenderMeta(data) {
 }
 
 function hlwSnapshotCellsHtml(s) {
+  const netClass = s.netIncome > 0 ? ' positive' : (s.netIncome < 0 ? ' negative' : '');
   const cells = [
-    ['Revenue', hlwFmtMoney(s.revenue)],
-    ['Expenses', hlwFmtMoney(s.expenses)],
-    ['Net income', hlwFmtMoney(s.netIncome)],
-    ['Cash on hand', hlwFmtMoney(s.cash)],
-    ['Active clients', s.activeClients || 0]
+    ['Revenue', hlwFmtMoney(s.revenue), ''],
+    ['Expenses', hlwFmtMoney(s.expenses), ''],
+    ['Net income', hlwFmtMoney(s.netIncome), netClass],
+    ['Cash on hand', hlwFmtMoney(s.cash), ''],
+    ['Active clients', s.activeClients || 0, '']
   ];
-  return cells.map(([label, value]) =>
-    `<div><div class="metric-label">${hlwEsc(label)}</div><div class="metric-value">${hlwEsc(value)}</div></div>`
+  return cells.map(([label, value, cls]) =>
+    `<div><div class="metric-label">${hlwEsc(label)}</div><div class="metric-value${cls}">${hlwEsc(value)}</div></div>`
   ).join('');
 }
 
@@ -41,7 +42,12 @@ function hlwRenderSnapshot(data) {
 
 function hlwStageChipClass(stage) {
   const s = String(stage).trim().toLowerCase();
-  return s.includes('active') ? 'stage-chip active-eng' : 'stage-chip';
+  if (s.includes('active')) return 'stage-chip stage-active';
+  if (s.includes('onboard')) return 'stage-chip stage-onboarding';
+  if (s.includes('review')) return 'stage-chip stage-review';
+  if (s.includes('docs') || s.includes('document')) return 'stage-chip stage-docs';
+  if (s.includes('prospect')) return 'stage-chip stage-prospect';
+  return 'stage-chip stage-other';
 }
 
 function hlwPipelineRowsHtml(rows) {
@@ -99,7 +105,7 @@ function hlwWaterfallRowsHtml(rows) {
     if (row.type === 'Bookkeeping') {
       return `<tr>
         <td class="hi">${hlwEsc(row.client)}</td>
-        <td>Bookkeeping</td>
+        <td><span class="engagement-chip type-bookkeeping">Bookkeeping</span></td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.bookkeeper))}</td>
         <td class="amount">—</td>
@@ -109,7 +115,7 @@ function hlwWaterfallRowsHtml(rows) {
     }
     return `<tr>
       <td class="hi">${hlwEsc(row.client)}</td>
-      <td>Tax Prep</td>
+      <td><span class="engagement-chip type-tax">Tax Prep</span></td>
       <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
       <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.procurer))}</td>
       <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.preparer))}</td>

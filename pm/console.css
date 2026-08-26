@@ -19,6 +19,16 @@
   --hairline: #e5e2d5;
   --lbl: #8a7f66;
 
+  /* Status-driven signal colors — used only where color reflects the
+     data itself (stage, engagement type, connection state, net income
+     sign). Gold stays reserved for brand emphasis + dollar amounts. */
+  --signal-green:  #5fae82;   /* active / connected / positive */
+  --signal-blue:   #5b93d9;   /* onboarding / new */
+  --signal-amber:  #d9a441;   /* in review / needs attention */
+  --signal-red:    #e0806a;   /* docs requested / error / negative */
+  --signal-purple: #9b8ad9;   /* prospect / not yet engaged */
+  --signal-teal:   #4fb8ae;   /* bookkeeping engagement */
+
   --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --mono: 'JetBrains Mono', monospace;
   --serif: 'Cormorant Garamond', serif; /* wordmark only — not for body/headings */
@@ -62,7 +72,7 @@ body {
 .settings-dot {
   position: absolute; top: -2px; right: -2px;
   width: 6px; height: 6px; border-radius: 50%;
-  background: #e08066; border: 1px solid var(--green-deep);
+  background: var(--signal-red); border: 1px solid var(--green-deep);
 }
 
 .settings-popout {
@@ -165,8 +175,9 @@ body {
 .hero h1 { font-family: var(--sans); font-weight: 500; font-size: 40px; line-height: 1.05; margin: 0; color: var(--cream); }
 .hero .meta { display: flex; gap: 30px; margin-top: 26px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; color: rgba(247,245,239,0.65); text-transform: uppercase; }
 .hero .meta b { color: rgba(247,245,239,0.95); font-weight: 500; }
-.hero .meta b.status-connected { color: var(--gold); }
-.hero .meta b.status-error { color: #e08066; }
+.hero .meta b.status-connected { color: var(--signal-green); }
+.hero .meta b.status-warn { color: var(--signal-amber); }
+.hero .meta b.status-error { color: var(--signal-red); }
 
 .connect-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
@@ -311,6 +322,8 @@ body {
 .snapshot > div { background: var(--green); padding: 20px 18px; }
 .metric-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(247,245,239,0.6); }
 .metric-value { font-family: var(--sans); font-weight: 500; font-size: 26px; margin-top: 10px; color: var(--cream); }
+.metric-value.positive { color: var(--signal-green); }
+.metric-value.negative { color: var(--signal-red); }
 
 /* ---- Section labels / layout ---- */
 
@@ -331,8 +344,23 @@ td.amount { text-align: right; font-variant-numeric: tabular-nums; color: var(--
 .rec-chip.recurring { border-color: var(--gold); color: var(--gold); }
 
 .stage-chip { font-family: var(--mono); font-size: 9px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(247,245,239,0.65); }
-.stage-chip.active-eng { color: var(--cream); }
-.stage-chip.active-eng::before { content: "● "; color: var(--gold); }
+.stage-chip::before { content: "● "; }
+.stage-chip.stage-active { color: var(--cream); }
+.stage-chip.stage-active::before { color: var(--signal-green); }
+.stage-chip.stage-onboarding { color: var(--cream); }
+.stage-chip.stage-onboarding::before { color: var(--signal-blue); }
+.stage-chip.stage-review { color: var(--cream); }
+.stage-chip.stage-review::before { color: var(--signal-amber); }
+.stage-chip.stage-docs { color: var(--cream); }
+.stage-chip.stage-docs::before { color: var(--signal-red); }
+.stage-chip.stage-prospect { color: var(--cream); }
+.stage-chip.stage-prospect::before { color: var(--signal-purple); }
+.stage-chip.stage-other::before { color: rgba(247,245,239,0.4); }
+
+.engagement-chip { font-family: var(--mono); font-size: 9px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 2px; }
+.engagement-chip.type-bookkeeping { color: var(--signal-teal); border: 1px solid var(--signal-teal); }
+.engagement-chip.type-tax { color: var(--signal-purple); border: 1px solid var(--signal-purple); }
+.engagement-chip.type-other { color: rgba(247,245,239,0.55); border: 1px solid rgba(247,245,239,0.22); }
 
 /* ---- Hours & capital ---- */
 

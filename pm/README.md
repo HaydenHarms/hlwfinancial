@@ -23,6 +23,21 @@ maintain via the GitHub web UI).
 
 ## Workbook schema
 
+## Color system
+Gold stays the brand accent (used for $ amounts, recurring-engagement
+emphasis, and general UI chrome like the settings gear). All other
+color is status-driven — it reflects what the data actually says, not
+decoration:
+- Pipeline stage chips: green = Active, blue = Onboarding, amber = In
+  Review, red = Docs Requested (blocked/waiting), purple = Prospect
+- Waterfall engagement-type chips: teal = Bookkeeping, purple = Tax Prep
+- Snapshot Net income: green if positive, red if negative
+- Hero "Data" status: green = connected, amber = permission needed,
+  red = error/unsupported
+These map to CSS custom properties (`--signal-green/blue/amber/red/
+purple/teal`) at the top of `console.css` — add new stages/types there
+rather than hardcoding a new color inline.
+
 The connected `.xlsx` needs five sheets (names matched case-insensitively).
 Missing sheets just render as empty sections rather than erroring — fine to
 fill in incrementally.

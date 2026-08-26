@@ -234,7 +234,7 @@
       if (result.needsPermission) {
         currentHandle = result.handle;
         needsPermissionReconnect = true;
-        setStatus('Permission needed', '');
+        setStatus('Permission needed', 'status-warn');
         updateSettingsDot();
         return;
       }
