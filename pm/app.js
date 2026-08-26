@@ -25,7 +25,7 @@
   const modalSubtitle = document.getElementById('modal-subtitle');
   const modalBody = document.getElementById('modal-body');
   const modalChartWrap = document.getElementById('modal-chart-wrap');
-  const modalChartCanvas = document.getElementById('modal-chart');
+  const modalChartAnchor = document.getElementById('modal-chart'); // Plottable renders an <svg> into this div
 
   let currentHandle = null;
   let currentData = null;
@@ -120,22 +120,35 @@
     modalSubtitle.textContent = hlwModalSubtitle(cardKey, currentData);
     modalBody.innerHTML = hlwBuildModalBody(cardKey, currentData);
 
+    modalOverlay.hidden = false;
+
     if (modalChart) { modalChart.destroy(); modalChart = null; }
-    const chartConfig = hlwBuildModalChartConfig(cardKey, currentData);
-    if (chartConfig && typeof Chart !== 'undefined') {
+    modalChartAnchor.innerHTML = '';
+    let chart = null;
+    try {
+      chart = cardKey === 'waterfall' ? hlwBuildWaterfallChart(currentData) : null;
+    } catch (e) {
+      console.error('Chart build failed:', e);
+    }
+    if (chart) {
+      // Container must be visible (non-zero size) before renderTo, since
+      // Plottable measures the DOM synchronously rather than deferring
+      // like Chart.js does — rendering into a hidden ([hidden]) ancestor
+      // would produce a 0x0 chart.
       modalChartWrap.hidden = false;
-      modalChart = new Chart(modalChartCanvas, chartConfig);
+      modalChart = chart;
+      chart.renderTo(modalChartAnchor);
     } else {
       modalChartWrap.hidden = true;
     }
 
-    modalOverlay.hidden = false;
     document.addEventListener('keydown', onModalKeydown);
   }
 
   function closeModal() {
     modalOverlay.hidden = true;
     if (modalChart) { modalChart.destroy(); modalChart = null; }
+    modalChartAnchor.innerHTML = '';
     document.removeEventListener('keydown', onModalKeydown);
   }
 

@@ -296,7 +296,27 @@ body {
 .card-modal-head .modal-subtitle { font-family: var(--mono); font-size: 10px; color: rgba(247,245,239,0.55); margin-top: 6px; letter-spacing: 0.04em; }
 
 .card-modal-chart { height: 240px; margin-bottom: 36px; }
-.card-modal-chart canvas { width: 100% !important; height: 100% !important; }
+.card-modal-chart #modal-chart { width: 100%; height: 100%; }
+
+/* Plottable (github.com/palantir/plottable) renders plain SVG with no
+   built-in theming API — style its output directly by element/class. */
+.card-modal-chart svg text {
+  font-family: var(--mono);
+  font-size: 10px;
+  fill: rgba(247,245,239,0.7);
+}
+.card-modal-chart .bar-label text {
+  fill: rgba(247,245,239,0.9);
+  font-size: 9px;
+}
+.card-modal-chart .gridlines line,
+.card-modal-chart line.gridline {
+  stroke: rgba(247,245,239,0.1);
+}
+.card-modal-chart .axis .baseline,
+.card-modal-chart .axis line.tick-mark {
+  stroke: rgba(247,245,239,0.25);
+}
 
 .card-modal-body table.data-table td, .card-modal-body table.data-table th { padding: 13px 14px; }
 .card-modal-body table.data-table td { font-size: 14px; }

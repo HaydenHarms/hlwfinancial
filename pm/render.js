@@ -215,59 +215,43 @@ function hlwBuildModalBody(cardKey, data) {
   }
 }
 
-// Returns a Chart.js config for the given card, or null if that card has no
-// chart (only the waterfall card does, for now).
-function hlwBuildModalChartConfig(cardKey, data) {
-  if (cardKey !== 'waterfall' || !data.waterfall.length) return null;
+// Builds a Plottable (github.com/palantir/plottable) bar chart of this
+// month's total earnings by partner, plus what's retained in capital
+// accounts, for the waterfall card modal. Returns a Plottable.Components.Table
+// ready for .renderTo(...), or null if there's nothing to chart. Only the
+// waterfall card has a chart, for now.
+function hlwBuildWaterfallChart(data) {
+  if (typeof Plottable === 'undefined' || !data.waterfall.length) return null;
   const agg = hlwAggregateEarningsByPartner(data.waterfall);
   if (!agg.byPartner.length) return null;
 
-  const labels = agg.byPartner.map(p => p.partner).concat('Capital accts');
-  const values = agg.byPartner.map(p => p.amount).concat(agg.capitalTotal);
-  const gold = '#8a7a3f';
-  const cream = 'rgba(247,245,239,0.85)';
-  const gridColor = 'rgba(247,245,239,0.1)';
+  const rows = agg.byPartner.map(p => ({ label: p.partner, amount: p.amount, isCapital: false }));
+  rows.push({ label: 'Capital accts', amount: agg.capitalTotal, isCapital: true });
 
-  return {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Total this month',
-        data: values,
-        backgroundColor: labels.map(l => l === 'Capital accts' ? 'rgba(247,245,239,0.25)' : gold),
-        borderRadius: 2,
-        maxBarThickness: 56
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: { label: ctx => hlwFmtMoney(ctx.parsed.y) },
-          backgroundColor: '#0a0a0a',
-          borderColor: gridColor,
-          borderWidth: 1,
-          titleFont: { family: 'JetBrains Mono' },
-          bodyFont: { family: 'JetBrains Mono' }
-        }
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: { color: cream, font: { family: 'Helvetica Neue', size: 12 } }
-        },
-        y: {
-          grid: { color: gridColor },
-          ticks: {
-            color: cream,
-            font: { family: 'JetBrains Mono', size: 10 },
-            callback: v => hlwFmtMoney(v)
-          }
-        }
-      }
-    }
-  };
+  const gold = '#b6a25c';
+  const muted = 'rgba(247,245,239,0.3)';
+
+  const xScale = new Plottable.Scales.Category();
+  const yScale = new Plottable.Scales.Linear();
+
+  const xAxis = new Plottable.Axes.Category(xScale, 'bottom');
+  const yAxis = new Plottable.Axes.Numeric(yScale, 'left');
+  yAxis.formatter(v => hlwFmtMoney(v));
+
+  const gridlines = new Plottable.Components.Gridlines(null, yScale);
+
+  const barPlot = new Plottable.Plots.Bar('vertical');
+  barPlot.addDataset(new Plottable.Dataset(rows));
+  barPlot.x(d => d.label, xScale);
+  barPlot.y(d => d.amount, yScale);
+  barPlot.attr('fill', d => d.isCapital ? muted : gold);
+  barPlot.labelsEnabled(true);
+  barPlot.labelFormatter(v => hlwFmtMoney(v));
+
+  const plotArea = new Plottable.Components.Group([gridlines, barPlot]);
+
+  return new Plottable.Components.Table([
+    [yAxis, plotArea],
+    [null, xAxis]
+  ]);
 }

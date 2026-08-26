@@ -98,7 +98,10 @@ cards are still clickable (or focus + Enter); doing so
 opens an expanded "window" modal with the full data and, for the waterfall
 card, a bar chart of total dollars earned this month per partner
 (aggregated across their procurer/preparer/reviewer/bookkeeper roles,
-purely derived from the Waterfall sheet -- no extra data entry). Close via
+purely derived from the Waterfall sheet -- no extra data entry), built
+with Plottable (github.com/palantir/plottable, D3-based) rather than
+Chart.js -- values are shown as labels on each bar rather than a hover
+tooltip, since Plottable doesn't have built-in tooltips. Close via
 the X, clicking the backdrop, or Escape. Charts for the other two
 modal-enabled cards (pipeline by stage, hours by partner) are a
 later pass.
@@ -107,5 +110,5 @@ later pass.
 
 v1 functional build complete: connect/reconnect/refresh flow, all four
 sheet types parsed, waterfall math applied, card/modal UI, one chart
-(waterfall earnings by partner), empty/error states styled.
+(waterfall earnings by partner, via Plottable), empty/error states styled.
 Not yet tested against a real workbook or deployed to `/pm` -- do that next.
