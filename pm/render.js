@@ -185,39 +185,60 @@ function hlwPipelineBreakdownHtml(rows) {
   return `<div class="breakdown-list">${items}</div>`;
 }
 
-// Two <select> filters (stage, partner) for the pipeline modal's full
-// engagement table. Options are derived from whatever values actually
-// appear in the data -- no hardcoded stage/partner list to keep in sync.
-// Wired up in app.js (openModal); this just builds the markup.
-function hlwPipelineFiltersHtml(rows) {
+// Two custom dropdown filters (stage, partner) for the pipeline modal's
+// full engagement table. Deliberately NOT native <select> elements --
+// the open options list of a native <select> is rendered by the OS/browser
+// and largely unstylable (font, colors), which is exactly what made the
+// first version hard to read. This builds the same look/behavior as the
+// site's other custom dropdowns (e.g. the period selector).
+// Options are derived from whatever values actually appear in the data --
+// no hardcoded stage/partner list to keep in sync. `selected` lets the
+// caller restore a previously-chosen filter (see wirePipelineFilters in
+// app.js, which persists filter state across modal close/reopen).
+function hlwFilterDropdownHtml(id, label, allLabel, options, selected) {
+  const optionsHtml = options.map(opt =>
+    `<button type="button" class="filter-option${opt === selected ? ' active' : ''}" data-value="${hlwEsc(opt)}">${hlwEsc(opt)}</button>`
+  ).join('');
+  const currentLabel = selected || allLabel;
+  return `<div class="filter-dropdown" id="${id}" data-value="${hlwEsc(selected || '')}">
+    <button type="button" class="filter-dropdown-trigger" aria-haspopup="listbox" aria-label="${hlwEsc(label)}">
+      <span class="filter-dropdown-value">${hlwEsc(currentLabel)}</span>
+      <svg viewBox="0 0 20 20" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7.5 10 12.5 15 7.5"/></svg>
+    </button>
+    <div class="filter-dropdown-menu" role="listbox" hidden>
+      <button type="button" class="filter-option${selected ? '' : ' active'}" data-value="">${hlwEsc(allLabel)}</button>
+      ${optionsHtml}
+    </div>
+  </div>`;
+}
+
+function hlwPipelineFiltersHtml(rows, selectedStage, selectedPartner) {
   const stages = Array.from(new Set(rows.map(r => String(r.stage || '').trim()).filter(Boolean))).sort();
   const partners = Array.from(new Set(rows.map(r => String(r.partner || '').trim()).filter(Boolean))).sort();
-  const stageOptions = stages.map(s => `<option value="${hlwEsc(s)}">${hlwEsc(s)}</option>`).join('');
-  const partnerOptions = partners.map(p => `<option value="${hlwEsc(p)}">${hlwEsc(p)}</option>`).join('');
   return `<div class="pipeline-filters">
-    <select id="pipeline-filter-stage" class="pipeline-filter-select">
-      <option value="">All stages</option>${stageOptions}
-    </select>
-    <select id="pipeline-filter-partner" class="pipeline-filter-select">
-      <option value="">All partners</option>${partnerOptions}
-    </select>
+    ${hlwFilterDropdownHtml('pipeline-filter-stage', 'Filter by stage', 'All stages', stages, selectedStage)}
+    ${hlwFilterDropdownHtml('pipeline-filter-partner', 'Filter by partner', 'All partners', partners, selectedPartner)}
   </div>`;
 }
 
 // Builds the HTML for the expanded body of whichever card was clicked.
-function hlwBuildModalBody(cardKey, data) {
+// `pipelineFilters` (optional, {stage, partner}) restores a previously
+// chosen filter selection -- see wirePipelineFilters in app.js.
+function hlwBuildModalBody(cardKey, data, pipelineFilters) {
   switch (cardKey) {
-    case 'pipeline':
+    case 'pipeline': {
       if (!data.pipeline.length) return '<div class="table-empty">No pipeline data in the workbook.</div>';
+      const filters = pipelineFilters || {};
       return `
         ${hlwPipelineBreakdownHtml(data.pipeline)}
         <div class="modal-section-sub">All engagements</div>
-        ${hlwPipelineFiltersHtml(data.pipeline)}
+        ${hlwPipelineFiltersHtml(data.pipeline, filters.stage, filters.partner)}
         <table class="data-table" id="pipeline-modal-table">
           <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Partner</th></tr></thead>
           <tbody>${hlwPipelineRowsHtml(data.pipeline)}</tbody>
         </table>
         <div class="table-empty" id="pipeline-filter-empty" hidden>No engagements match those filters.</div>`;
+    }
 
     case 'partners':
       if (!data.partners.length) return '<div class="table-empty">No hours/capital data in the workbook.</div>';

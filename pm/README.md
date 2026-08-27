@@ -20,8 +20,7 @@ maintain via the GitHub web UI).
 - `render.js` — renders parsed data into the dashboard DOM
 - `app.js` — wires it all together (connect/refresh buttons, connection state, errors)
 - `style-preview.html` — approved visual direction (static mockup, not wired to data)
-- `HLW_PM_Template.xlsx` — sample workbook matching the expected schema; copy this to start the real shared tracker
-- `HLW_PM_Mock_Data.xlsx` — filled-in mock data for dev/testing away from the real tracker
+- `HLW_PM_Mock_Data.xlsx` — filled-in mock data for dev/testing away from the real tracker; also doubles as the schema reference (deliberately not keeping a separate blank template file in the repo)
 
 ## Workbook schema
 

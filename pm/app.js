@@ -35,6 +35,9 @@
   let modalChart = null;
   let onChartResize = null; // resize listener bound while the chart modal is open; removed on close
   let needsPermissionReconnect = false; // set when a stored handle needs its permission re-granted
+  // Persists across modal close/reopen (cleared only on reconnect/refresh,
+  // since a fresh workbook may not have the same stage/partner values).
+  const pipelineFilterState = { stage: '', partner: '' };
 
   function setStatus(text, cls) {
     metaStatus.textContent = text;
@@ -122,7 +125,7 @@
 
     modalTitle.textContent = meta.title;
     modalSubtitle.textContent = hlwModalSubtitle(cardKey, currentData);
-    modalBody.innerHTML = hlwBuildModalBody(cardKey, currentData);
+    modalBody.innerHTML = hlwBuildModalBody(cardKey, currentData, pipelineFilterState);
 
     modalOverlay.hidden = false;
 
@@ -175,19 +178,20 @@
     document.addEventListener('keydown', onModalKeydown);
   }
 
-  // Filters the pipeline modal's "All engagements" table by the two
-  // <select> dropdowns built in hlwPipelineFiltersHtml. Pure client-side
-  // show/hide on the already-rendered rows -- no re-fetch, no re-render.
+  // Wires the two custom filter dropdowns (hlwFilterDropdownHtml in
+  // render.js) for the pipeline modal's "All engagements" table. Pure
+  // client-side show/hide on the already-rendered rows -- no re-fetch, no
+  // re-render. Selections are written into pipelineFilterState as they're
+  // made, and hlwBuildModalBody reads that state back when the modal is
+  // rebuilt, so the choice survives closing and reopening the modal.
   function wirePipelineFilters() {
-    const stageSelect = document.getElementById('pipeline-filter-stage');
-    const partnerSelect = document.getElementById('pipeline-filter-partner');
     const table = document.getElementById('pipeline-modal-table');
     const emptyMsg = document.getElementById('pipeline-filter-empty');
-    if (!stageSelect || !partnerSelect || !table) return;
+    if (!table) return;
 
     function applyFilters() {
-      const stage = stageSelect.value;
-      const partner = partnerSelect.value;
+      const stage = pipelineFilterState.stage;
+      const partner = pipelineFilterState.partner;
       let visibleCount = 0;
       table.querySelectorAll('tbody tr').forEach(row => {
         const matches = (!stage || row.dataset.stage === stage) && (!partner || row.dataset.partner === partner);
@@ -198,8 +202,40 @@
       if (emptyMsg) emptyMsg.hidden = visibleCount !== 0;
     }
 
-    stageSelect.addEventListener('change', applyFilters);
-    partnerSelect.addEventListener('change', applyFilters);
+    function wireDropdown(id, stateKey) {
+      const dropdown = document.getElementById(id);
+      if (!dropdown) return;
+      const trigger = dropdown.querySelector('.filter-dropdown-trigger');
+      const valueEl = dropdown.querySelector('.filter-dropdown-value');
+      const menu = dropdown.querySelector('.filter-dropdown-menu');
+
+      trigger.addEventListener('click', e => {
+        e.stopPropagation();
+        menu.hidden = !menu.hidden;
+      });
+      menu.querySelectorAll('.filter-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          const value = opt.dataset.value;
+          pipelineFilterState[stateKey] = value;
+          valueEl.textContent = opt.textContent;
+          menu.querySelectorAll('.filter-option').forEach(o => o.classList.toggle('active', o === opt));
+          menu.hidden = true;
+          applyFilters();
+        });
+      });
+    }
+
+    wireDropdown('pipeline-filter-stage', 'stage');
+    wireDropdown('pipeline-filter-partner', 'partner');
+    applyFilters(); // re-apply whatever was already selected, since the table was just rebuilt from scratch
+  }
+
+  // Closes any open filter-dropdown menu on outside click or Escape. One
+  // delegated pair of listeners set up once in init(), rather than
+  // re-attaching document-level listeners every time a modal opens (which
+  // would leak a new pair on every open with no matching removal).
+  function closeAllFilterDropdowns() {
+    document.querySelectorAll('.filter-dropdown-menu:not([hidden])').forEach(menu => { menu.hidden = true; });
   }
 
   function closeModal() {
@@ -302,6 +338,8 @@
     wireCards();
     wirePeriodControl();
     btnExportPdf.addEventListener('click', handleExportClick);
+    document.addEventListener('click', closeAllFilterDropdowns);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllFilterDropdowns(); });
 
     if (!HlwFileConnect.supported) {
       showError('This browser does not support the File System Access API. Open this page in a recent Chrome or Edge on desktop.');

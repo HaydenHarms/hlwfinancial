@@ -1,6 +1,6 @@
 // Parses the connected .xlsx workbook (via SheetJS) into the plain JS shape
-// render.js expects. Expected workbook structure — see
-// reference/HLW_PM_Template.xlsx:
+// render.js expects. Expected workbook structure — see HLW_PM_Mock_Data.xlsx
+// for a filled-in example of this schema:
 //
 //   Sheet "Snapshot"   — two columns, Key / Value. Recognized keys (case-insensitive):
 //                        Period, Revenue, Expenses, Net Income, Cash On Hand,
