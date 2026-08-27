@@ -100,7 +100,6 @@ body {
 .report-cover-bottom {
   height: 6.38in;
   background: #152e26;
-  position: relative;
   padding: 1.3in 0.65in 0 0.65in;
   box-sizing: border-box;
 }
@@ -149,6 +148,7 @@ body {
   left: 0;
   right: 0;
   height: 40px;
+  z-index: 2;
   display: flex;
   align-items: flex-start;
   gap: 3px;
