@@ -1,141 +1,313 @@
 /* Print stylesheet — only loaded during print / "Save as PDF" (see the
    media="print" link in index.html), triggered by the Export PDF button
-   in app.js (window.print()).
+   in app.js.
 
-   Strategy: console.css already routes nearly all text/border color
-   through CSS custom properties (--cream, --cream-rgb, --gold, --green,
-   --green-deep, --signal-*). Redefining those here re-themes the whole
-   dashboard from dark-mode-for-screen to a light, paper-friendly
-   letterhead look without duplicating every selector. Anything NOT
-   covered by a variable (layout, hiding interactive chrome, page breaks)
-   is handled explicitly below.
+   As of this version, PDF export is a dedicated report document (built
+   fresh into #report-print-root by hlwBuildReportHtml in render.js), NOT
+   the dashboard cards reflowed onto paper. Everything in the normal
+   dashboard (.hero, .main, modals) is hidden for print; only
+   #report-print-root's cover + content sections are shown. See
+   build_report.py (the original reportlab prototype approved for this
+   design) for the reference this mirrors.
 */
 
 :root {
+  /* Same reasoning as before: override the Google Fonts (JetBrains Mono /
+     Cormorant Garamond) with reliable local system fonts for print --
+     Chrome's print-to-PDF pipeline (ChromeOS especially) can fail to embed
+     custom @font-face web fonts as real vector outlines and falls back to
+     rasterized bitmap glyphs instead, which reads as grainy text. */
+  --mono: 'Courier New', Courier, monospace;
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: Georgia, 'Times New Roman', serif; /* report body copy uses the serif, not the dashboard's sans */
+
+  /* console.css has no `media` restriction, so it's still active during
+     print -- and the report table reuses its .stage-chip classes (see
+     note below). Those rules use var(--cream) etc., tuned for light text
+     on a DARK dashboard background; redefine them here so the same
+     classes render as dark text on this report's white background
+     instead of coming out near-invisible. */
   --green-deep: #ffffff;
   --green: #ffffff;
   --cream: #1c1c1e;
   --cream-rgb: 28, 28, 30;
   --gold: #8a6d1f;
   --gold-glow: transparent;
-  --panel-bg: #ffffff;
-  /* Override the Google Fonts (JetBrains Mono / Cormorant Garamond) with
-     reliable local system fonts for print specifically. Chrome's
-     print-to-PDF pipeline (ChromeOS especially) can fail to embed custom
-     @font-face web fonts as real vector outlines and falls back to
-     rasterized bitmap glyphs instead -- at the small 9-11px sizes used
-     throughout this UI, that shows up as visibly grainy text. System
-     fonts are always available locally and always render as proper
-     vector text in print. */
-  --mono: 'Courier New', Courier, monospace;
-  --serif: Georgia, 'Times New Roman', serif;
 }
 
 @page {
   margin: 0.6in 0.5in;
 }
+@page :first {
+  margin: 0; /* the cover bleeds full-page; content pages get normal margins */
+}
 
 body {
   background: #ffffff;
   background-image: none;
-  line-height: 1.5;
 }
 
-/* ---- Print-only elements (hidden on screen via .print-only in console.css) ---- */
-
-.print-only {
-  display: block;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: rgba(var(--cream-rgb), 0.55);
-  letter-spacing: 0.04em;
-  margin-top: 10px;
-}
-
-.print-footer {
-  margin-top: 28px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(var(--cream-rgb), 0.2);
-  font-family: var(--mono);
-  font-size: 8.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(var(--cream-rgb), 0.4);
-  text-align: center;
-}
-
-.print-eyebrow {
-  display: block;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 10px;
-}
-
-/* ---- Hide anything interactive/screen-only ---- */
-
-.btn-export-pdf,
-.card-expand-hint,
-.error-banner,
-.empty-state,
-.card-modal-overlay {
+/* Hide the entire live dashboard -- only the freshly-built report shows. */
+.hero, .main, .card-modal-overlay {
   display: none !important;
 }
 
-/* Keep the Period/Data meta labels themselves (siblings of these wrappers,
-   not children) -- just drop the interactive icon+popout controls so
-   "Period August 2026" / "Data Local — connected..." read as plain text. */
-.period-control, .settings-control { display: none !important; }
-
-/* Cards should never look "clickable" on paper. */
-.card { cursor: default; }
-.card:hover, .card:focus-visible, .card-static:hover {
-  background: #ffffff;
-  border-color: rgba(var(--cream-rgb), 0.18);
-  box-shadow: none;
+#report-print-root {
+  display: block;
 }
 
-/* ---- Letterhead ---- */
+/* ==== Cover page ==== */
 
-.hero {
-  border-bottom: 2px solid var(--gold);
-  padding: 0 0 18px;
-  margin-bottom: 24px;
+.report-cover {
+  position: relative;
+  width: 100%;
+  height: 11in;
+  break-after: page;
+  page-break-after: always;
+  overflow: hidden;
+  font-family: Georgia, 'Times New Roman', serif;
 }
-.hero .wordmark { color: var(--cream); font-size: 16px; }
-.hero .wordmark em { color: var(--gold); }
-.hero h1 { color: var(--cream); font-size: 26px; }
-.hero .meta { color: rgba(var(--cream-rgb), 0.7); }
-.hero .meta b { color: var(--cream); }
 
-/* ---- Layout: stack everything single-column, avoid mid-card page breaks ---- */
+.report-cover-top {
+  height: 4.62in;
+  background: #2f6b56;
+  position: relative;
+}
+.report-cover-wordmark {
+  position: absolute;
+  top: 0.9in;
+  left: 0.65in;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: #eef3ef;
+}
 
-.main { padding: 0; }
-.row { display: block; }
-.row .card { margin-bottom: 14px; }
-.card, .snapshot, table.data-table, .partner {
+.report-cover-bottom {
+  height: 6.38in;
+  background: #152e26;
+  position: relative;
+  padding: 1.3in 0.65in 0 0.65in;
+  box-sizing: border-box;
+}
+.report-eyebrow {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #a9c9bb;
+  margin-bottom: 14px;
+}
+.report-cover-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: bold;
+  font-size: 34px;
+  color: #ffffff;
+  margin: 0 0 14px;
+}
+.report-cover-desc {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 13px;
+  color: #c3d6cc;
+  margin: 0 0 24px;
+  max-width: 5.5in;
+}
+.report-cover-rule {
+  border: none;
+  border-top: 1px solid #3e5f52;
+  margin: 0 0 12px;
+}
+.report-cover-footer {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: #8fac9f;
+}
+
+/* Skyline, straddling the seam between the two color blocks -- tops flush
+   against the boundary, bars extend down into the dark block, matching
+   the reportlab prototype's coordinate math exactly. */
+.report-skyline {
+  position: absolute;
+  top: 4.62in;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  overflow: hidden;
+}
+.report-skyline-bar {
+  width: 10px;
+  flex: 0 0 auto;
+  background: #9ec2b3;
+}
+
+/* ==== Content pages ==== */
+
+.report-content {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #1c1c1e;
+}
+
+.report-continuity {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #5a5a5c;
+}
+.report-hr {
+  border: none;
+  border-top: 0.6px solid #dedad0;
+  margin: 8px 0 16px;
+}
+
+.report-summary {
+  font-size: 11px;
+  line-height: 1.55;
+  margin: 0 0 14px;
+}
+
+.report-stats {
+  display: flex;
+  background: #f7f5ef;
+  border: 0.6px solid #dedad0;
+  margin-bottom: 6px;
+}
+.report-stat {
+  flex: 1;
+  padding: 12px 14px;
+  border-right: 0.6px solid #dedad0;
+}
+.report-stat:last-child { border-right: none; }
+.report-stat-label {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a8a8c;
+  margin-bottom: 4px;
+}
+.report-stat-value {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: bold;
+  font-size: 17px;
+  color: #1c1c1e;
+}
+.report-stat-value.report-positive { color: #4f7a5f; }
+.report-stat-value.report-negative { color: #a5503f; }
+
+.report-section {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #8a6d1f;
+  margin: 26px 0 8px;
+  break-after: avoid;
+}
+.report-meta-line {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 9px;
+  color: #5a5a5c;
+  margin-bottom: 10px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  margin-bottom: 6px;
+  break-inside: auto;
+}
+.report-table thead {
+  display: table-header-group; /* repeats the header row if a table splits across a page */
+}
+.report-table th {
+  text-align: left;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8a8a8c;
+  border-bottom: 1px solid #1c1c1e;
+  padding: 6px 8px;
+}
+.report-table th.th-r { text-align: right; }
+.report-table td {
+  padding: 7px 8px;
+  border-bottom: 0.6px solid #dedad0;
+  vertical-align: top;
+}
+.report-table td.hi { font-weight: bold; }
+.report-table td.amount { text-align: right; font-variant-numeric: tabular-nums; }
+.report-table tr { break-inside: avoid; }
+
+.report-cell-sub {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 7px;
+  color: #8a8a8c;
+  margin-top: 2px;
+}
+
+.report-recurring { color: #8a6d1f; }
+.report-dim { color: #8a8a8c; }
+.report-type-bookkeeping { color: #3f8078; font-family: 'Courier New', Courier, monospace; font-size: 8px; font-weight: bold; }
+.report-type-tax { color: #7d6a9e; font-family: 'Courier New', Courier, monospace; font-size: 8px; font-weight: bold; }
+
+/* Stage dots reuse the dashboard's own stage-chip classes (see
+   console.css's --signal-* variables), so colors here match the live
+   console's coding exactly -- no separate palette to keep in sync. */
+.stage-chip::before { content: "● "; }
+.stage-chip.stage-active::before { color: #5fae82; }
+.stage-chip.stage-onboarding::before { color: #5b93d9; }
+.stage-chip.stage-review::before { color: #d9a441; }
+.stage-chip.stage-docs::before { color: #e0806a; }
+.stage-chip.stage-prospect::before { color: #9b8ad9; }
+.stage-chip.stage-other::before { color: #8a8a8c; }
+
+.report-note {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 8px;
+  color: #8a8a8c;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+.report-bar-chart { margin-top: 10px; }
+.report-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
   break-inside: avoid;
 }
-.dashboard { gap: 0; }
-
-.card {
-  background: #ffffff;
-  border: 1px solid rgba(var(--cream-rgb), 0.2);
-  box-shadow: none;
+.report-bar-label {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: bold;
+  font-size: 9.5px;
+  width: 1.4in;
+  flex: 0 0 auto;
 }
-
-.snapshot {
-  background: rgba(var(--cream-rgb), 0.2);
-  border: 1px solid rgba(var(--cream-rgb), 0.2);
+.report-bar-track {
+  flex: 1;
+  height: 15px;
+  background: transparent;
 }
-.snapshot > div { background: #ffffff; }
-
-/* Chips print fine via their existing --signal-*/--gold variable-based
-   rules; the borders/opacity-based fills just need a touch more contrast
-   on white than they needed on a dark background. */
-.stage-chip::before, .engagement-chip, .rec-chip {
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
+.report-bar-fill {
+  height: 100%;
+  background: #8a6d1f;
+}
+.report-bar-fill.report-bar-capital { background: #9a9a9a; }
+.report-bar-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 9px;
+  width: 0.9in;
+  flex: 0 0 auto;
+  text-align: right;
 }

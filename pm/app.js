@@ -14,7 +14,6 @@
   const settingsDot = document.getElementById('settings-dot');
 
   const btnExportPdf = document.getElementById('btn-export-pdf');
-  const printMeta = document.getElementById('print-meta');
 
   const metaPeriod = document.getElementById('meta-period');
   const periodOptions = document.querySelectorAll('.period-option');
@@ -322,15 +321,19 @@
   }
 
   // ---- PDF export ----
-  // Just triggers the browser's native print dialog with print.css active
-  // (see index.html's <link media="print">) -- no PDF library, no new CDN
-  // dependency. Chrome/Edge's own "Save as PDF" print destination produces
-  // the actual file. Stamps the generation time into the print-only meta
-  // line right beforehand so it reflects "now", not whenever the page
-  // happened to load.
+  // Builds a dedicated report document (hlwBuildReportHtml in render.js --
+  // cover page + content pages, entirely separate from the dashboard DOM)
+  // fresh from currentData, drops it into #report-print-root, then triggers
+  // the browser's native print dialog with print.css active (see index.html's
+  // <link media="print">) -- no PDF library, no new CDN dependency. Chrome/
+  // Edge's own "Save as PDF" print destination produces the actual file.
+  const reportPrintRoot = document.getElementById('report-print-root');
+
   function handleExportClick() {
-    const stamp = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' });
-    printMeta.textContent = 'Report generated ' + stamp;
+    if (!currentData) return;
+    const html = hlwBuildReportHtml(currentData);
+    if (!html) return;
+    reportPrintRoot.innerHTML = html;
     window.print();
   }
 

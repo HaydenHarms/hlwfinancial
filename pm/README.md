@@ -128,28 +128,56 @@ by partner) are a later pass.
 ## PDF export
 
 The "Export PDF" button (appears in the hero once a workbook is connected)
-calls `window.print()` -- no PDF library, no new CDN dependency. `print.css`
-is scoped via a `media="print"` link so it only applies during print/"Save
-as PDF", and re-themes the dashboard from dark-mode-for-screen to a light,
-paper-friendly letterhead look. It works by redefining the same CSS custom
-properties (`--cream`, `--cream-rgb`, `--gold`, `--green`/`--green-deep`)
-that console.css's colors already route through, rather than duplicating
-every selector -- see the comment at the top of print.css. Hides all
-interactive chrome (gear, period picker icon, expand hints, error banner);
-keeps the Period/Data meta values as plain text. Stamps a "Report generated
-[date/time]" line (app.js's handleExportClick) right before printing so it
-reflects the moment of export, not page load.
+builds a dedicated report document -- a cover page plus content pages --
+entirely separate from the dashboard DOM, not the dashboard cards reflowed
+onto paper. `hlwBuildReportHtml` in render.js builds the report fresh from
+`currentData` every time the button is clicked, drops it into the (normally
+empty, screen-hidden) `#report-print-root` div, then calls `window.print()`.
+No PDF library, no new CDN dependency -- Chrome/Edge's own "Save as PDF"
+print destination produces the actual file.
 
-Scope: exports the main dashboard (Snapshot, Pipeline, Hours & capital,
-Waterfall cards) as currently shown. Does NOT capture an open modal or the
-waterfall chart, since the chart only exists inside the modal, not the main
-page -- exporting from the dashboard view was the ask, and pulling in
-Plottable's SVG output for print specifically wasn't in scope for this pass.
+`print.css` (scoped via `media="print"`) hides the entire live dashboard
+(`.hero`, `.main`, any open modal) and shows only `#report-print-root`.
+Design reference: a standalone reportlab prototype was built and approved
+first (`build_report.py`, not part of the deployed site -- kept as a design
+reference) before translating it into this print-CSS version, specifically
+to avoid iterating blind against the browser print pipeline the way the
+first version of this feature had to.
+
+- **Cover page**: full-bleed, deep forest green (matching the main
+  marketing site's brand, not this report's own gold/black interior --
+  a deliberate cover/interior contrast), with a bar-chart-styled "skyline"
+  silhouette on the seam between the two color blocks. `@page :first`
+  removes margins just for this page so it bleeds edge-to-edge; `@page`
+  (all other pages) keeps normal print margins.
+- **Content pages**: a one-line continuity header (not a repeated title --
+  the cover already carries that), a data-derived summary paragraph, stat
+  cards, then Pipeline / Hours & Capital / Profit-Split Waterfall as
+  sectioned tables. The partner-totals bar chart is plain HTML/CSS bars
+  (`.report-bar-*` classes) rather than Plottable, so PDF export has zero
+  dependency on the charting library.
+- **Fonts**: same reasoning as before -- print.css overrides the Google
+  Fonts (JetBrains Mono / Cormorant Garamond) with system fonts (Georgia,
+  Courier New) so print never depends on webfont embedding, which is what
+  caused grainy text in an earlier version.
+- **Stage chips**: the report table reuses the dashboard's own
+  `.stage-chip` classes (so pipeline stage colors match the live console
+  exactly) -- console.css has no `media` restriction so it's still active
+  during print; print.css redefines `--cream`/`--gold`/etc. so those
+  shared rules render as dark-on-white instead of their screen (light-on-
+  dark) colors.
+
+Scope: exports the full current dataset (Pipeline, Hours & Capital,
+Waterfall, Snapshot) as a proper report, not a snapshot of whatever's
+scrolled into view. Not yet: real period filtering (the Period selector is
+still display-only, see above) or an option to export a single card/modal
+in isolation.
 
 ## Status
 
 v1 functional build complete: connect/reconnect/refresh flow, all four
 sheet types parsed, waterfall math applied, card/modal UI, one chart
 (waterfall earnings by partner, via Plottable + manual value labels),
-empty/error states styled.
+empty/error states styled, PDF export (dedicated report document with
+cover page).
 Not yet tested against a real workbook or deployed to `/pm` -- do that next.

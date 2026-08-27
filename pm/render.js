@@ -348,3 +348,176 @@ function hlwDrawBarValueLabels(container, rows) {
     rect.parentNode.appendChild(text);
   });
 }
+
+// ---- PDF export report ----
+// Builds a dedicated, standalone report document (cover page + content
+// pages) as its own HTML fragment -- entirely separate from the on-screen
+// dashboard DOM, not just the dashboard cards reflowed onto paper. Printed
+// via print.css's .report-* rules (only active for print/"Save as PDF"),
+// triggered by the Export PDF button in app.js. Same bar-heights sequence
+// as the original reportlab prototype, so the cover's skyline matches.
+
+const HLW_SKYLINE_HEIGHTS = [10, 18, 28, 14, 40, 22, 16, 34, 12, 26];
+
+function hlwReportSkylineHtml() {
+  let bars = '';
+  for (let i = 0; i < 90; i++) {
+    bars += `<div class="report-skyline-bar" style="height:${HLW_SKYLINE_HEIGHTS[i % HLW_SKYLINE_HEIGHTS.length]}px"></div>`;
+  }
+  return bars;
+}
+
+function hlwReportStatBlock(label, value, cls) {
+  return `<div class="report-stat"><div class="report-stat-label">${hlwEsc(label)}</div><div class="report-stat-value${cls ? ' ' + cls : ''}">${hlwEsc(value)}</div></div>`;
+}
+
+function hlwReportPipelineRowsHtml(rows) {
+  return rows.map(row => {
+    const isRecurring = String(row.type).trim().toLowerCase().includes('recur');
+    return `<tr>
+      <td class="hi">${hlwEsc(row.client)}</td>
+      <td>${hlwEsc(row.engagement)}</td>
+      <td class="${isRecurring ? 'report-recurring' : 'report-dim'}">${hlwEsc(row.type)}</td>
+      <td><span class="${hlwStageChipClass(row.stage)}">${hlwEsc(row.stage)}</span></td>
+      <td>${hlwEsc(row.partner)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function hlwReportHoursCapitalRowsHtml(partners) {
+  return partners.map(p => `<tr>
+    <td class="hi">${hlwEsc(p.partner)}</td>
+    <td>${hlwEsc(hlwFmtHours(p.hours))}</td>
+    <td></td>
+    <td class="amount">${p.capitalBalance !== null ? hlwEsc(hlwFmtMoney(p.capitalBalance)) : '—'}</td>
+  </tr>`).join('');
+}
+
+function hlwReportWaterfallCell(amount, name) {
+  if (!amount && !name) return '<td class="amount">—</td>';
+  const nameHtml = name ? `<div class="report-cell-sub">${hlwEsc(name)}</div>` : '';
+  return `<td class="amount">${hlwEsc(hlwFmtMoney(amount))}${nameHtml}</td>`;
+}
+
+function hlwReportWaterfallRowsHtml(rows) {
+  return rows.map(row => {
+    const typeClass = row.type === 'Bookkeeping' ? 'report-type-bookkeeping' : 'report-type-tax';
+    if (row.type === 'Bookkeeping') {
+      return `<tr>
+        <td class="hi">${hlwEsc(row.client)}</td>
+        <td class="${typeClass}">${hlwEsc(row.type)}</td>
+        <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
+        ${hlwReportWaterfallCell(row.amounts.bookkeeper, row.bookkeeper)}
+        <td class="amount">—</td>
+        <td class="amount">—</td>
+        <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
+      </tr>`;
+    }
+    return `<tr>
+      <td class="hi">${hlwEsc(row.client)}</td>
+      <td class="${typeClass}">${hlwEsc(row.type)}</td>
+      <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
+      ${hlwReportWaterfallCell(row.amounts.procurer, row.procurer)}
+      ${hlwReportWaterfallCell(row.amounts.preparer, row.preparer)}
+      ${hlwReportWaterfallCell(row.amounts.reviewer, row.reviewer)}
+      <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
+    </tr>`;
+  }).join('');
+}
+
+function hlwReportTotalsChartHtml(data) {
+  const agg = hlwAggregateEarningsByPartner(data.waterfall);
+  const rows = agg.byPartner.map(p => ({ label: p.partner, amount: p.amount, isCapital: false }));
+  rows.push({ label: 'Capital accounts', amount: agg.capitalTotal, isCapital: true });
+  rows.sort((a, b) => b.amount - a.amount);
+  const max = Math.max(1, ...rows.map(r => r.amount));
+  return rows.map(r => `
+    <div class="report-bar-row">
+      <div class="report-bar-label">${hlwEsc(r.label)}</div>
+      <div class="report-bar-track">
+        <div class="report-bar-fill${r.isCapital ? ' report-bar-capital' : ''}" style="width:${Math.max(2, (r.amount / max) * 100)}%"></div>
+      </div>
+      <div class="report-bar-value">${hlwEsc(hlwFmtMoney(r.amount))}</div>
+    </div>`).join('');
+}
+
+function hlwPipelineStageSummary(rows) {
+  const counts = {};
+  rows.forEach(r => {
+    const stage = String(r.stage || '').trim() || 'Unspecified';
+    counts[stage] = (counts[stage] || 0) + 1;
+  });
+  return Object.entries(counts).map(([stage, n]) => `${n} ${stage}`).join('   ·   ');
+}
+
+// Builds the full report HTML fragment. Returns null if there's no
+// connected data to report on (export button is hidden in that case
+// anyway, but this stays safe to call regardless).
+function hlwBuildReportHtml(data) {
+  if (!data || !data.snapshot) return null;
+  const s = data.snapshot;
+  const period = s.period || 'This period';
+  const generated = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const netClass = s.netIncome > 0 ? 'report-positive' : (s.netIncome < 0 ? 'report-negative' : '');
+
+  return `
+    <section class="report-cover">
+      <div class="report-cover-top">
+        <div class="report-cover-wordmark">H L W&nbsp;&nbsp;&nbsp;FINANCIAL</div>
+      </div>
+      <div class="report-skyline">${hlwReportSkylineHtml()}</div>
+      <div class="report-cover-bottom">
+        <div class="report-eyebrow">A PRACTICE MANAGEMENT REPORT</div>
+        <h1 class="report-cover-title">Firm Overview</h1>
+        <p class="report-cover-desc">Practice-wide snapshot of pipeline, hours, capital, and profit split.</p>
+        <hr class="report-cover-rule">
+        <div class="report-cover-footer">
+          <span>PERIOD&nbsp;&nbsp;${hlwEsc(String(period).toUpperCase())}</span>
+          <span>PREPARED ${hlwEsc(generated.toUpperCase())} · CONFIDENTIAL</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-content">
+      <div class="report-continuity">FIRM OVERVIEW&nbsp;&nbsp;&nbsp;&nbsp;${hlwEsc(String(period).toUpperCase())}</div>
+      <hr class="report-hr">
+      <p class="report-summary">HLW Financial closed ${hlwEsc(period)} with ${hlwEsc(hlwFmtMoney(s.revenue))} in revenue
+        against ${hlwEsc(hlwFmtMoney(s.expenses))} in expenses, for net income of ${hlwEsc(hlwFmtMoney(s.netIncome))}.
+        The firm is carrying ${hlwEsc(hlwFmtMoney(s.cash))} in cash on hand across ${hlwEsc(s.activeClients || 0)} active
+        clients, with ${hlwEsc(data.pipeline.length)} engagements moving through the pipeline this period.</p>
+
+      <div class="report-stats">
+        ${hlwReportStatBlock('Revenue', hlwFmtMoney(s.revenue))}
+        ${hlwReportStatBlock('Expenses', hlwFmtMoney(s.expenses))}
+        ${hlwReportStatBlock('Net income', hlwFmtMoney(s.netIncome), netClass)}
+        ${hlwReportStatBlock('Cash on hand', hlwFmtMoney(s.cash))}
+        ${hlwReportStatBlock('Active clients', String(s.activeClients || 0))}
+      </div>
+
+      ${data.pipeline.length ? `
+      <h2 class="report-section">Client Pipeline</h2>
+      <div class="report-meta-line">${hlwEsc(data.pipeline.length)} engagements&nbsp;&nbsp;&nbsp;&nbsp;${hlwEsc(hlwPipelineStageSummary(data.pipeline))}</div>
+      <table class="report-table">
+        <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Partner</th></tr></thead>
+        <tbody>${hlwReportPipelineRowsHtml(data.pipeline)}</tbody>
+      </table>` : ''}
+
+      ${data.partners.length ? `
+      <h2 class="report-section">Hours &amp; Capital</h2>
+      <table class="report-table">
+        <thead><tr><th>Partner</th><th>Hours logged (this period)</th><th></th><th class="th-r">Capital balance</th></tr></thead>
+        <tbody>${hlwReportHoursCapitalRowsHtml(data.partners)}</tbody>
+      </table>` : ''}
+
+      ${data.waterfall.length ? `
+      <h2 class="report-section">Profit-Split Waterfall</h2>
+      <table class="report-table">
+        <thead><tr><th>Client</th><th>Type</th><th class="th-r">Gross profit</th><th class="th-r">Procurer 10%</th><th class="th-r">Preparer 45%</th><th class="th-r">Reviewer 15%</th><th class="th-r">Capital 30%</th></tr></thead>
+        <tbody>${hlwReportWaterfallRowsHtml(data.waterfall)}</tbody>
+      </table>
+      <p class="report-note">Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts.
+        Bookkeeping: 60% guaranteed payment to assigned bookkeeper, remaining 40% to capital accounts.</p>
+      <div class="report-meta-line" style="margin-top:18px;">TOTAL THIS PERIOD, BY PARTNER</div>
+      <div class="report-bar-chart">${hlwReportTotalsChartHtml(data)}</div>` : ''}
+    </section>`;
+}

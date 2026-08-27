@@ -17,13 +17,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plottable@3/plottable.css">
 
 <link rel="stylesheet" href="console.css?v=16">
-<link rel="stylesheet" href="print.css?v=2" media="print">
+<link rel="stylesheet" href="print.css?v=3" media="print">
 </head>
 <body>
 
   <div class="hero">
     <div class="wordmark">HLW <em>Financial</em></div>
-    <span class="print-eyebrow print-only">Practice Management Report</span>
     <h1>Practice Management</h1>
     <div class="meta">
       <div>Period <b id="meta-period">—</b>
@@ -71,9 +70,13 @@
     <div class="hero-actions">
       <button id="btn-export-pdf" class="btn-export-pdf" hidden>Export PDF</button>
     </div>
-    <div id="print-meta" class="print-only"></div>
     <div id="error-banner" class="error-banner" hidden></div>
   </div>
+
+  <!-- Populated fresh at export time (hlwBuildReportHtml in render.js) and
+       shown only for print -- see print.css. A dedicated report document,
+       not the dashboard cards reflowed onto paper. -->
+  <div id="report-print-root"></div>
 
   <div class="main">
 
@@ -137,8 +140,6 @@
         <div class="waterfall-note">Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts. Bookkeeping: 60% guaranteed payment to assigned bookkeeper, remaining 40% to capital accounts.</div>
       </div>
 
-      <div class="print-footer print-only">HLW Financial — Practice Management Report — Confidential</div>
-
     </div>
 
   </div>
@@ -161,9 +162,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/plottable@3/plottable.min.js"></script>
-  <script src="file-connect.js?v=16"></script>
-  <script src="parse-excel.js?v=16"></script>
-  <script src="render.js?v=16"></script>
-  <script src="app.js?v=16"></script>
+  <script src="file-connect.js?v=17"></script>
+  <script src="parse-excel.js?v=17"></script>
+  <script src="render.js?v=17"></script>
+  <script src="app.js?v=17"></script>
 </body>
 </html>
