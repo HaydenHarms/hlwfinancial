@@ -111,6 +111,7 @@ body {
   position: absolute; left: 0; top: 100%;
   padding-top: 10px;
   opacity: 0;
+  pointer-events: none;
   transform: translateY(-6px);
   transition: opacity 0.18s ease, transform 0.18s ease;
   z-index: 20;
@@ -118,6 +119,7 @@ body {
 .period-control:hover .period-popout,
 .period-control:focus-within .period-popout {
   opacity: 1;
+  pointer-events: auto;
   transform: translateY(0);
 }
 .period-popout-inner {
