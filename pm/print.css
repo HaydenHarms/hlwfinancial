@@ -42,6 +42,19 @@
   margin: 0; /* the cover bleeds full-page; content pages get normal margins */
 }
 
+/* Chrome's print dialog has "Background graphics" OFF by default, which
+   strips every background-color/background-image at print time regardless
+   of what the CSS says -- this is what was actually causing the missing
+   cover background, missing skyline, and missing bar-chart fills (the
+   report's text colors printed fine, since that setting only affects
+   backgrounds). This forces backgrounds to print regardless of that
+   checkbox -- the standard, documented fix for exactly this behavior. */
+#report-print-root, #report-print-root * {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
 body {
   background: #ffffff;
   background-image: none;
