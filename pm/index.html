@@ -10,7 +10,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="console.css?v=8">
+<!-- Required by Plottable (github.com/palantir/plottable) -- without this,
+     its internal components lose their position:absolute layout rules and
+     the chart renders with broken sizing/position instead of confined to
+     its container. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plottable@3/plottable.css">
+
+<link rel="stylesheet" href="console.css?v=10">
 </head>
 <body>
 
@@ -147,9 +153,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/plottable@3/plottable.min.js"></script>
-  <script src="file-connect.js?v=8"></script>
-  <script src="parse-excel.js?v=8"></script>
-  <script src="render.js?v=8"></script>
-  <script src="app.js?v=8"></script>
+  <script src="file-connect.js?v=10"></script>
+  <script src="parse-excel.js?v=10"></script>
+  <script src="render.js?v=10"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

@@ -233,6 +233,13 @@ function hlwBuildWaterfallChart(data) {
 
   const xScale = new Plottable.Scales.Category();
   const yScale = new Plottable.Scales.Linear();
+  // Pad the y-domain above the tallest bar. Without this, the tallest bar
+  // touches the top of the plot with zero headroom, and Plottable silently
+  // refuses to draw ANY bar labels (not just that one) when a label doesn't
+  // fit -- confirmed by rendering this exact chart standalone and inspecting
+  // the generated SVG; the bar-label-text-area group existed but was empty.
+  const maxAmount = Math.max(0, ...rows.map(r => r.amount));
+  yScale.domain([0, maxAmount > 0 ? maxAmount * 1.2 : 1]);
 
   const xAxis = new Plottable.Axes.Category(xScale, 'bottom');
   const yAxis = new Plottable.Axes.Numeric(yScale, 'left');
@@ -245,13 +252,46 @@ function hlwBuildWaterfallChart(data) {
   barPlot.x(d => d.label, xScale);
   barPlot.y(d => d.amount, yScale);
   barPlot.attr('fill', d => d.isCapital ? muted : gold);
-  barPlot.labelsEnabled(true);
-  barPlot.labelFormatter(v => hlwFmtMoney(v));
+  // Not using Plottable's built-in labelsEnabled()/labelFormatter() -- its
+  // Typesettable-based label writer proved unreliable to verify (it silently
+  // no-ops if SVG text measurement fails, per its own source, swallowing the
+  // error). Drawing bar-value labels manually instead, right after renderTo,
+  // using the bars' own rendered <rect> coordinates -- see
+  // hlwDrawBarValueLabels below, called from app.js.
+  barPlot.animated(false);
 
   const plotArea = new Plottable.Components.Group([gridlines, barPlot]);
 
-  return new Plottable.Components.Table([
+  const table = new Plottable.Components.Table([
     [yAxis, plotArea],
     [null, xAxis]
   ]);
+
+  return { table, rows };
+}
+
+// Draws each bar's dollar value as plain SVG <text> above it, using the
+// bars' own already-rendered <rect> coordinates -- call this right after
+// table.renderTo(container). `rows` must be in the same order as the
+// dataset passed to the Bar plot (hlwBuildWaterfallChart guarantees this).
+// Safe to call repeatedly (e.g. on resize): clears any labels it previously
+// drew before adding new ones.
+function hlwDrawBarValueLabels(container, rows) {
+  container.querySelectorAll('.hlw-bar-value-label').forEach(el => el.remove());
+  const rects = container.querySelectorAll('.bar-area rect');
+  if (!rects.length || !rows) return;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  rects.forEach((rect, i) => {
+    const row = rows[i];
+    if (!row) return;
+    const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+    const barTop = parseFloat(rect.getAttribute('y'));
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('class', 'hlw-bar-value-label');
+    text.setAttribute('x', x);
+    text.setAttribute('y', Math.max(barTop - 6, 10));
+    text.setAttribute('text-anchor', 'middle');
+    text.textContent = hlwFmtMoney(row.amount);
+    rect.parentNode.appendChild(text);
+  });
 }
