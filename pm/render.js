@@ -53,12 +53,14 @@ function hlwStageChipClass(stage) {
 function hlwPipelineRowsHtml(rows) {
   return rows.map(row => {
     const isRecurring = String(row.type).trim().toLowerCase().includes('recur');
-    return `<tr>
+    const stage = String(row.stage || '').trim();
+    const partner = String(row.partner || '').trim();
+    return `<tr data-stage="${hlwEsc(stage)}" data-partner="${hlwEsc(partner)}">
       <td class="hi">${hlwEsc(row.client)}</td>
       <td>${hlwEsc(row.engagement)}</td>
       <td><span class="rec-chip${isRecurring ? ' recurring' : ''}">${hlwEsc(row.type || (isRecurring ? 'Recurring' : 'One-off'))}</span></td>
       <td><span class="${hlwStageChipClass(row.stage)}">${hlwEsc(row.stage)}</span></td>
-      <td>${hlwEsc(row.procurer)}</td>
+      <td>${hlwEsc(row.partner)}</td>
     </tr>`;
   }).join('');
 }
@@ -183,6 +185,25 @@ function hlwPipelineBreakdownHtml(rows) {
   return `<div class="breakdown-list">${items}</div>`;
 }
 
+// Two <select> filters (stage, partner) for the pipeline modal's full
+// engagement table. Options are derived from whatever values actually
+// appear in the data -- no hardcoded stage/partner list to keep in sync.
+// Wired up in app.js (openModal); this just builds the markup.
+function hlwPipelineFiltersHtml(rows) {
+  const stages = Array.from(new Set(rows.map(r => String(r.stage || '').trim()).filter(Boolean))).sort();
+  const partners = Array.from(new Set(rows.map(r => String(r.partner || '').trim()).filter(Boolean))).sort();
+  const stageOptions = stages.map(s => `<option value="${hlwEsc(s)}">${hlwEsc(s)}</option>`).join('');
+  const partnerOptions = partners.map(p => `<option value="${hlwEsc(p)}">${hlwEsc(p)}</option>`).join('');
+  return `<div class="pipeline-filters">
+    <select id="pipeline-filter-stage" class="pipeline-filter-select">
+      <option value="">All stages</option>${stageOptions}
+    </select>
+    <select id="pipeline-filter-partner" class="pipeline-filter-select">
+      <option value="">All partners</option>${partnerOptions}
+    </select>
+  </div>`;
+}
+
 // Builds the HTML for the expanded body of whichever card was clicked.
 function hlwBuildModalBody(cardKey, data) {
   switch (cardKey) {
@@ -191,10 +212,12 @@ function hlwBuildModalBody(cardKey, data) {
       return `
         ${hlwPipelineBreakdownHtml(data.pipeline)}
         <div class="modal-section-sub">All engagements</div>
-        <table class="data-table">
-          <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Procurer</th></tr></thead>
+        ${hlwPipelineFiltersHtml(data.pipeline)}
+        <table class="data-table" id="pipeline-modal-table">
+          <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Partner</th></tr></thead>
           <tbody>${hlwPipelineRowsHtml(data.pipeline)}</tbody>
-        </table>`;
+        </table>
+        <div class="table-empty" id="pipeline-filter-empty" hidden>No engagements match those filters.</div>`;
 
     case 'partners':
       if (!data.partners.length) return '<div class="table-empty">No hours/capital data in the workbook.</div>';

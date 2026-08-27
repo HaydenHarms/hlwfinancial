@@ -13,6 +13,8 @@ Flat — everything lives directly in `/pm`, no subfolders (easier to
 maintain via the GitHub web UI).
 - `index.html` — page shell, served as `/pm`
 - `console.css` — approved design tokens + full component styles
+- `print.css` — PDF export theme (loaded only for print/"Save as PDF" via a
+  `media="print"` link), re-themes the dashboard light-on-white for paper
 - `file-connect.js` — file picker, IndexedDB handle persistence, permission handling
 - `parse-excel.js` — SheetJS parsing + waterfall math, workbook schema documented inline
 - `render.js` — renders parsed data into the dashboard DOM
@@ -45,7 +47,11 @@ fill in incrementally.
 - **Snapshot** — two columns, `Key` / `Value`. Keys: `Period`, `Revenue`,
   `Expenses`, `Net Income`, `Cash On Hand`, `Active Clients`, `Entities`.
 - **Pipeline** — `Client`, `Engagement`, `Type` (`Recurring`/`One-off`),
-  `Stage`, `Procurer`.
+  `Stage`, `Partner` (who's assigned to the engagement -- renamed from
+  `Procurer` since it's a different concept from Waterfall's role of the
+  same name; see below). The modal's full engagement table has "All
+  stages"/"All partners" filter dropdowns, options generated from whatever
+  values actually appear in the data.
 - **Hours** — `Partner`, `Hours Logged`. Informational only — not tied to
   any threshold.
 - **Capital** — `Partner`, `Capital Account Status`, `Capital Balance`
@@ -58,9 +64,9 @@ fill in incrementally.
   - Bookkeeping: 60% guaranteed payment to the assigned bookkeeper, remaining 40% to capital accounts
   Each role's name is shown as a small label under its dollar amount in the
   profit-split table (card + modal) -- blank if that cell was left empty in
-  the sheet. Deliberately not shown in Pipeline: Pipeline's own `Procurer`
-  column is a different concept (who owns the client relationship), not
-  who's earning a cut of a specific engagement's profit.
+  the sheet. This `Procurer` is deliberately separate from Pipeline's
+  `Partner` column above -- one is who's earning a cut of this specific
+  engagement's profit, the other is who's assigned to the engagement.
 
 ## Style direction
 
@@ -119,6 +125,27 @@ entirely and is confirmed working. It re-runs on window resize while
 the modal is open. Close via the X, clicking the backdrop, or Escape.
 Charts for the other two modal-enabled cards (pipeline by stage, hours
 by partner) are a later pass.
+
+## PDF export
+
+The "Export PDF" button (appears in the hero once a workbook is connected)
+calls `window.print()` -- no PDF library, no new CDN dependency. `print.css`
+is scoped via a `media="print"` link so it only applies during print/"Save
+as PDF", and re-themes the dashboard from dark-mode-for-screen to a light,
+paper-friendly letterhead look. It works by redefining the same CSS custom
+properties (`--cream`, `--cream-rgb`, `--gold`, `--green`/`--green-deep`)
+that console.css's colors already route through, rather than duplicating
+every selector -- see the comment at the top of print.css. Hides all
+interactive chrome (gear, period picker icon, expand hints, error banner);
+keeps the Period/Data meta values as plain text. Stamps a "Report generated
+[date/time]" line (app.js's handleExportClick) right before printing so it
+reflects the moment of export, not page load.
+
+Scope: exports the main dashboard (Snapshot, Pipeline, Hours & capital,
+Waterfall cards) as currently shown. Does NOT capture an open modal or the
+waterfall chart, since the chart only exists inside the modal, not the main
+page -- exporting from the dashboard view was the ask, and pulling in
+Plottable's SVG output for print specifically wasn't in scope for this pass.
 
 ## Status
 

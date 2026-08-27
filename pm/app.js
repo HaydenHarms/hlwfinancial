@@ -13,6 +13,9 @@
 
   const settingsDot = document.getElementById('settings-dot');
 
+  const btnExportPdf = document.getElementById('btn-export-pdf');
+  const printMeta = document.getElementById('print-meta');
+
   const metaPeriod = document.getElementById('meta-period');
   const periodOptions = document.querySelectorAll('.period-option');
   const periodStartInput = document.getElementById('period-start');
@@ -167,7 +170,36 @@
       modalChartWrap.hidden = true;
     }
 
+    if (cardKey === 'pipeline') wirePipelineFilters();
+
     document.addEventListener('keydown', onModalKeydown);
+  }
+
+  // Filters the pipeline modal's "All engagements" table by the two
+  // <select> dropdowns built in hlwPipelineFiltersHtml. Pure client-side
+  // show/hide on the already-rendered rows -- no re-fetch, no re-render.
+  function wirePipelineFilters() {
+    const stageSelect = document.getElementById('pipeline-filter-stage');
+    const partnerSelect = document.getElementById('pipeline-filter-partner');
+    const table = document.getElementById('pipeline-modal-table');
+    const emptyMsg = document.getElementById('pipeline-filter-empty');
+    if (!stageSelect || !partnerSelect || !table) return;
+
+    function applyFilters() {
+      const stage = stageSelect.value;
+      const partner = partnerSelect.value;
+      let visibleCount = 0;
+      table.querySelectorAll('tbody tr').forEach(row => {
+        const matches = (!stage || row.dataset.stage === stage) && (!partner || row.dataset.partner === partner);
+        row.hidden = !matches;
+        if (matches) visibleCount++;
+      });
+      table.hidden = visibleCount === 0;
+      if (emptyMsg) emptyMsg.hidden = visibleCount !== 0;
+    }
+
+    stageSelect.addEventListener('change', applyFilters);
+    partnerSelect.addEventListener('change', applyFilters);
   }
 
   function closeModal() {
@@ -214,6 +246,7 @@
     setStatus('Local — connected (' + stamp + ')', 'status-connected');
     btnConnect.textContent = 'Reconnect';
     btnRefresh.hidden = false;
+    btnExportPdf.hidden = false;
   }
 
   async function handleConnectClick() {
@@ -252,9 +285,23 @@
     }
   }
 
+  // ---- PDF export ----
+  // Just triggers the browser's native print dialog with print.css active
+  // (see index.html's <link media="print">) -- no PDF library, no new CDN
+  // dependency. Chrome/Edge's own "Save as PDF" print destination produces
+  // the actual file. Stamps the generation time into the print-only meta
+  // line right beforehand so it reflects "now", not whenever the page
+  // happened to load.
+  function handleExportClick() {
+    const stamp = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' });
+    printMeta.textContent = 'Report generated ' + stamp;
+    window.print();
+  }
+
   async function init() {
     wireCards();
     wirePeriodControl();
+    btnExportPdf.addEventListener('click', handleExportClick);
 
     if (!HlwFileConnect.supported) {
       showError('This browser does not support the File System Access API. Open this page in a recent Chrome or Edge on desktop.');

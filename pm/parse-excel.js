@@ -5,8 +5,11 @@
 //   Sheet "Snapshot"   — two columns, Key / Value. Recognized keys (case-insensitive):
 //                        Period, Revenue, Expenses, Net Income, Cash On Hand,
 //                        Active Clients, Entities
-//   Sheet "Pipeline"   — columns: Client, Engagement, Type, Stage, Procurer
-//                        Type is "Recurring" or "One-off".
+//   Sheet "Pipeline"   — columns: Client, Engagement, Type, Stage, Partner
+//                        Type is "Recurring" or "One-off". Partner is who's
+//                        assigned to that engagement (not necessarily who
+//                        procured it -- see Waterfall's own Procurer column
+//                        for that, a different, profit-split-specific role).
 //   Sheet "Hours"      — columns: Partner, Hours Logged
 //   Sheet "Capital"    — columns: Partner, Capital Account Status, Capital Balance (optional)
 //   Sheet "Waterfall"  — columns: Client, Engagement Type, Gross Profit,
@@ -80,7 +83,7 @@ function hlwParsePipeline(workbook) {
     engagement: hlwGetField(row, 'Engagement'),
     type: hlwGetField(row, 'Type'),
     stage: hlwGetField(row, 'Stage'),
-    procurer: hlwGetField(row, 'Procurer')
+    partner: hlwGetField(row, 'Partner')
   })).filter(r => r.client);
 }
 

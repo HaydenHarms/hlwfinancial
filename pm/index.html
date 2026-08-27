@@ -16,7 +16,8 @@
      its container. -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plottable@3/plottable.css">
 
-<link rel="stylesheet" href="console.css?v=14">
+<link rel="stylesheet" href="console.css?v=16">
+<link rel="stylesheet" href="print.css?v=1" media="print">
 </head>
 <body>
 
@@ -66,6 +67,10 @@
         </div>
       </div>
     </div>
+    <div class="hero-actions">
+      <button id="btn-export-pdf" class="btn-export-pdf" hidden>Export PDF</button>
+    </div>
+    <div id="print-meta" class="print-only"></div>
     <div id="error-banner" class="error-banner" hidden></div>
   </div>
 
@@ -102,7 +107,7 @@
             <span class="card-expand-hint">Expand ⤢</span>
           </div>
           <table class="data-table" id="pipeline-table">
-            <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Procurer</th></tr></thead>
+            <thead><tr><th>Client</th><th>Engagement</th><th>Type</th><th>Stage</th><th>Partner</th></tr></thead>
             <tbody id="pipeline-body"></tbody>
           </table>
           <div id="pipeline-empty" class="table-empty" hidden>No pipeline data in the workbook.</div>
@@ -153,9 +158,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/plottable@3/plottable.min.js"></script>
-  <script src="file-connect.js?v=14"></script>
-  <script src="parse-excel.js?v=14"></script>
-  <script src="render.js?v=14"></script>
-  <script src="app.js?v=14"></script>
+  <script src="file-connect.js?v=16"></script>
+  <script src="parse-excel.js?v=16"></script>
+  <script src="render.js?v=16"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>

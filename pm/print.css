@@ -1,0 +1,108 @@
+/* Print stylesheet — only loaded during print / "Save as PDF" (see the
+   media="print" link in index.html), triggered by the Export PDF button
+   in app.js (window.print()).
+
+   Strategy: console.css already routes nearly all text/border color
+   through CSS custom properties (--cream, --cream-rgb, --gold, --green,
+   --green-deep, --signal-*). Redefining those here re-themes the whole
+   dashboard from dark-mode-for-screen to a light, paper-friendly
+   letterhead look without duplicating every selector. Anything NOT
+   covered by a variable (layout, hiding interactive chrome, page breaks)
+   is handled explicitly below.
+*/
+
+:root {
+  --green-deep: #ffffff;
+  --green: #ffffff;
+  --cream: #1c1c1e;
+  --cream-rgb: 28, 28, 30;
+  --gold: #8a6d1f;
+  --gold-glow: transparent;
+  --panel-bg: #ffffff;
+}
+
+@page {
+  margin: 0.6in 0.5in;
+}
+
+body {
+  background: #ffffff;
+  background-image: none;
+}
+
+/* ---- Print-only elements (hidden on screen via .print-only in console.css) ---- */
+
+.print-only {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(var(--cream-rgb), 0.55);
+  letter-spacing: 0.04em;
+  margin-top: 10px;
+}
+
+/* ---- Hide anything interactive/screen-only ---- */
+
+.btn-export-pdf,
+.card-expand-hint,
+.error-banner,
+.empty-state,
+.card-modal-overlay {
+  display: none !important;
+}
+
+/* Keep the Period/Data meta labels themselves (siblings of these wrappers,
+   not children) -- just drop the interactive icon+popout controls so
+   "Period August 2026" / "Data Local — connected..." read as plain text. */
+.period-control, .settings-control { display: none !important; }
+
+/* Cards should never look "clickable" on paper. */
+.card { cursor: default; }
+.card:hover, .card:focus-visible, .card-static:hover {
+  background: #ffffff;
+  border-color: rgba(var(--cream-rgb), 0.18);
+  box-shadow: none;
+}
+
+/* ---- Letterhead ---- */
+
+.hero {
+  border-bottom: 2px solid var(--gold);
+  padding: 0 0 18px;
+  margin-bottom: 24px;
+}
+.hero .wordmark { color: var(--cream); font-size: 16px; }
+.hero .wordmark em { color: var(--gold); }
+.hero h1 { color: var(--cream); font-size: 26px; }
+.hero .meta { color: rgba(var(--cream-rgb), 0.7); }
+.hero .meta b { color: var(--cream); }
+
+/* ---- Layout: stack everything single-column, avoid mid-card page breaks ---- */
+
+.main { padding: 0; }
+.row { display: block; }
+.row .card { margin-bottom: 14px; }
+.card, .snapshot, table.data-table, .partner {
+  break-inside: avoid;
+}
+.dashboard { gap: 0; }
+
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(var(--cream-rgb), 0.2);
+  box-shadow: none;
+}
+
+.snapshot {
+  background: rgba(var(--cream-rgb), 0.2);
+  border: 1px solid rgba(var(--cream-rgb), 0.2);
+}
+.snapshot > div { background: #ffffff; }
+
+/* Chips print fine via their existing --signal-*/--gold variable-based
+   rules; the borders/opacity-based fills just need a touch more contrast
+   on white than they needed on a dark background. */
+.stage-chip::before, .engagement-chip, .rec-chip {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
