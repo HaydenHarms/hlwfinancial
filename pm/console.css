@@ -297,6 +297,12 @@ body {
 
 .card-modal-chart { height: 240px; margin-bottom: 36px; }
 .card-modal-chart #modal-chart { width: 100%; height: 100%; }
+.chart-error {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.02em;
+  color: var(--signal-red); text-align: center; padding: 0 20px;
+}
 
 /* Plottable (github.com/palantir/plottable) renders plain SVG with no
    built-in theming API — style its output directly by element/class. */
@@ -305,9 +311,11 @@ body {
   font-size: 10px;
   fill: rgba(247,245,239,0.7);
 }
-.card-modal-chart .bar-label text {
+.card-modal-chart .hlw-bar-value-label {
   fill: rgba(247,245,239,0.9);
   font-size: 9px;
+  font-family: var(--mono);
+  pointer-events: none;
 }
 .card-modal-chart .gridlines line,
 .card-modal-chart line.gridline {

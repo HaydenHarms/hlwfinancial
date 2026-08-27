@@ -30,6 +30,7 @@
   let currentHandle = null;
   let currentData = null;
   let modalChart = null;
+  let onChartResize = null; // resize listener bound while the chart modal is open; removed on close
   let needsPermissionReconnect = false; // set when a stored handle needs its permission re-granted
 
   function setStatus(text, cls) {
@@ -123,21 +124,45 @@
     modalOverlay.hidden = false;
 
     if (modalChart) { modalChart.destroy(); modalChart = null; }
+    if (onChartResize) { window.removeEventListener('resize', onChartResize); onChartResize = null; }
     modalChartAnchor.innerHTML = '';
-    let chart = null;
-    try {
-      chart = cardKey === 'waterfall' ? hlwBuildWaterfallChart(currentData) : null;
-    } catch (e) {
-      console.error('Chart build failed:', e);
-    }
-    if (chart) {
-      // Container must be visible (non-zero size) before renderTo, since
-      // Plottable measures the DOM synchronously rather than deferring
-      // like Chart.js does — rendering into a hidden ([hidden]) ancestor
-      // would produce a 0x0 chart.
-      modalChartWrap.hidden = false;
-      modalChart = chart;
-      chart.renderTo(modalChartAnchor);
+
+    if (cardKey === 'waterfall') {
+      // Deferred to the next frame: reading/measuring the container's size
+      // in the same tick that removes `hidden` can be unreliable depending
+      // on the browser, and this chart depends on real layout being settled
+      // before Plottable measures it.
+      requestAnimationFrame(() => {
+        let built = null;
+        try {
+          built = hlwBuildWaterfallChart(currentData);
+        } catch (e) {
+          console.error('Chart build failed:', e);
+        }
+        if (!built) {
+          modalChartWrap.hidden = true;
+          return;
+        }
+        modalChartWrap.hidden = false;
+        try {
+          built.table.renderTo(modalChartAnchor);
+          hlwDrawBarValueLabels(modalChartAnchor, built.rows);
+          onChartResize = () => hlwDrawBarValueLabels(modalChartAnchor, built.rows);
+          window.addEventListener('resize', onChartResize);
+          modalChart = built.table;
+          // Sanity check: if nothing actually painted (a bar plot with no
+          // visible <rect>s), don't leave a silent blank box -- show a
+          // message instead so a failure is diagnosable from the page
+          // itself rather than looking like nothing happened.
+          if (!modalChartAnchor.querySelector('.bar-area rect')) {
+            throw new Error('Chart rendered but no bars were drawn');
+          }
+        } catch (e) {
+          console.error('Chart render failed:', e);
+          if (modalChart) { modalChart.destroy(); modalChart = null; }
+          modalChartAnchor.innerHTML = '<div class="chart-error">Chart couldn\'t render — check the browser console, or try refreshing the page.</div>';
+        }
+      });
     } else {
       modalChartWrap.hidden = true;
     }
@@ -147,6 +172,7 @@
 
   function closeModal() {
     modalOverlay.hidden = true;
+    if (onChartResize) { window.removeEventListener('resize', onChartResize); onChartResize = null; }
     if (modalChart) { modalChart.destroy(); modalChart = null; }
     modalChartAnchor.innerHTML = '';
     document.removeEventListener('keydown', onModalKeydown);
