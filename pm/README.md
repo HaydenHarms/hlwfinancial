@@ -56,6 +56,11 @@ fill in incrementally.
   the sheet:
   - Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts
   - Bookkeeping: 60% guaranteed payment to the assigned bookkeeper, remaining 40% to capital accounts
+  Each role's name is shown as a small label under its dollar amount in the
+  profit-split table (card + modal) -- blank if that cell was left empty in
+  the sheet. Deliberately not shown in Pipeline: Pipeline's own `Procurer`
+  column is a different concept (who owns the client relationship), not
+  who's earning a cut of a specific engagement's profit.
 
 ## Style direction
 
@@ -100,15 +105,25 @@ card, a bar chart of total dollars earned this month per partner
 (aggregated across their procurer/preparer/reviewer/bookkeeper roles,
 purely derived from the Waterfall sheet -- no extra data entry), built
 with Plottable (github.com/palantir/plottable, D3-based) rather than
-Chart.js -- values are shown as labels on each bar rather than a hover
-tooltip, since Plottable doesn't have built-in tooltips. Close via
-the X, clicking the backdrop, or Escape. Charts for the other two
-modal-enabled cards (pipeline by stage, hours by partner) are a
-later pass.
+Chart.js. The bar-growth animation is disabled (chart renders fresh
+every time the modal opens, so there's nothing to animate from) and
+the y-scale is padded 20% above the tallest bar so nothing touches the
+plot's top edge. Dollar-value labels above each bar are drawn manually
+as plain SVG text positioned from the bars' own rendered coordinates,
+NOT via Plottable's built-in labelsEnabled()/labelFormatter() --
+verified via a real jsdom+d3+Plottable execution harness (not just
+docs) that its bundled Typesettable label writer silently no-ops when
+SVG text measurement fails, with no error surfaced; the manual
+approach in hlwDrawBarValueLabels (render.js) sidesteps that path
+entirely and is confirmed working. It re-runs on window resize while
+the modal is open. Close via the X, clicking the backdrop, or Escape.
+Charts for the other two modal-enabled cards (pipeline by stage, hours
+by partner) are a later pass.
 
 ## Status
 
 v1 functional build complete: connect/reconnect/refresh flow, all four
 sheet types parsed, waterfall math applied, card/modal UI, one chart
-(waterfall earnings by partner, via Plottable), empty/error states styled.
+(waterfall earnings by partner, via Plottable + manual value labels),
+empty/error states styled.
 Not yet tested against a real workbook or deployed to `/pm` -- do that next.

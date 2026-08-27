@@ -100,6 +100,15 @@ function hlwRenderPartners(data) {
   list.innerHTML = hlwPartnersListHtml(data.partners);
 }
 
+// Pairs a dollar amount with the partner assigned to that role, as a
+// small sub-label under the figure — e.g. "$540" with "Drew Wigley"
+// beneath it. Falls back to just the amount if no name was entered in
+// that row's Procurer/Preparer/Reviewer/Bookkeeper column.
+function hlwAmountWithName(amount, name) {
+  const nameHtml = name ? `<div class="cell-sub">${hlwEsc(name)}</div>` : '';
+  return `<td class="amount">${hlwEsc(hlwFmtMoney(amount))}${nameHtml}</td>`;
+}
+
 function hlwWaterfallRowsHtml(rows) {
   return rows.map(row => {
     if (row.type === 'Bookkeeping') {
@@ -107,7 +116,7 @@ function hlwWaterfallRowsHtml(rows) {
         <td class="hi">${hlwEsc(row.client)}</td>
         <td><span class="engagement-chip type-bookkeeping">Bookkeeping</span></td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
-        <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.bookkeeper))}</td>
+        ${hlwAmountWithName(row.amounts.bookkeeper, row.bookkeeper)}
         <td class="amount">—</td>
         <td class="amount">—</td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
@@ -117,9 +126,9 @@ function hlwWaterfallRowsHtml(rows) {
       <td class="hi">${hlwEsc(row.client)}</td>
       <td><span class="engagement-chip type-tax">Tax Prep</span></td>
       <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
-      <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.procurer))}</td>
-      <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.preparer))}</td>
-      <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.reviewer))}</td>
+      ${hlwAmountWithName(row.amounts.procurer, row.procurer)}
+      ${hlwAmountWithName(row.amounts.preparer, row.preparer)}
+      ${hlwAmountWithName(row.amounts.reviewer, row.reviewer)}
       <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
     </tr>`;
   }).join('');
@@ -200,13 +209,13 @@ function hlwBuildModalBody(cardKey, data) {
       return `
         <div class="modal-section-sub">By engagement</div>
         <table class="data-table">
-          <thead><tr><th>Client</th><th>Type</th><th>Gross profit</th><th>Procurer 10%</th><th>Preparer 45%</th><th>Reviewer 15%</th><th>Capital accts 30%</th></tr></thead>
+          <thead><tr><th>Client</th><th>Type</th><th class="num-col">Gross profit</th><th class="num-col">Procurer 10%</th><th class="num-col">Preparer 45%</th><th class="num-col">Reviewer 15%</th><th class="num-col">Capital accts 30%</th></tr></thead>
           <tbody>${hlwWaterfallRowsHtml(data.waterfall)}</tbody>
         </table>
         <div class="waterfall-note">Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts. Bookkeeping: 60% guaranteed payment to assigned bookkeeper, remaining 40% to capital accounts.</div>
         <div class="modal-section-sub">Total this month, by partner</div>
         <table class="data-table modal-totals">
-          <thead><tr><th>Partner</th><th>Total</th></tr></thead>
+          <thead><tr><th>Partner</th><th class="num-col">Total</th></tr></thead>
           <tbody>${totalsRows}</tbody>
         </table>`;
     }

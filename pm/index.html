@@ -16,7 +16,7 @@
      its container. -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plottable@3/plottable.css">
 
-<link rel="stylesheet" href="console.css?v=11">
+<link rel="stylesheet" href="console.css?v=13">
 </head>
 <body>
 
@@ -124,7 +124,7 @@
           <span class="card-expand-hint">Expand ⤢</span>
         </div>
         <table class="data-table" id="waterfall-table">
-          <thead><tr><th>Client</th><th>Type</th><th>Gross profit</th><th id="wf-col-a">Procurer 10%</th><th id="wf-col-b">Preparer 45%</th><th id="wf-col-c">Reviewer 15%</th><th id="wf-col-d">Capital accts 30%</th></tr></thead>
+          <thead><tr><th>Client</th><th>Type</th><th class="num-col" id="wf-col-a">Gross profit</th><th class="num-col" id="wf-col-b">Procurer 10%</th><th class="num-col" id="wf-col-c">Preparer 45%</th><th class="num-col" id="wf-col-d">Reviewer 15%</th><th class="num-col" id="wf-col-e">Capital accts 30%</th></tr></thead>
           <tbody id="waterfall-body"></tbody>
         </table>
         <div id="waterfall-empty" class="table-empty" hidden>No waterfall data in the workbook.</div>
@@ -153,9 +153,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/plottable@3/plottable.min.js"></script>
-  <script src="file-connect.js?v=11"></script>
-  <script src="parse-excel.js?v=11"></script>
-  <script src="render.js?v=11"></script>
-  <script src="app.js?v=11"></script>
+  <script src="file-connect.js?v=13"></script>
+  <script src="parse-excel.js?v=13"></script>
+  <script src="render.js?v=13"></script>
+  <script src="app.js?v=13"></script>
 </body>
 </html>
