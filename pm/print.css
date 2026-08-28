@@ -104,13 +104,18 @@ body {
    fixed/deterministic art, not regenerated per export). Confined to a
    band via fixed position/height, feathered top and bottom via a mask
    gradient so it dissolves into the surrounding background rather than
-   having a visible edge. */
+   having a visible edge. Sits entirely above .report-cover-text (which
+   starts at 6.82in) with a clean gap -- was previously extending down
+   to 8.69in and overlapping the title/description text. 30% shorter
+   vertically than the original band (4.73in -> 3.31in); the SVG's own
+   preserveAspectRatio="none" just squishes the artwork to fit, same
+   technique already used to confine it to a band in the first place. */
 .report-cover-diagram {
   position: absolute;
-  top: 3.96in;   /* 11in * 0.36 */
+  top: 3.19in;
   left: 0;
   width: 100%;
-  height: 4.73in; /* 11in * (0.79 - 0.36) */
+  height: 3.31in;
   opacity: 0.62;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);

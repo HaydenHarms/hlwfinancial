@@ -210,6 +210,13 @@ body {
 .btn-export-pdf:hover, .btn-export-pdf:focus-visible { border-color: var(--gold); color: var(--gold); outline: none; }
 
 .print-only { display: none; }
+/* Only ever populated right before window.print() (see handleExportClick
+   in app.js) and meant to be print-only -- print.css's own display:block
+   for this only applies during print, since that stylesheet is scoped via
+   media="print". This screen-mode rule was missing, so the freshly-built
+   report (including the cover's 11in-tall section) was rendering directly
+   into the live page the instant it got populated. */
+#report-print-root { display: none; }
 
 .error-banner {
   margin-top: 22px;
