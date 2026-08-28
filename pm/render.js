@@ -65,16 +65,45 @@ function hlwPipelineRowsHtml(rows) {
   }).join('');
 }
 
-function hlwRenderPipeline(data) {
+// `filters` (optional, {stage, partner}) is the same pipelineFilterState
+// object app.js uses for the modal's filter dropdowns (see
+// wirePipelineFilters/closeModal in app.js) -- applying it here too keeps
+// the compact card in sync with whatever was last selected in the modal,
+// rather than always showing the full unfiltered list.
+function hlwRenderPipeline(data, filters) {
   const body = document.getElementById('pipeline-body');
   const empty = document.getElementById('pipeline-empty');
+  const badge = document.getElementById('pipeline-filter-badge');
+  const f = filters || {};
+  const isFiltered = !!(f.stage || f.partner);
+
+  if (badge) {
+    badge.hidden = !isFiltered;
+    if (isFiltered) {
+      badge.textContent = 'Filtered: ' + [f.stage, f.partner].filter(Boolean).join(' · ');
+    }
+  }
+
   if (!data.pipeline.length) {
     body.innerHTML = '';
+    empty.textContent = 'No pipeline data in the workbook.';
+    empty.hidden = false;
+    return;
+  }
+
+  const rows = data.pipeline.filter(r =>
+    (!f.stage || String(r.stage || '').trim() === f.stage) &&
+    (!f.partner || String(r.partner || '').trim() === f.partner)
+  );
+
+  if (!rows.length) {
+    body.innerHTML = '';
+    empty.textContent = 'No engagements match the active filter.';
     empty.hidden = false;
     return;
   }
   empty.hidden = true;
-  body.innerHTML = hlwPipelineRowsHtml(data.pipeline);
+  body.innerHTML = hlwPipelineRowsHtml(rows);
 }
 
 function hlwPartnersListHtml(partners) {
@@ -118,9 +147,10 @@ function hlwWaterfallRowsHtml(rows) {
         <td class="hi">${hlwEsc(row.client)}</td>
         <td><span class="engagement-chip type-bookkeeping">Bookkeeping</span></td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
+        <td class="amount">—</td>
+        <td class="amount">—</td>
+        <td class="amount">—</td>
         ${hlwAmountWithName(row.amounts.bookkeeper, row.bookkeeper)}
-        <td class="amount">—</td>
-        <td class="amount">—</td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
       </tr>`;
     }
@@ -131,6 +161,7 @@ function hlwWaterfallRowsHtml(rows) {
       ${hlwAmountWithName(row.amounts.procurer, row.procurer)}
       ${hlwAmountWithName(row.amounts.preparer, row.preparer)}
       ${hlwAmountWithName(row.amounts.reviewer, row.reviewer)}
+      <td class="amount">—</td>
       <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
     </tr>`;
   }).join('');
@@ -148,10 +179,12 @@ function hlwRenderWaterfall(data) {
   body.innerHTML = hlwWaterfallRowsHtml(data.waterfall);
 }
 
-function hlwRenderDashboard(data) {
+// `pipelineFilters` is optional and threaded straight through to
+// hlwRenderPipeline -- see its comment above.
+function hlwRenderDashboard(data, pipelineFilters) {
   hlwRenderMeta(data);
   hlwRenderSnapshot(data);
-  hlwRenderPipeline(data);
+  hlwRenderPipeline(data, pipelineFilters);
   hlwRenderPartners(data);
   hlwRenderWaterfall(data);
 }
@@ -253,7 +286,7 @@ function hlwBuildModalBody(cardKey, data, pipelineFilters) {
       return `
         <div class="modal-section-sub">By engagement</div>
         <table class="data-table">
-          <thead><tr><th>Client</th><th>Type</th><th class="num-col">Gross profit</th><th class="num-col">Procurer 10%</th><th class="num-col">Preparer 45%</th><th class="num-col">Reviewer 15%</th><th class="num-col">Capital accts 30%</th></tr></thead>
+          <thead><tr><th>Client</th><th>Type</th><th class="num-col">Gross profit</th><th class="num-col">Procurer 10%</th><th class="num-col">Preparer 45%</th><th class="num-col">Reviewer 15%</th><th class="num-col">Bookkeeper 60%</th><th class="num-col">Capital accts 30%</th></tr></thead>
           <tbody>${hlwWaterfallRowsHtml(data.waterfall)}</tbody>
         </table>
         <div class="waterfall-note">Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts. Bookkeeping: 60% guaranteed payment to assigned bookkeeper, remaining 40% to capital accounts.</div>
@@ -406,9 +439,10 @@ function hlwReportWaterfallRowsHtml(rows) {
         <td class="hi">${hlwEsc(row.client)}</td>
         <td class="${typeClass}">${hlwEsc(row.type)}</td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.gross))}</td>
+        <td class="amount">—</td>
+        <td class="amount">—</td>
+        <td class="amount">—</td>
         ${hlwReportWaterfallCell(row.amounts.bookkeeper, row.bookkeeper)}
-        <td class="amount">—</td>
-        <td class="amount">—</td>
         <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
       </tr>`;
     }
@@ -419,6 +453,7 @@ function hlwReportWaterfallRowsHtml(rows) {
       ${hlwReportWaterfallCell(row.amounts.procurer, row.procurer)}
       ${hlwReportWaterfallCell(row.amounts.preparer, row.preparer)}
       ${hlwReportWaterfallCell(row.amounts.reviewer, row.reviewer)}
+      <td class="amount">—</td>
       <td class="amount">${hlwEsc(hlwFmtMoney(row.amounts.capital))}</td>
     </tr>`;
   }).join('');
@@ -509,7 +544,7 @@ function hlwBuildReportHtml(data) {
       ${data.waterfall.length ? `
       <h2 class="report-section">Profit-Split Waterfall</h2>
       <table class="report-table">
-        <thead><tr><th>Client</th><th>Type</th><th class="th-r">Gross profit</th><th class="th-r">Procurer 10%</th><th class="th-r">Preparer 45%</th><th class="th-r">Reviewer 15%</th><th class="th-r">Capital 30%</th></tr></thead>
+        <thead><tr><th>Client</th><th>Type</th><th class="th-r">Gross profit</th><th class="th-r">Procurer 10%</th><th class="th-r">Preparer 45%</th><th class="th-r">Reviewer 15%</th><th class="th-r">Bookkeeper 60%</th><th class="th-r">Capital 30%</th></tr></thead>
         <tbody>${hlwReportWaterfallRowsHtml(data.waterfall)}</tbody>
       </table>
       <p class="report-note">Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts.

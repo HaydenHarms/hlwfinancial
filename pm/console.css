@@ -285,6 +285,16 @@ body {
 }
 .card:hover .card-expand-hint, .card:focus-visible .card-expand-hint { color: var(--gold); }
 
+/* Callout on the compact pipeline card when the modal's stage/partner
+   filter is carrying through to it -- see hlwRenderPipeline in render.js.
+   Gold + filled (unlike the hollow status chips) so it reads as "this view
+   isn't the full dataset" at a glance, not just another data chip. */
+.filter-badge {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--green-deep); background: var(--gold); border-radius: 3px;
+  padding: 2px 8px; margin-left: 12px; white-space: nowrap;
+}
+
 .row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin-bottom: 8px; }
 .row .card { margin: 0; }
 

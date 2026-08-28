@@ -199,6 +199,9 @@
       });
       table.hidden = visibleCount === 0;
       if (emptyMsg) emptyMsg.hidden = visibleCount !== 0;
+      // Keep the compact card in sync live, not just once the modal closes --
+      // see hlwRenderPipeline in render.js.
+      if (currentData) hlwRenderPipeline(currentData, pipelineFilterState);
     }
 
     function wireDropdown(id, stateKey) {
@@ -243,6 +246,10 @@
     if (modalChart) { modalChart.destroy(); modalChart = null; }
     modalChartAnchor.innerHTML = '';
     document.removeEventListener('keydown', onModalKeydown);
+    // Belt-and-suspenders: the pipeline card is already kept live-synced to
+    // pipelineFilterState as filters change (see wirePipelineFilters), but
+    // re-apply here too so closing always reflects the current selection.
+    if (currentData) hlwRenderPipeline(currentData, pipelineFilterState);
   }
 
   function onModalKeydown(e) {
@@ -273,7 +280,7 @@
     currentData = data;
     needsPermissionReconnect = false;
     updateSettingsDot();
-    hlwRenderDashboard(data);
+    hlwRenderDashboard(data, pipelineFilterState);
     emptyState.hidden = true;
     dashboard.hidden = false;
     clearError();
