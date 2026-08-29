@@ -513,7 +513,7 @@ function hlwBuildReportHtml(data) {
     <section class="report-content">
       <div class="report-continuity">FIRM OVERVIEW&nbsp;&nbsp;&nbsp;&nbsp;${hlwEsc(String(period).toUpperCase())}</div>
       <hr class="report-hr">
-      <p class="report-summary">HLW Financial closed ${hlwEsc(period)} with ${hlwEsc(hlwFmtMoney(s.revenue))} in revenue
+      <p class="report-summary">For ${hlwEsc(period)}, HLW Financial recorded ${hlwEsc(hlwFmtMoney(s.revenue))} in revenue
         against ${hlwEsc(hlwFmtMoney(s.expenses))} in expenses, for net income of ${hlwEsc(hlwFmtMoney(s.netIncome))}.
         The firm is carrying ${hlwEsc(hlwFmtMoney(s.cash))} in cash on hand across ${hlwEsc(s.activeClients || 0)} active
         clients, with ${hlwEsc(data.pipeline.length)} engagements moving through the pipeline this period.</p>

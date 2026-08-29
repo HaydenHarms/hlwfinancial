@@ -30,7 +30,10 @@
   const modalChartAnchor = document.getElementById('modal-chart'); // Plottable renders an <svg> into this div
 
   let currentHandle = null;
-  let currentData = null;
+  let currentRawData = null;   // unfiltered parse -- see hlwParseWorkbook in parse-excel.js
+  let currentData = null;      // currentRawData filtered to activeRange -- see hlwBuildPeriodView
+  let activeRange = null;      // { key, start, end, label } -- see hlwComputePeriodRange below
+  let openCardKey = null;      // which modal (if any) is currently open, so period changes can refresh it live
   let modalChart = null;
   let onChartResize = null; // resize listener bound while the chart modal is open; removed on close
   let needsPermissionReconnect = false; // set when a stored handle needs its permission re-granted
@@ -59,45 +62,67 @@
   }
 
   // ---- Period selector ----
-  // Display-only: sets what the "Period" label shows. The workbook has no
-  // per-row dates on Pipeline/Waterfall entries, so this does not filter
-  // the dashboard data -- it only relabels the period. Reconnecting or
-  // refreshing the file resets the label back to the Snapshot sheet's
-  // own Period value (see hlwRenderMeta in render.js).
+  // Recomputes currentData from currentRawData (see hlwBuildPeriodView in
+  // parse-excel.js) and re-renders every time the period changes -- this is
+  // the one place that makes the selector "ubiquitous": every card, the open
+  // modal (if any), and the PDF export all just read currentData and have no
+  // idea a period filter exists.
 
   const HLW_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const hlwFmtShort = d => (HLW_MONTHS[d.getMonth()].slice(0, 3)) + ' ' + d.getDate() + ', ' + d.getFullYear();
+  const hlwStartOfDay = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+  const hlwEndOfDay = d => { const x = new Date(d); x.setHours(23, 59, 59, 999); return x; };
 
-  function hlwComputePeriodLabel(key) {
+  function hlwComputePeriodRange(key, customStart, customEnd) {
     const now = new Date();
     const y = now.getFullYear(), m = now.getMonth();
     switch (key) {
-      case 'this-month':
-        return HLW_MONTHS[m] + ' ' + y;
-      case 'last-month': {
-        const lm = new Date(y, m - 1, 1);
-        return HLW_MONTHS[lm.getMonth()] + ' ' + lm.getFullYear();
+      case 'this-month': {
+        const start = new Date(y, m, 1);
+        const end = new Date(y, m + 1, 0);
+        return { key, start: hlwStartOfDay(start), end: hlwEndOfDay(end), label: HLW_MONTHS[m] + ' ' + y };
       }
-      case 'ytd':
-        return hlwFmtShort(new Date(y, 0, 1)) + ' – ' + hlwFmtShort(now);
+      case 'last-month': {
+        const start = new Date(y, m - 1, 1);
+        const end = new Date(y, m, 0);
+        return { key, start: hlwStartOfDay(start), end: hlwEndOfDay(end), label: HLW_MONTHS[start.getMonth()] + ' ' + start.getFullYear() };
+      }
+      case 'ytd': {
+        const start = new Date(y, 0, 1);
+        return { key, start: hlwStartOfDay(start), end: hlwEndOfDay(now), label: hlwFmtShort(start) + ' – ' + hlwFmtShort(now) };
+      }
       case 'ttm': {
         const start = new Date(y, m, now.getDate());
         start.setFullYear(start.getFullYear() - 1);
         start.setDate(start.getDate() + 1);
-        return hlwFmtShort(start) + ' – ' + hlwFmtShort(now);
+        return { key, start: hlwStartOfDay(start), end: hlwEndOfDay(now), label: hlwFmtShort(start) + ' – ' + hlwFmtShort(now) };
       }
+      case 'custom':
+        return { key, start: hlwStartOfDay(customStart), end: hlwEndOfDay(customEnd), label: hlwFmtShort(customStart) + ' – ' + hlwFmtShort(customEnd) };
       default:
         return null;
     }
   }
 
+  // Recomputes currentData for a new range and re-renders. Safe to call
+  // before a workbook is connected (just updates the label + stores the
+  // range for when loadAndRender runs).
+  function applyPeriod(range) {
+    if (!range) return;
+    activeRange = range;
+    metaPeriod.textContent = range.label;
+    if (!currentRawData) return;
+    currentData = hlwBuildPeriodView(currentRawData, activeRange);
+    hlwRenderDashboard(currentData, pipelineFilterState);
+    if (openCardKey) openModal(openCardKey); // live-refresh the open modal's contents, if any
+  }
+
   function wirePeriodControl() {
     periodOptions.forEach(btn => {
       btn.addEventListener('click', () => {
-        const label = hlwComputePeriodLabel(btn.dataset.period);
         periodOptions.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        metaPeriod.textContent = label;
+        applyPeriod(hlwComputePeriodRange(btn.dataset.period));
       });
     });
 
@@ -105,13 +130,13 @@
       const startVal = periodStartInput.value;
       const endVal = periodEndInput.value;
       if (!startVal || !endVal) return;
-      // Parse as local dates (not UTC) so the displayed range matches what was picked.
+      // Parse as local dates (not UTC) so the filtered range matches what was picked.
       const [sy, sm, sd] = startVal.split('-').map(Number);
       const [ey, em, ed] = endVal.split('-').map(Number);
       const start = new Date(sy, sm - 1, sd);
       const end = new Date(ey, em - 1, ed);
       periodOptions.forEach(b => b.classList.remove('active'));
-      metaPeriod.textContent = hlwFmtShort(start) + ' – ' + hlwFmtShort(end);
+      applyPeriod(hlwComputePeriodRange('custom', start, end));
     });
   }
 
@@ -121,6 +146,7 @@
     if (!currentData) return;
     const meta = HLW_MODAL_META[cardKey];
     if (!meta) return;
+    openCardKey = cardKey;
 
     modalTitle.textContent = meta.title;
     modalSubtitle.textContent = hlwModalSubtitle(cardKey, currentData);
@@ -242,6 +268,7 @@
 
   function closeModal() {
     modalOverlay.hidden = true;
+    openCardKey = null;
     if (onChartResize) { window.removeEventListener('resize', onChartResize); onChartResize = null; }
     if (modalChart) { modalChart.destroy(); modalChart = null; }
     modalChartAnchor.innerHTML = '';
@@ -276,11 +303,24 @@
   // ---- File connect / refresh ----
 
   async function loadAndRender(file) {
-    const data = await hlwParseWorkbook(file);
-    currentData = data;
+    currentRawData = await hlwParseWorkbook(file);
     needsPermissionReconnect = false;
     updateSettingsDot();
+<<<<<<< Updated upstream
     hlwRenderDashboard(data, pipelineFilterState);
+=======
+    // First connect of the session defaults to "This month"; a reconnect or
+    // refresh keeps whatever period the partner already had selected rather
+    // than jumping back to it (see applyPeriod -- it just recomputes
+    // currentData from the fresh raw data using the existing activeRange).
+    if (!activeRange) {
+      activeRange = hlwComputePeriodRange('this-month');
+      periodOptions.forEach(b => b.classList.toggle('active', b.dataset.period === 'this-month'));
+    }
+    currentData = hlwBuildPeriodView(currentRawData, activeRange);
+    metaPeriod.textContent = activeRange.label;
+    hlwRenderDashboard(currentData, pipelineFilterState);
+>>>>>>> Stashed changes
     emptyState.hidden = true;
     dashboard.hidden = false;
     clearError();

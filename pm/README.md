@@ -46,31 +46,55 @@ rather than hardcoding a new color inline.
 
 The connected `.xlsx` needs five sheets (names matched case-insensitively).
 Missing sheets just render as empty sections rather than erroring — fine to
-fill in incrementally.
+fill in incrementally. The Period selector (see UI section below) filters
+Snapshot/Pipeline/Waterfall/Hours by a real `Date` column on each sheet, so
+most sheets now take a per-row date rather than a single aggregate value --
+see each sheet below for how its `Date` is meant to be filled in.
 
-- **Snapshot** — two columns, `Key` / `Value`. Keys: `Period`, `Revenue`,
-  `Expenses`, `Net Income`, `Cash On Hand`, `Active Clients`, `Entities`.
+- **Snapshot** — one row **per reporting period** (e.g. append a new row each
+  month), columns: `Date`, `Revenue`, `Expenses`, `Net Income`, `Cash On
+  Hand`, `Active Clients`, `Entities`. `Date` is any day within that period's
+  month (the 1st is the convention in the mock file). When a period spans
+  several rows (YTD, TTM, a custom range) `Revenue`/`Expenses`/`Net Income`
+  are **summed** across the matching rows (they're flows), while `Cash On
+  Hand`/`Active Clients`/`Entities` take the **latest** matching row's value
+  (they're point-in-time balances, not something you'd want to add up).
 - **Pipeline** — `Client`, `Engagement`, `Type` (`Recurring`/`One-off`),
   `Stage`, `Partner` (who's assigned to the engagement -- renamed from
   `Procurer` since it's a different concept from Waterfall's role of the
-  same name; see below). The modal's full engagement table has "All
+  same name; see below), `Date`. The modal's full engagement table has "All
   stages"/"All partners" filter dropdowns, options generated from whatever
-  values actually appear in the data.
-- **Hours** — `Partner`, `Hours Logged`. Informational only — not tied to
-  any threshold.
+  values actually appear in the data. `Date` is when the row was opened or
+  last moved -- filtered by the Period selector like the other sheets, but a
+  **blank** `Date` always shows regardless of period (a newly-added
+  engagement without a date yet shouldn't just vanish from the dashboard).
+- **Hours** — `Partner`, `Hours Logged`, `Date`. One row **per time hours are
+  logged** (e.g. one row per partner per month), not one aggregate row per
+  partner anymore -- rows are summed per partner within the selected period.
 - **Capital** — `Partner`, `Capital Account Status`, `Capital Balance`
-  (optional).
+  (optional). Unchanged -- still one current-balance row per partner, no
+  `Date` column, since a running balance isn't a period flow and stays the
+  same regardless of which period is selected.
 - **Waterfall** — `Client`, `Engagement Type` (`Tax Prep`/`Bookkeeping`),
-  `Gross Profit`, `Procurer`, `Preparer`, `Reviewer`, `Bookkeeper`. The split
-  math is computed client-side per the operating agreement, not read from
-  the sheet:
+  `Gross Profit`, `Procurer`, `Preparer`, `Reviewer`, `Bookkeeper`, `Date`.
+  The split math is computed client-side per the operating agreement, not
+  read from the sheet:
   - Tax prep: 10% procurer / 45% preparer / 15% reviewer / 30% capital accounts
   - Bookkeeping: 60% guaranteed payment to the assigned bookkeeper, remaining 40% to capital accounts
   Each role's name is shown as a small label under its dollar amount in the
   profit-split table (card + modal) -- blank if that cell was left empty in
   the sheet. This `Procurer` is deliberately separate from Pipeline's
   `Partner` column above -- one is who's earning a cut of this specific
-  engagement's profit, the other is who's assigned to the engagement.
+  engagement's profit, the other is who's assigned to the engagement. `Date`
+  is when the engagement's profit was realized; a row with no `Date` is
+  dropped entirely (unlike Pipeline, a dateless dollar figure can't be
+  attributed to any period, so there's no sensible "always show" fallback).
+
+`Date` cells should be entered as real Excel dates (type a date and let
+Excel format the cell, or use its autofill/date-picker) rather than text --
+typed dates parse fine too ("8/15/2026", "2026-08-15"), but a real date cell
+is what makes monthly entry fast (drag-fill a column of dates down, same as
+any other Excel date column).
 
 ## Style direction
 
@@ -100,12 +124,14 @@ The error banner sits directly in the hero when something goes wrong.
 
 The Period selector (calendar icon next to "Period") works the same
 way — hover/focus reveals a dropdown of This month / Last month / YTD
-/ TTM, plus a custom date-range picker with an Apply button. It is
-display-only for now: it relabels the "Period" text but does not
-filter Pipeline/Waterfall rows, since the workbook schema has no
-per-row dates to filter by (only an aggregate Period value on the
-Snapshot sheet). Reconnecting or refreshing the file resets the label
-back to whatever the Snapshot sheet's Period value says.
+/ TTM, plus a custom date-range picker with an Apply button. It's fully
+functional: picking a preset or applying a custom range re-filters
+Snapshot/Pipeline/Waterfall/Hours by each row's `Date` column (see Workbook
+schema above) and re-renders every card, the currently-open modal (if any),
+and the PDF export -- all from the same filtered data, so nothing needs its
+own separate period-awareness. Defaults to "This month" on first connect;
+reconnecting or refreshing the file keeps whatever period was already
+selected and just recomputes it against the fresh data.
 
 The Firm snapshot card is static — it doesn't open a modal (there's
 nothing more to show that isn't already on the card). The other three
@@ -182,10 +208,9 @@ first version of this feature had to.
   dark) colors.
 
 Scope: exports the full current dataset (Pipeline, Hours & Capital,
-Waterfall, Snapshot) as a proper report, not a snapshot of whatever's
-scrolled into view. Not yet: real period filtering (the Period selector is
-still display-only, see above) or an option to export a single card/modal
-in isolation.
+Waterfall, Snapshot) for whatever period is currently selected, as a proper
+report, not a snapshot of whatever's scrolled into view. Not yet: an option
+to export a single card/modal in isolation.
 
 ## Status
 
@@ -193,5 +218,11 @@ v1 functional build complete: connect/reconnect/refresh flow, all four
 sheet types parsed, waterfall math applied, card/modal UI, one chart
 (waterfall earnings by partner, via Plottable + manual value labels),
 empty/error states styled, PDF export (dedicated report document with
-cover page).
+cover page), and a fully functional Period selector (Snapshot/Pipeline/
+Waterfall/Hours all filtered by a per-row `Date` column -- see Workbook
+schema above).
+Known issue: on the main dashboard, the Client pipeline / Hours & Capital
+row is a fixed 1.6fr/1fr grid -- with a large roster this leaves a lot of
+dead space next to the much-shorter Hours & Capital card. Worth capping the
+compact card's row count (or giving it its own scroll) at some point.
 Not yet tested against a real workbook or deployed to `/pm` -- do that next.
