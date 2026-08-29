@@ -306,9 +306,6 @@
     currentRawData = await hlwParseWorkbook(file);
     needsPermissionReconnect = false;
     updateSettingsDot();
-<<<<<<< Updated upstream
-    hlwRenderDashboard(data, pipelineFilterState);
-=======
     // First connect of the session defaults to "This month"; a reconnect or
     // refresh keeps whatever period the partner already had selected rather
     // than jumping back to it (see applyPeriod -- it just recomputes
@@ -320,7 +317,6 @@
     currentData = hlwBuildPeriodView(currentRawData, activeRange);
     metaPeriod.textContent = activeRange.label;
     hlwRenderDashboard(currentData, pipelineFilterState);
->>>>>>> Stashed changes
     emptyState.hidden = true;
     dashboard.hidden = false;
     clearError();
