@@ -251,6 +251,19 @@
   .belief-row .support{font-size:17px;line-height:1.8;color:var(--ink-soft);}
   .belief-row .support strong{color:var(--ink);font-weight:600;}
 
+  /* "What We Do" bullets: no divider lines between the points
+     themselves — only the row's overall top/bottom edges remain. */
+  .wwd-row + .wwd-row{border-top:none;}
+
+  /* Typing animation for the "What We Do" headline text, triggered
+     on scroll into view (see BELIEF ROWS TYPING script below). */
+  .type-target.typing::after{
+    content:'';display:inline-block;width:2px;height:0.85em;
+    background:var(--green);margin-left:3px;vertical-align:-0.05em;
+    animation:type-blink .8s step-end infinite;
+  }
+  @keyframes type-blink{50%{opacity:0;}}
+
   .last-row{border-bottom:1px solid var(--line);margin-bottom:80px;}
 
   /* ===== CTA — identical to product-page pattern ===== */
@@ -354,24 +367,24 @@
 <div class="about-wrap">
 
   <div class="mission-block">
-    <h2><em>With clean books and deep insight, the visionaries of the future can make informed business and tax decisions, changing the world for the better.</em></h2>
+    <h2>With clean books and deep insight, the visionaries of the future can make informed business and tax decisions, changing the world for the better.</h2>
     <p>Information is moving faster than ever, and we know business owners can't wait on deadlines to do their work. HLW exists to adapt to the pace its customers must move at.</p>
     <p>We understand that business owners need accurate real-time insight into their operations, and the current services can't offer that. We also understand that individual operators don't just want a return filed, they want a partner to deliver insights.</p>
-    <p>We see a need for a dedicated service that understands your operations intimately, and is ready to move as fast as you are. That is why we founded HLW Financial.</p>
+    <p>We see a need for a dedicated service that understand your operations intimately, and is ready to move as fast as you are. That is why we founded HLW Financial.</p>
   </div>
 
   <h2 class="section-head">What We Do</h2>
 
-  <div class="belief-row">
-    <h3>We keep books current, not reconstructed.</h3>
+  <div class="belief-row wwd-row">
+    <h3 class="type-target">We keep books current, not reconstructed.</h3>
     <p class="support">[DRAFT] Transactions are categorized as they clear. The close happens continuously, so nothing has to be pieced back together months later.</p>
   </div>
-  <div class="belief-row">
-    <h3>We handle personal and business together.</h3>
+  <div class="belief-row wwd-row">
+    <h3 class="type-target">We handle personal and business together.</h3>
     <p class="support">[DRAFT] One advisor sees both sides of a founder's finances — no re-explaining context between a bookkeeper and a separate tax preparer.</p>
   </div>
-  <div class="belief-row last-row">
-    <h3>We work by referral, not by ad spend.</h3>
+  <div class="belief-row wwd-row last-row">
+    <h3 class="type-target">We work by referral, not by ad spend.</h3>
     <p class="support">[DRAFT] Every engagement comes through an introduction. That's a constraint we've chosen, not a limitation we're working around.</p>
   </div>
 
@@ -595,6 +608,34 @@
       });
     }, {threshold:0.3});
     rows.forEach(r=>io.observe(r));
+  })();
+
+  // ===== "WHAT WE DO" HEADLINES — type on scroll into view =====
+  (function(){
+    const targets = document.querySelectorAll('.type-target');
+    if(!targets.length) return;
+    const speed = 26; // ms per character
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        const el = entry.target;
+        io.unobserve(el);
+        const text = el.textContent;
+        el.textContent = '';
+        el.classList.add('typing');
+        let i = 0;
+        (function step(){
+          el.textContent = text.slice(0, i);
+          i++;
+          if(i <= text.length){
+            setTimeout(step, speed);
+          } else {
+            el.classList.remove('typing');
+          }
+        })();
+      });
+    }, {threshold:0.4});
+    targets.forEach(t=>io.observe(t));
   })();
 
   // ===== CTA — fade/rise into view on scroll =====
