@@ -202,6 +202,10 @@
   .bio-socials a:focus-visible{
     color:var(--green);border-color:var(--green);transform:translateY(-2px);
   }
+  .bio-socials a.text-link{
+    width:auto;height:38px;padding:0 14px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.03em;
+  }
 
   @media(max-width:640px){
     .bio-panel{padding:60px 26px 40px;grid-template-columns:1fr;max-height:88vh;}
@@ -443,7 +447,8 @@
         social: {
           email: 'mailto:harms.e.hayden@gmail.com',
           linkedin: 'https://www.linkedin.com/in/haydenharms',
-          x: 'https://x.com/haydeneharms'
+          x: 'https://x.com/haydeneharms',
+          website: 'https://haydenharms.com'
         }
       },
       landon: {
@@ -493,14 +498,18 @@
       const socialLinks = [
         ['email', m.social && m.social.email, m.name + ' email'],
         ['linkedin', m.social && m.social.linkedin, m.name + ' on LinkedIn'],
-        ['x', m.social && m.social.x, m.name + ' on X']
+        ['x', m.social && m.social.x, m.name + ' on X'],
+        ['website', m.social && m.social.website, m.name + ' website']
       ];
       document.getElementById('bioSocials').innerHTML = socialLinks
         .filter(function(s){ return s[1]; })
         .map(function(s){
+          const isWebsite = s[0] === 'website';
+          const label = isWebsite ? s[1].replace(/^https?:\/\//, '').replace(/\/$/, '') : ICONS[s[0]];
           return '<a href="' + s[1] + '" aria-label="' + s[2] + '"' +
-            (s[0] === 'email' ? '' : ' target="_blank" rel="noopener"') +
-            '>' + ICONS[s[0]] + '</a>';
+            (isWebsite ? ' class="text-link"' : '') +
+            ' target="_blank" rel="noopener"' +
+            '>' + label + '</a>';
         }).join('');
       overlay.classList.add('is-open');
       document.body.style.overflow = 'hidden';
