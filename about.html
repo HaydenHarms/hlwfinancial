@@ -187,6 +187,21 @@
     font-size:16.5px;line-height:1.8;color:var(--ink-soft);margin-bottom:16px;
   }
   .bio-body p:last-child{margin-bottom:0;}
+  .bio-socials{
+    display:flex;gap:10px;margin-top:24px;
+  }
+  .bio-socials a{
+    display:flex;align-items:center;justify-content:center;
+    width:38px;height:38px;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    transition:color .25s ease,border-color .25s ease,transform .25s ease;
+  }
+  .bio-socials a svg{width:17px;height:17px;fill:currentColor;}
+  .bio-socials a:hover,
+  .bio-socials a:focus-visible{
+    color:var(--green);border-color:var(--green);transform:translateY(-2px);
+  }
 
   @media(max-width:640px){
     .bio-panel{padding:60px 26px 40px;grid-template-columns:1fr;max-height:88vh;}
@@ -388,6 +403,7 @@
       <div class="bio-role" id="bioRole"></div>
       <h2 id="bioName"></h2>
       <div class="bio-body" id="bioBody"></div>
+      <div class="bio-socials" id="bioSocials"></div>
     </div>
   </div>
 </div>
@@ -404,6 +420,16 @@
   // below is a first pass — flagged [DRAFT] like the rest of this
   // page's placeholder copy, swap in the real thing whenever ready.
   (function(){
+    // Inline icon SVGs for the bio-panel social row. currentColor so
+    // they pick up the .bio-socials a hover/focus color transition.
+    const ICONS = {
+      email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="1.5"/><polyline points="2,6 12,13 22,6"/></svg>',
+      linkedin: '<svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 .001-4.124 2.062 2.062 0 0 1-.001 4.124zM7.114 20.452H3.558V9h3.556v11.452z"/></svg>',
+      x: '<svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'
+    };
+
+    // [DRAFT] placeholder handles — swap in the real mailto/profile
+    // URLs for each founder whenever ready.
     const TEAM = {
       hayden: {
         name: 'Hayden Harms',
@@ -413,7 +439,12 @@
         bio: [
           'Hayden leads bookkeeping product development and internal infrastructure flows. He also directly manages all of his client relationships like the other partners.',
           'Hayden moved from Amarillo, Texas to Dallas to study accounting at Dallas Baptist University. While working at HLW, Hayden also works as an intern at Airbus Helicopters. He has a love of politics, philosophy, and the future of America.'
-        ]
+        ],
+        social: {
+          email: 'mailto:harms.e.hayden@gmail.com',
+          linkedin: '#',
+          x: '#'
+        }
       },
       landon: {
         name: 'Landon Lindsey',
@@ -423,7 +454,12 @@
         bio: [
           'Landon heads up the firm\'s tax work and managing the scope of client relationships.',
           '[DRAFT] Add background, credentials, and what he focuses on here.'
-        ]
+        ],
+        social: {
+          email: 'mailto:#',
+          linkedin: '#',
+          x: '#'
+        }
       },
       drew: {
         name: 'Drew Wigley',
@@ -433,7 +469,12 @@
         bio: [
           'Drew leads the firm in client engagement and internal communications as well as managing the firm\'s bookkeeping practices.',
           '[DRAFT] Add background, credentials, and what he focuses on here.'
-        ]
+        ],
+        social: {
+          email: 'mailto:#',
+          linkedin: '#',
+          x: '#'
+        }
       }
     };
 
@@ -451,6 +492,18 @@
       document.getElementById('bioRole').textContent = m.role;
       document.getElementById('bioName').textContent = m.name;
       document.getElementById('bioBody').innerHTML = m.bio.map(p => '<p>' + p + '</p>').join('');
+      const socialLinks = [
+        ['email', m.social && m.social.email, m.name + ' email'],
+        ['linkedin', m.social && m.social.linkedin, m.name + ' on LinkedIn'],
+        ['x', m.social && m.social.x, m.name + ' on X']
+      ];
+      document.getElementById('bioSocials').innerHTML = socialLinks
+        .filter(function(s){ return s[1]; })
+        .map(function(s){
+          return '<a href="' + s[1] + '" aria-label="' + s[2] + '"' +
+            (s[0] === 'email' ? '' : ' target="_blank" rel="noopener"') +
+            '>' + ICONS[s[0]] + '</a>';
+        }).join('');
       overlay.classList.add('is-open');
       document.body.style.overflow = 'hidden';
     }
