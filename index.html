@@ -137,9 +137,9 @@
   .hero-sticky{
     position:absolute;inset:0;
     display:flex;align-items:center;justify-content:center;
-    transform:scale(calc(1 - var(--fuse,0) * 0.06));
-    filter:blur(calc(var(--fuse,0) * 3px));
-    opacity:calc(1 - var(--fuse,0) * 0.25);
+    transform:scale(calc(1 - var(--recede,0) * 0.06));
+    filter:blur(calc(var(--recede,0) * 3px));
+    opacity:calc(1 - var(--recede,0) * 0.25);
   }
   .hero-bg{
     position:absolute;inset:0;overflow:hidden;
@@ -1307,24 +1307,43 @@
   // NOTE: this page's scroll container is document.body, not window
   // (see updateNav / the hero decode script) — a window scroll listener
   // never fires on this layout, so it must be bound to document.body.
+  //
+  // --recede (hero scale/blur/dim) is deliberately a SEPARATE, much
+  // faster progress value from --fuse (the solid-overlay fade), keyed
+  // off #productSection's TOP edge rather than the cards' bottom edge.
+  // The opaque cards themselves cover the hero almost as soon as they
+  // enter view — long before --fuse (measured all the way to the
+  // cards' bottom) has moved much — so driving the hero's recede off
+  // the same slow value made it happen well after the hero was already
+  // hidden behind them. --recede completes over just ~220px right as
+  // the section starts entering, so the hero visibly eases back while
+  // it's still actually the thing on screen.
   (function(){
     const gallery = document.querySelector('#productSection .product-gallery');
     const section = document.getElementById('productSection');
     if(!gallery || !section) return;
-    const range = 320; // px of scroll over which the fuse completes
+    const fuseRange = 320; // px of scroll over which --fuse completes
+    const recedeRange = 220; // px of scroll over which --recede completes
     let ticking = false;
     function update(){
       ticking = false;
-      const bottom = gallery.getBoundingClientRect().bottom;
       const vh = window.innerHeight;
-      // bottom > vh + range  -> cards' bottom still well below the fold -> 0
-      // bottom = vh          -> cards' bottom just reached the fold    -> 1
-      let progress = (vh + range - bottom) / range;
-      progress = Math.min(1, Math.max(0, progress));
+
+      const bottom = gallery.getBoundingClientRect().bottom;
+      let fuseProgress = (vh + fuseRange - bottom) / fuseRange;
+      fuseProgress = Math.min(1, Math.max(0, fuseProgress));
+
+      const top = section.getBoundingClientRect().top;
+      // top === vh  -> section hasn't started entering yet          -> 0
+      // top <= vh - recedeRange -> section well underway entering   -> 1
+      let recedeProgress = (vh - top) / recedeRange;
+      recedeProgress = Math.min(1, Math.max(0, recedeProgress));
+
       // Set on :root (not just #productSection) so the hero — a sibling
-      // section, not a descendant — can also read --fuse for its own
-      // recede effect (see .hero-content above).
-      document.documentElement.style.setProperty('--fuse', progress);
+      // section, not a descendant — can also read these for its own
+      // recede effect (see .hero-sticky above).
+      document.documentElement.style.setProperty('--fuse', fuseProgress);
+      document.documentElement.style.setProperty('--recede', recedeProgress);
     }
     function onScroll(){
       if(!ticking){
