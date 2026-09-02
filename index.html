@@ -57,6 +57,14 @@
      room top and bottom. */
   #productSection{
     min-height:0;padding:32px 0;
+    /* Negative margin so this section physically overlaps the sticky
+       hero by the same distance as the fade zone below — without this,
+       the hero has already scrolled fully away by the time this section
+       is on screen, so the "transparent" part of the gradient was just
+       revealing plain cream page background (identical to the solid
+       cream it fades into) and the whole effect was invisible. This
+       makes the hero genuinely still be there, pinned, underneath. */
+    margin-top:-160px;
     /* Fades in from fully transparent at the very top — so the sticky
        hero video crossfades in underneath instead of cutting hard to
        white — up to plain cream (the site's regular background color)
@@ -67,23 +75,24 @@
       rgba(247,245,239,1) 160px,
       var(--cream) 100%);
   }
-  /* "Fuse" marker — sits exactly over the transparent-fade zone above.
-     Not visible itself; an IntersectionObserver (see FUSE ANIMATION
-     script below) watches it to know when that zone has scrolled out
-     of view going down (fuse: solid, no more gradient) vs. back into
-     view going up (unfuse: gradient restored). */
+  /* Not visible itself; used only as a scroll-position reference by
+     the FUSE ANIMATION script below, which continuously fuses/unfuses
+     the overlay in real time as this zone crosses the top of the
+     viewport — not a one-shot toggle after the fact, since anything
+     that only fired once the zone had scrolled fully out of view would
+     be changing pixels the user can no longer see. */
   .fuse-marker{position:absolute;top:0;left:0;width:1px;height:160px;pointer-events:none;}
   .product-gallery{position:relative;z-index:1;}
   /* Solid cream overlay, faded in/out on top of #productSection's own
      gradient background — this is what actually performs the "fusion":
      crossfading the transparent-hero-peek zone to fully solid and back,
-     rather than jump-cutting between two different backgrounds. */
+     rather than jump-cutting between two different backgrounds. Driven
+     directly by --fuse (set in JS per scroll frame), not a CSS
+     transition, so it tracks the scroll gesture 1:1 in both directions. */
   #productSection::after{
     content:'';position:absolute;inset:0;z-index:0;
-    background:var(--cream);opacity:0;pointer-events:none;
-    transition:opacity .6s ease;
+    background:var(--cream);opacity:var(--fuse,0);pointer-events:none;
   }
-  #productSection.is-fused::after{opacity:1;}
   /* Same issue on the marquee section itself: it used to be the first
      section right after the hero, where full-viewport centering made
      sense as a big entrance. Now that it follows the product cards,
@@ -1286,30 +1295,36 @@
   })();
 
   // ===== FUSE ANIMATION — crossfade the top-of-page transparent-hero
-  // gradient to solid once the user has scrolled past it, and back to
-  // transparent once they scroll back up to it. The marker sits exactly
-  // over the 160px transparent-fade zone at the top of #productSection;
-  // watching it (rather than reading scroll position directly) means this
-  // stays correct regardless of section heights, zoom level, etc.
+  // gradient to solid as the user scrolls THROUGH it, and back to
+  // transparent scrolling back up through it. Driven by the marker's
+  // live position every frame (not a one-time viewport-exit check),
+  // so the change happens while those pixels are still visible,
+  // scrubbing in lockstep with the scroll gesture in both directions.
   (function(){
     const marker = document.getElementById('fuseMarker');
     const section = document.getElementById('productSection');
     if(!marker || !section) return;
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){
-          // marker back in view — scrolled up to it — unfuse
-          section.classList.remove('is-fused');
-        } else if(entry.boundingClientRect.top < 0){
-          // marker scrolled up out of view (past it, going down) — fuse
-          section.classList.add('is-fused');
-        }
-        // if it left going the other direction (boundingClientRect.top > 0,
-        // i.e. below the viewport — shouldn't normally happen here since
-        // the marker starts in view) leave the state as-is.
-      });
-    }, {threshold:0});
-    io.observe(marker);
+    const zoneHeight = 160; // matches .fuse-marker height / the gradient's fade distance
+    let ticking = false;
+    function update(){
+      ticking = false;
+      const rect = marker.getBoundingClientRect();
+      // rect.bottom runs from 160 (zone untouched, at rest) down to 0
+      // and below (zone scrolled up past the viewport top) as the user
+      // scrolls down. Map that directly to a 0→1 fuse amount.
+      let progress = 1 - (rect.bottom / zoneHeight);
+      progress = Math.min(1, Math.max(0, progress));
+      section.style.setProperty('--fuse', progress);
+    }
+    function onScroll(){
+      if(!ticking){
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+    update();
   })();
 
 
