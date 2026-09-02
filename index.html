@@ -49,14 +49,30 @@
   .snap-section{
     position:relative;z-index:2;
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-    background:var(--page-bg);
+    /* Gradient instead of a flat fill, pinned to the viewport (not the
+       page) via background-attachment:fixed — this is still a fully
+       opaque background per section (no transparency introduced), it
+       just shifts which slice of the gradient shows as you scroll,
+       since a fixed background is repositioned relative to the
+       viewport rather than scrolling with the content underneath it. */
+    background:linear-gradient(180deg, #f7f5ef 0%, #f2e8d2 48%, #eef2ea 100%);
+    background-attachment:fixed;
+    background-size:100% 100vh;
   }
   /* Product cards no longer need a full viewport of vertical centering —
      that's what was leaving a large blank gap above the marquee section
      that now follows it. Size to content instead, with modest breathing
      room top and bottom. */
   #productSection{
-    min-height:0;padding:100px 0;
+    min-height:0;padding:60px 0;
+  }
+  /* Same issue on the marquee section itself: it used to be the first
+     section right after the hero, where full-viewport centering made
+     sense as a big entrance. Now that it follows the product cards,
+     that same centering was leaving a second, even larger empty band
+     above the tabs. Drop it in favor of a fixed, modest top gap. */
+  #marqueeSection{
+    min-height:0;justify-content:flex-start;padding:0 0 60px;
   }
   body{
     background:var(--page-bg);color:var(--ink);
@@ -560,6 +576,9 @@
   /* ===== FOOTER ===== */
 
   @media(max-width:900px){
+    /* background-attachment:fixed is unreliable/janky on many mobile
+       browsers — fall back to a normal scrolling gradient there. */
+    .snap-section{background-attachment:scroll;}
     .hero-content{padding:0 22px;}
     .hero-scroll-cue{left:22px;bottom:26px;gap:14px;font-size:13px;letter-spacing:.1em;}
     .hero-scroll-cue .line{width:2px;height:48px;}
