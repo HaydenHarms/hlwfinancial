@@ -49,22 +49,27 @@
   .snap-section{
     position:relative;z-index:2;
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-    /* Gradient instead of a flat fill, pinned to the viewport (not the
-       page) via background-attachment:fixed — this is still a fully
-       opaque background per section (no transparency introduced), it
-       just shifts which slice of the gradient shows as you scroll,
-       since a fixed background is repositioned relative to the
-       viewport rather than scrolling with the content underneath it. */
-    background:linear-gradient(180deg, #f7f5ef 0%, #f2e8d2 48%, #eef2ea 100%);
-    background-attachment:fixed;
-    background-size:100% 100vh;
+    background:var(--page-bg);
   }
   /* Product cards no longer need a full viewport of vertical centering —
      that's what was leaving a large blank gap above the marquee section
      that now follows it. Size to content instead, with modest breathing
      room top and bottom. */
   #productSection{
-    min-height:0;padding:60px 0;
+    min-height:0;padding:32px 0;
+    /* First half of a continuous two-section gradient — a normal
+       (scrolls-with-the-page) background, not viewport-fixed, so it's
+       an actual color transition as you move through the section
+       rather than a static tint. Starts fully transparent so the
+       sticky hero video shows through and crossfades in underneath
+       instead of cutting hard to solid cream, then reaches full
+       opacity within the first ~160px and carries on into the warm
+       tone marqueeSection starts from, so the sections read as one
+       continuous wash. */
+    background:linear-gradient(180deg,
+      rgba(247,245,239,0) 0px,
+      rgba(247,245,239,1) 160px,
+      #f0e2c4 100%);
   }
   /* Same issue on the marquee section itself: it used to be the first
      section right after the hero, where full-viewport centering made
@@ -72,7 +77,10 @@
      that same centering was leaving a second, even larger empty band
      above the tabs. Drop it in favor of a fixed, modest top gap. */
   #marqueeSection{
-    min-height:0;justify-content:flex-start;padding:0 0 60px;
+    min-height:0;justify-content:flex-start;padding:0 0 32px;
+    /* Second half — continues from #productSection's warm gold tone
+       into a pale sage green by the time it reaches the CTA section. */
+    background:linear-gradient(180deg, #f0e2c4 0%, #e6ede4 100%);
   }
   body{
     background:var(--page-bg);color:var(--ink);
@@ -576,9 +584,6 @@
   /* ===== FOOTER ===== */
 
   @media(max-width:900px){
-    /* background-attachment:fixed is unreliable/janky on many mobile
-       browsers — fall back to a normal scrolling gradient there. */
-    .snap-section{background-attachment:scroll;}
     .hero-content{padding:0 22px;}
     .hero-scroll-cue{left:22px;bottom:26px;gap:14px;font-size:13px;letter-spacing:.1em;}
     .hero-scroll-cue .line{width:2px;height:48px;}
