@@ -57,22 +57,15 @@
      room top and bottom. */
   #productSection{
     min-height:0;padding:32px 0;
-    /* Negative margin so this section physically overlaps the sticky
-       hero by the same distance as the fade zone below — without this,
-       the hero has already scrolled fully away by the time this section
-       is on screen, so the "transparent" part of the gradient was just
-       revealing plain cream page background (identical to the solid
-       cream it fades into) and the whole effect was invisible. This
-       makes the hero genuinely still be there, pinned, underneath. */
-    margin-top:-160px;
-    /* Fades in from fully transparent at the very top — so the sticky
-       hero video crossfades in underneath instead of cutting hard to
-       white — up to plain cream (the site's regular background color)
-       within the first ~160px, then stays that color the rest of the
-       way down. */
+    /* Fades in from fully transparent at the very top to plain cream
+       (the site's regular background color) within the first ~300px,
+       then stays that color the rest of the way down. No overlap with
+       the hero above — that was bleeding into the hero's fullscreen
+       view even at rest (scroll position 0), which is wrong; the hero
+       needs to be purely fullscreen until the user actually scrolls. */
     background:linear-gradient(180deg,
       rgba(247,245,239,0) 0px,
-      rgba(247,245,239,1) 160px,
+      rgba(247,245,239,1) 300px,
       var(--cream) 100%);
   }
   /* Not visible itself; used only as a scroll-position reference by
@@ -81,7 +74,7 @@
      viewport — not a one-shot toggle after the fact, since anything
      that only fired once the zone had scrolled fully out of view would
      be changing pixels the user can no longer see. */
-  .fuse-marker{position:absolute;top:0;left:0;width:1px;height:160px;pointer-events:none;}
+  .fuse-marker{position:absolute;top:0;left:0;width:1px;height:300px;pointer-events:none;}
   .product-gallery{position:relative;z-index:1;}
   /* Solid cream overlay, faded in/out on top of #productSection's own
      gradient background — this is what actually performs the "fusion":
@@ -1304,7 +1297,7 @@
     const marker = document.getElementById('fuseMarker');
     const section = document.getElementById('productSection');
     if(!marker || !section) return;
-    const zoneHeight = 160; // matches .fuse-marker height / the gradient's fade distance
+    const zoneHeight = 300; // matches .fuse-marker height / the gradient's fade distance
     let ticking = false;
     function update(){
       ticking = false;
