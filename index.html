@@ -57,12 +57,19 @@
      room top and bottom. */
   #productSection{
     min-height:0;padding:32px 0;
-    /* Fades in from fully transparent at the very top to plain cream
-       (the site's regular background color) within the first ~300px,
-       then stays that color the rest of the way down. No overlap with
-       the hero above — that was bleeding into the hero's fullscreen
-       view even at rest (scroll position 0), which is wrong; the hero
-       needs to be purely fullscreen until the user actually scrolls. */
+    /* Overlaps the hero by exactly the hero's extra scroll "slack"
+       (see .hero-video above) — this is what makes the transparent
+       part of the gradient below actually reveal the still-pinned
+       hero underneath, instead of just the plain cream page
+       background (which is the same color it fades into, and was
+       invisible). Because the hero wrapper is genuinely taller than
+       its sticky content now, this doesn't bleed into the very first
+       frame — the hero still exactly fills the viewport at rest. */
+    margin-top:-300px;
+    /* Fades in from fully transparent at the very top — revealing the
+       hero underneath — to plain cream (the site's regular background
+       color) within that same first ~300px, then stays that color the
+       rest of the way down. */
     background:linear-gradient(180deg,
       rgba(247,245,239,0) 0px,
       rgba(247,245,239,1) 300px,
@@ -124,8 +131,23 @@
   /* Get Started — same button shape as Client Access, distinguished by
      color (gold fill vs. green) so it reads as the primary action */
 
-  /* ===== HERO — full-bleed animated background, minimal overlay copy ===== */
+  /* ===== HERO — full-bleed animated background, minimal overlay copy =====
+     Two-layer structure: .hero-video is a plain (non-sticky) spacer taller
+     than one viewport — the extra height is scroll "slack" — and
+     .hero-sticky is the actual pinned 100vh visual inside it. Without
+     that extra slack, position:sticky has nowhere to remain stuck: the
+     wrapper and the sticky content would be the same height, so there's
+     no scroll range during which content further down the page can
+     overlap it. #productSection's negative margin (below) pulls it up
+     by exactly that same slack amount, so it visually overlaps the
+     still-pinned hero for that scroll range — revealing it through the
+     transparent top of its gradient — without any of that bleeding into
+     the very first frame (scroll position 0), where the sticky content
+     still exactly fills the viewport on its own. */
   .hero-video{
+    position:relative;height:calc(100vh + 300px);
+  }
+  .hero-sticky{
     position:sticky;top:0;height:100vh;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
     z-index:1;
@@ -667,16 +689,18 @@
 </div>
 
 <section class="hero-video">
-  <div class="hero-bg">
-    <div class="hero-bg-fallback"></div>
-    <video src="media/Website_hero.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+  <div class="hero-sticky">
+    <div class="hero-bg">
+      <div class="hero-bg-fallback"></div>
+      <video src="media/Website_hero.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+    </div>
+    <div class="hero-noise"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Laying the <em>foundations</em> of the <em id="heroFuture">future.</em></h1>
+    </div>
+    <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
   </div>
-  <div class="hero-noise"></div>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <h1>Laying the <em>foundations</em> of the <em id="heroFuture">future.</em></h1>
-  </div>
-  <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
 
 <div class="snap-section" id="productSection">
