@@ -1323,7 +1323,12 @@
     const section = document.getElementById('productSection');
     if(!gallery || !section) return;
     const fuseRange = 320; // px of scroll over which --fuse completes
-    const recedeRange = 220; // px of scroll over which --recede completes
+    const recedeDelay = 80; // px of scroll before --recede starts at all —
+                             // matches the point where the cards have just
+                             // started peeking in at the bottom of the
+                             // screen, rather than starting on the very
+                             // first pixel scrolled
+    const recedeRange = 220; // px of scroll AFTER recedeDelay over which --recede completes
     let ticking = false;
     function update(){
       ticking = false;
@@ -1334,9 +1339,10 @@
       fuseProgress = Math.min(1, Math.max(0, fuseProgress));
 
       const top = section.getBoundingClientRect().top;
-      // top === vh  -> section hasn't started entering yet          -> 0
-      // top <= vh - recedeRange -> section well underway entering   -> 1
-      let recedeProgress = (vh - top) / recedeRange;
+      // top === vh              -> section hasn't started entering yet -> 0
+      // top === vh - recedeDelay -> the "just peeking" point           -> 0 (ramp starts here)
+      // top <= vh - recedeDelay - recedeRange -> well underway         -> 1
+      let recedeProgress = (vh - recedeDelay - top) / recedeRange;
       recedeProgress = Math.min(1, Math.max(0, recedeProgress));
 
       // Set on :root (not just #productSection) so the hero — a sibling
