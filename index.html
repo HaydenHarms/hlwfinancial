@@ -78,16 +78,6 @@
     content:'';position:absolute;inset:0;z-index:0;
     background:var(--cream);opacity:var(--fuse,0);pointer-events:none;
   }
-  /* Grain / focus pull — a brief flicker of film grain right at the
-     midpoint of the fuse (fuse≈0.5), resolving to nothing by the time
-     it's fully fused (fuse=1) or fully unfused (fuse=0). fuse*(1-fuse)
-     is 0 at both ends and peaks at 0.5, which is exactly that shape. */
-  .grain-overlay{
-    content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
-    mix-blend-mode:overlay;
-    opacity:calc(var(--fuse,0) * (1 - var(--fuse,0)) * 2.2);
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
   /* Same issue on the marquee section itself: it used to be the first
      section right after the hero, where full-viewport centering made
      sense as a big entrance. Now that it follows the product cards,
@@ -134,11 +124,22 @@
   .hero-video{
     position:sticky;top:0;height:100vh;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
-    z-index:1;
+    z-index:1;background:#0b120d;
   }
+  /* Hero recede — as the product section below fuses to solid (--fuse,
+     set on :root per scroll frame), the whole hero — video, overlay,
+     and text together — eases back: slightly smaller and softer,
+     reading as it settling into the background rather than being
+     abruptly covered. Applied to the wrapper (not just the text) so
+     the video itself visibly recedes, not only the copy on top of it.
+     .hero-video behind it gets a solid dark fallback fill so scaling
+     this down doesn't reveal the page's cream background at the edges. */
   .hero-sticky{
     position:absolute;inset:0;
     display:flex;align-items:center;justify-content:center;
+    transform:scale(calc(1 - var(--fuse,0) * 0.06));
+    filter:blur(calc(var(--fuse,0) * 3px));
+    opacity:calc(1 - var(--fuse,0) * 0.25);
   }
   .hero-bg{
     position:absolute;inset:0;overflow:hidden;
@@ -172,13 +173,6 @@
     position:relative;z-index:2;max-width:1400px;margin:0 auto;width:100%;
     padding:0 60px;color:#f4f1e8;
     text-align:center;
-    /* Hero recede — as the product section below fuses to solid
-       (--fuse, set on :root per scroll frame), the hero content eases
-       back: slightly smaller, softer, and dimmer, reading as it settling
-       into the background rather than being abruptly covered. */
-    transform:scale(calc(1 - var(--fuse,0) * 0.06));
-    filter:blur(calc(var(--fuse,0) * 3px));
-    opacity:calc(1 - var(--fuse,0) * 0.3);
   }
   .hero-content .eyebrow{
     font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
@@ -699,7 +693,6 @@
 </section>
 
 <div class="snap-section" id="productSection">
-  <div class="grain-overlay"></div>
   <div class="product-gallery">
     <a class="product-card has-bg" id="prodBookkeeping" href="bookkeeping.html">
       <img src="media/product-bookkeeping.PNG" alt="">
