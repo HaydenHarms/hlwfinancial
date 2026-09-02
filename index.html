@@ -51,6 +51,13 @@
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
     background:var(--page-bg);
   }
+  /* Product cards no longer need a full viewport of vertical centering —
+     that's what was leaving a large blank gap above the marquee section
+     that now follows it. Size to content instead, with modest breathing
+     room top and bottom. */
+  #productSection{
+    min-height:0;padding:100px 0;
+  }
   body{
     background:var(--page-bg);color:var(--ink);
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -564,6 +571,7 @@
        breathing gap, so hero → marquee → products sit close together. */
     .snap-section{min-height:0;justify-content:flex-start;}
     #marqueeSection{padding-top:28px;}
+    #productSection{padding:28px 0;}
     .facts-wrap{height:52vh;}
     .marquee-card{inset:0 22px;}
     .marquee-card-inner{padding:0 26px 40px;}
@@ -634,7 +642,7 @@
   <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
 
-<div class="snap-section">
+<div class="snap-section" id="productSection">
   <div class="product-gallery">
     <a class="product-card has-bg" id="prodBookkeeping" href="bookkeeping.html">
       <img src="media/product-bookkeeping.PNG" alt="">
