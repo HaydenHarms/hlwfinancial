@@ -78,6 +78,16 @@
     content:'';position:absolute;inset:0;z-index:0;
     background:var(--cream);opacity:var(--fuse,0);pointer-events:none;
   }
+  /* Grain / focus pull — a brief flicker of film grain right at the
+     midpoint of the fuse (fuse≈0.5), resolving to nothing by the time
+     it's fully fused (fuse=1) or fully unfused (fuse=0). fuse*(1-fuse)
+     is 0 at both ends and peaks at 0.5, which is exactly that shape. */
+  .grain-overlay{
+    content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+    mix-blend-mode:overlay;
+    opacity:calc(var(--fuse,0) * (1 - var(--fuse,0)) * 2.2);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
   /* Same issue on the marquee section itself: it used to be the first
      section right after the hero, where full-viewport centering made
      sense as a big entrance. Now that it follows the product cards,
@@ -162,6 +172,13 @@
     position:relative;z-index:2;max-width:1400px;margin:0 auto;width:100%;
     padding:0 60px;color:#f4f1e8;
     text-align:center;
+    /* Hero recede — as the product section below fuses to solid
+       (--fuse, set on :root per scroll frame), the hero content eases
+       back: slightly smaller, softer, and dimmer, reading as it settling
+       into the background rather than being abruptly covered. */
+    transform:scale(calc(1 - var(--fuse,0) * 0.06));
+    filter:blur(calc(var(--fuse,0) * 3px));
+    opacity:calc(1 - var(--fuse,0) * 0.3);
   }
   .hero-content .eyebrow{
     font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
@@ -682,6 +699,7 @@
 </section>
 
 <div class="snap-section" id="productSection">
+  <div class="grain-overlay"></div>
   <div class="product-gallery">
     <a class="product-card has-bg" id="prodBookkeeping" href="bookkeeping.html">
       <img src="media/product-bookkeeping.PNG" alt="">
@@ -1310,7 +1328,10 @@
       // bottom = vh          -> cards' bottom just reached the fold    -> 1
       let progress = (vh + range - bottom) / range;
       progress = Math.min(1, Math.max(0, progress));
-      section.style.setProperty('--fuse', progress);
+      // Set on :root (not just #productSection) so the hero — a sibling
+      // section, not a descendant — can also read --fuse for its own
+      // recede effect (see .hero-content above).
+      document.documentElement.style.setProperty('--fuse', progress);
     }
     function onScroll(){
       if(!ticking){
