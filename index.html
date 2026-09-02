@@ -51,6 +51,42 @@
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
     background:var(--page-bg);
   }
+  /* Product cards no longer need a full viewport of vertical centering —
+     that's what was leaving a large blank gap above the marquee section
+     that now follows it. Size to content instead, with modest breathing
+     room top and bottom. */
+  #productSection{
+    min-height:0;padding:32px 0;
+    /* Gradient from transparent at the top (revealing the sticky hero
+       pinned behind this section) fading to solid cream. No negative
+       margin needed — the hero stays pinned for the whole page scroll,
+       so it's already behind this section wherever this section is
+       transparent, and the hero remains untouched at scroll 0. */
+    background:linear-gradient(180deg,
+      rgba(247,245,239,0) 0%,
+      rgba(247,245,239,1) 55%,
+      var(--cream) 100%);
+  }
+  .product-gallery{position:relative;z-index:1;}
+  /* Solid cream overlay, faded in/out on top of #productSection's own
+     gradient background — this is what actually performs the "fusion":
+     crossfading the transparent-hero-peek zone to fully solid and back,
+     rather than jump-cutting between two different backgrounds. Driven
+     directly by --fuse (set in JS per scroll frame), not a CSS
+     transition, so it tracks the scroll gesture 1:1 in both directions. */
+  #productSection::after{
+    content:'';position:absolute;inset:0;z-index:0;
+    background:var(--cream);opacity:var(--fuse,0);pointer-events:none;
+  }
+  /* Same issue on the marquee section itself: it used to be the first
+     section right after the hero, where full-viewport centering made
+     sense as a big entrance. Now that it follows the product cards,
+     that same centering was leaving a second, even larger empty band
+     above the tabs. Drop it in favor of a fixed, modest top gap. */
+  #marqueeSection{
+    min-height:0;justify-content:flex-start;padding:0 0 32px;
+    background:var(--cream);
+  }
   body{
     background:var(--page-bg);color:var(--ink);
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -80,11 +116,30 @@
   /* Get Started — same button shape as Client Access, distinguished by
      color (gold fill vs. green) so it reads as the primary action */
 
-  /* ===== HERO — full-bleed animated background, minimal overlay copy ===== */
+  /* ===== HERO — full-bleed animated background, minimal overlay copy =====
+     Sticky for the whole page scroll: because its containing block is the
+     body, it stays pinned behind every later section rather than only for
+     a short window. Later sections have z-index:2 and scroll over it, so
+     wherever one of them is transparent, the hero shows through. */
   .hero-video{
     position:sticky;top:0;height:100vh;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
-    z-index:1;
+    z-index:1;background:#0b120d;
+  }
+  /* Hero recede — as the product section below fuses to solid (--fuse,
+     set on :root per scroll frame), the whole hero — video, overlay,
+     and text together — eases back: slightly smaller and softer,
+     reading as it settling into the background rather than being
+     abruptly covered. Applied to the wrapper (not just the text) so
+     the video itself visibly recedes, not only the copy on top of it.
+     .hero-video behind it gets a solid dark fallback fill so scaling
+     this down doesn't reveal the page's cream background at the edges. */
+  .hero-sticky{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    transform:scale(calc(1 - var(--recede,0) * 0.06));
+    filter:blur(calc(var(--recede,0) * 3px));
+    opacity:calc(1 - var(--recede,0) * 0.25);
   }
   .hero-bg{
     position:absolute;inset:0;overflow:hidden;
@@ -564,6 +619,7 @@
        breathing gap, so hero → marquee → products sit close together. */
     .snap-section{min-height:0;justify-content:flex-start;}
     #marqueeSection{padding-top:28px;}
+    #productSection{padding:28px 0;}
     .facts-wrap{height:52vh;}
     .marquee-card{inset:0 22px;}
     .marquee-card-inner{padding:0 26px 40px;}
@@ -622,17 +678,38 @@
 </div>
 
 <section class="hero-video">
-  <div class="hero-bg">
-    <div class="hero-bg-fallback"></div>
-    <video src="media/Website_hero.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+  <div class="hero-sticky">
+    <div class="hero-bg">
+      <div class="hero-bg-fallback"></div>
+      <video src="media/Website_hero.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+    </div>
+    <div class="hero-noise"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Laying the <em>foundations</em> of the <em id="heroFuture">future.</em></h1>
+    </div>
+    <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
   </div>
-  <div class="hero-noise"></div>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <h1>Laying the <em>foundations</em> of the <em id="heroFuture">future.</em></h1>
-  </div>
-  <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
 </section>
+
+<div class="snap-section" id="productSection">
+  <div class="product-gallery">
+    <a class="product-card has-bg" id="prodBookkeeping" href="bookkeeping.html">
+      <img src="media/product-bookkeeping.PNG" alt="">
+      <div class="product-card-inner">
+        <h3>Bookkeeping</h3>
+        <p class="pg-body" data-final="Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.">Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.</p>
+      </div>
+    </a>
+    <a class="product-card has-bg" id="prodTax" href="tax-prep.html">
+      <img src="media/product-tax.png" alt="">
+      <div class="product-card-inner">
+        <h3>Tax Preparation</h3>
+        <p class="pg-body" data-final="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.</p>
+      </div>
+    </a>
+  </div>
+</div>
 
 <div class="snap-section" id="marqueeSection">
   <div class="marquee-tabs" id="marqueeTabs">
@@ -701,25 +778,6 @@
         </div>
       </a>
     </div>
-  </div>
-</div>
-
-<div class="snap-section">
-  <div class="product-gallery">
-    <a class="product-card has-bg" id="prodBookkeeping" href="bookkeeping.html">
-      <img src="media/product-bookkeeping.PNG" alt="">
-      <div class="product-card-inner">
-        <h3>Bookkeeping</h3>
-        <p class="pg-body" data-final="Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.">Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year.</p>
-      </div>
-    </a>
-    <a class="product-card has-bg" id="prodTax" href="tax-prep.html">
-      <img src="media/product-tax.png" alt="">
-      <div class="product-card-inner">
-        <h3>Tax Preparation</h3>
-        <p class="pg-body" data-final="Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.">Individual and entity returns prepared from books that are already right, with liability tracked ahead of the deadline.</p>
-      </div>
-    </a>
   </div>
 </div>
 
@@ -1239,6 +1297,70 @@
       });
     }, {threshold:0.3});
     io.observe(section);
+  })();
+
+  // ===== FUSE ANIMATION — the top of #productSection is transparent, so
+  // the sticky hero shows through behind it. This fades a solid cream
+  // overlay in over that gradient as the BOTTOM of the product cards
+  // comes into view, so it's fully solid by the time the cards are
+  // fully on screen — and fades back out (unfuses) scrolling back up.
+  // NOTE: this page's scroll container is document.body, not window
+  // (see updateNav / the hero decode script) — a window scroll listener
+  // never fires on this layout, so it must be bound to document.body.
+  //
+  // --recede (hero scale/blur/dim) is deliberately a SEPARATE, much
+  // faster progress value from --fuse (the solid-overlay fade), keyed
+  // off #productSection's TOP edge rather than the cards' bottom edge.
+  // The opaque cards themselves cover the hero almost as soon as they
+  // enter view — long before --fuse (measured all the way to the
+  // cards' bottom) has moved much — so driving the hero's recede off
+  // the same slow value made it happen well after the hero was already
+  // hidden behind them. --recede completes over just ~220px right as
+  // the section starts entering, so the hero visibly eases back while
+  // it's still actually the thing on screen.
+  (function(){
+    const gallery = document.querySelector('#productSection .product-gallery');
+    const section = document.getElementById('productSection');
+    if(!gallery || !section) return;
+    const fuseRange = 320; // px of scroll over which --fuse completes
+    const recedeDelay = 240; // px of scroll before --recede starts at all —
+                             // matches the point where the cards have just
+                             // started peeking in at the bottom of the
+                             // screen, rather than starting on the very
+                             // first pixel scrolled
+    const recedeRange = 220; // px of scroll AFTER recedeDelay over which --recede completes
+    let ticking = false;
+    function update(){
+      ticking = false;
+      const vh = window.innerHeight;
+
+      const bottom = gallery.getBoundingClientRect().bottom;
+      let fuseProgress = (vh + fuseRange - bottom) / fuseRange;
+      fuseProgress = Math.min(1, Math.max(0, fuseProgress));
+
+      const top = section.getBoundingClientRect().top;
+      // top === vh              -> section hasn't started entering yet -> 0
+      // top === vh - recedeDelay -> the "just peeking" point           -> 0 (ramp starts here)
+      // top <= vh - recedeDelay - recedeRange -> well underway         -> 1
+      let recedeProgress = (vh - recedeDelay - top) / recedeRange;
+      recedeProgress = Math.min(1, Math.max(0, recedeProgress));
+
+      // Set on :root (not just #productSection) so the hero — a sibling
+      // section, not a descendant — can also read these for its own
+      // recede effect (see .hero-sticky above).
+      document.documentElement.style.setProperty('--fuse', fuseProgress);
+      document.documentElement.style.setProperty('--recede', recedeProgress);
+    }
+    function onScroll(){
+      if(!ticking){
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+    document.body.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+    update();
   })();
 
 
