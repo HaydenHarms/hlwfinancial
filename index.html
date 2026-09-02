@@ -57,31 +57,16 @@
      room top and bottom. */
   #productSection{
     min-height:0;padding:32px 0;
-    /* Overlaps the hero by exactly the hero's extra scroll "slack"
-       (see .hero-video above) — this is what makes the transparent
-       part of the gradient below actually reveal the still-pinned
-       hero underneath, instead of just the plain cream page
-       background (which is the same color it fades into, and was
-       invisible). Because the hero wrapper is genuinely taller than
-       its sticky content now, this doesn't bleed into the very first
-       frame — the hero still exactly fills the viewport at rest. */
-    margin-top:-300px;
-    /* Fades in from fully transparent at the very top — revealing the
-       hero underneath — to plain cream (the site's regular background
-       color) within that same first ~300px, then stays that color the
-       rest of the way down. */
+    /* Gradient from transparent at the top (revealing the sticky hero
+       pinned behind this section) fading to solid cream. No negative
+       margin needed — the hero stays pinned for the whole page scroll,
+       so it's already behind this section wherever this section is
+       transparent, and the hero remains untouched at scroll 0. */
     background:linear-gradient(180deg,
-      rgba(247,245,239,0) 0px,
-      rgba(247,245,239,1) 300px,
+      rgba(247,245,239,0) 0%,
+      rgba(247,245,239,1) 55%,
       var(--cream) 100%);
   }
-  /* Not visible itself; used only as a scroll-position reference by
-     the FUSE ANIMATION script below, which continuously fuses/unfuses
-     the overlay in real time as this zone crosses the top of the
-     viewport — not a one-shot toggle after the fact, since anything
-     that only fired once the zone had scrolled fully out of view would
-     be changing pixels the user can no longer see. */
-  .fuse-marker{position:absolute;top:0;left:0;width:1px;height:300px;pointer-events:none;}
   .product-gallery{position:relative;z-index:1;}
   /* Solid cream overlay, faded in/out on top of #productSection's own
      gradient background — this is what actually performs the "fusion":
@@ -132,25 +117,18 @@
      color (gold fill vs. green) so it reads as the primary action */
 
   /* ===== HERO — full-bleed animated background, minimal overlay copy =====
-     Two-layer structure: .hero-video is a plain (non-sticky) spacer taller
-     than one viewport — the extra height is scroll "slack" — and
-     .hero-sticky is the actual pinned 100vh visual inside it. Without
-     that extra slack, position:sticky has nowhere to remain stuck: the
-     wrapper and the sticky content would be the same height, so there's
-     no scroll range during which content further down the page can
-     overlap it. #productSection's negative margin (below) pulls it up
-     by exactly that same slack amount, so it visually overlaps the
-     still-pinned hero for that scroll range — revealing it through the
-     transparent top of its gradient — without any of that bleeding into
-     the very first frame (scroll position 0), where the sticky content
-     still exactly fills the viewport on its own. */
+     Sticky for the whole page scroll: because its containing block is the
+     body, it stays pinned behind every later section rather than only for
+     a short window. Later sections have z-index:2 and scroll over it, so
+     wherever one of them is transparent, the hero shows through. */
   .hero-video{
-    position:relative;height:calc(100vh + 300px);
-  }
-  .hero-sticky{
     position:sticky;top:0;height:100vh;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
     z-index:1;
+  }
+  .hero-sticky{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
   }
   .hero-bg{
     position:absolute;inset:0;overflow:hidden;
@@ -704,7 +682,6 @@
 </section>
 
 <div class="snap-section" id="productSection">
-  <div class="fuse-marker" id="fuseMarker"></div>
   <div class="product-gallery">
     <a class="product-card has-bg" id="prodBookkeeping" href="bookkeeping.html">
       <img src="media/product-bookkeeping.PNG" alt="">
@@ -1311,25 +1288,27 @@
     io.observe(section);
   })();
 
-  // ===== FUSE ANIMATION — crossfade the top-of-page transparent-hero
-  // gradient to solid as the user scrolls THROUGH it, and back to
-  // transparent scrolling back up through it. Driven by the marker's
-  // live position every frame (not a one-time viewport-exit check),
-  // so the change happens while those pixels are still visible,
-  // scrubbing in lockstep with the scroll gesture in both directions.
+  // ===== FUSE ANIMATION — the top of #productSection is transparent, so
+  // the sticky hero shows through behind it. This fades a solid cream
+  // overlay in over that gradient as the BOTTOM of the product cards
+  // comes into view, so it's fully solid by the time the cards are
+  // fully on screen — and fades back out (unfuses) scrolling back up.
+  // NOTE: this page's scroll container is document.body, not window
+  // (see updateNav / the hero decode script) — a window scroll listener
+  // never fires on this layout, so it must be bound to document.body.
   (function(){
-    const marker = document.getElementById('fuseMarker');
+    const gallery = document.querySelector('#productSection .product-gallery');
     const section = document.getElementById('productSection');
-    if(!marker || !section) return;
-    const zoneHeight = 300; // matches .fuse-marker height / the gradient's fade distance
+    if(!gallery || !section) return;
+    const range = 320; // px of scroll over which the fuse completes
     let ticking = false;
     function update(){
       ticking = false;
-      const rect = marker.getBoundingClientRect();
-      // rect.bottom runs from 160 (zone untouched, at rest) down to 0
-      // and below (zone scrolled up past the viewport top) as the user
-      // scrolls down. Map that directly to a 0→1 fuse amount.
-      let progress = 1 - (rect.bottom / zoneHeight);
+      const bottom = gallery.getBoundingClientRect().bottom;
+      const vh = window.innerHeight;
+      // bottom > vh + range  -> cards' bottom still well below the fold -> 0
+      // bottom = vh          -> cards' bottom just reached the fold    -> 1
+      let progress = (vh + range - bottom) / range;
       progress = Math.min(1, Math.max(0, progress));
       section.style.setProperty('--fuse', progress);
     }
@@ -1339,6 +1318,7 @@
         requestAnimationFrame(update);
       }
     }
+    document.body.addEventListener('scroll', onScroll, {passive:true});
     window.addEventListener('scroll', onScroll, {passive:true});
     window.addEventListener('resize', onScroll);
     update();
