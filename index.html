@@ -499,15 +499,15 @@
   /* wider-spaced layer: the first dots to appear, starting around mid-card */
   .bg-tax .flow-tax-b::before, .bg-tax .flow-tax-c::before, .bg-tax .flow-tax-d::before{
     background-size:calc(var(--tax-s) * .035) calc(var(--tax-s) * .035);
-    -webkit-mask-image:linear-gradient(135deg, transparent 0%, transparent 38%, black 90%);
-    mask-image:linear-gradient(135deg, transparent 0%, transparent 38%, black 90%);
+    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 38%, black 90%);
+    mask-image:linear-gradient(45deg, transparent 0%, transparent 38%, black 90%);
   }
   /* tight-spaced layer: only visible right at the corner tip, on top of the
      first layer, so the two compound into denser-looking dots right at the point */
   .bg-tax .flow-tax-b::after, .bg-tax .flow-tax-c::after, .bg-tax .flow-tax-d::after{
     background-size:calc(var(--tax-s) * .018) calc(var(--tax-s) * .018);
-    -webkit-mask-image:linear-gradient(135deg, transparent 0%, transparent 62%, black 96%);
-    mask-image:linear-gradient(135deg, transparent 0%, transparent 62%, black 96%);
+    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 62%, black 96%);
+    mask-image:linear-gradient(45deg, transparent 0%, transparent 62%, black 96%);
   }
   .bg-tax .flow-tax-card span{
     position:relative; z-index:1; text-transform:lowercase;
