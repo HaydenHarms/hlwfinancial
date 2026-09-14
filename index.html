@@ -476,31 +476,38 @@
     border:2px solid var(--flow-card-border);
     box-shadow:0 14px 28px rgba(0,0,0,.35);
     overflow:hidden; transform-origin:center;
-    display:flex; align-items:flex-end; justify-content:flex-start;
+    /* label sits bottom-RIGHT: with the fan order below (a front-left ...
+       d back-right), each card is covered on its LEFT by the card in front
+       of it, so the right edge is always the exposed sliver — that's where
+       the label needs to live to stay readable while fanned. */
+    display:flex; align-items:flex-end; justify-content:flex-end;
     padding:calc(var(--tax-s) * .09);
   }
-  /* halftone shading in the upper-right corner — two dot layers stacked so
-     coverage compounds near the very corner, reading as dots packing closer
-     together rather than just a flat opacity fade. Front-most card (a) gets
-     none of this — it stays a clean, flat card, per reference. */
+  /* halftone shading in the upper-LEFT corner (opposite the label) — two dot
+     layers stacked so coverage compounds near the very corner, reading as
+     dots packing closer together rather than just a flat opacity fade.
+     Front-most card (a) gets none of this — it stays a clean, flat card,
+     per reference. Verified in a real Chromium render (Playwright), not
+     just by eye in code: this is the finer, denser pass after the first
+     one rendered too coarse. */
   .bg-tax .flow-tax-b::before, .bg-tax .flow-tax-b::after,
   .bg-tax .flow-tax-c::before, .bg-tax .flow-tax-c::after,
   .bg-tax .flow-tax-d::before, .bg-tax .flow-tax-d::after{
     content:""; position:absolute; inset:0; pointer-events:none;
-    background-image:radial-gradient(rgba(10,7,3,.55) 1px, transparent 1.3px);
+    background-image:radial-gradient(rgba(10,7,3,.55) .55px, transparent .75px);
   }
   /* wider-spaced layer: the first dots to appear, starting around mid-card */
   .bg-tax .flow-tax-b::before, .bg-tax .flow-tax-c::before, .bg-tax .flow-tax-d::before{
-    background-size:calc(var(--tax-s) * .07) calc(var(--tax-s) * .07);
-    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 38%, black 90%);
-    mask-image:linear-gradient(45deg, transparent 0%, transparent 38%, black 90%);
+    background-size:calc(var(--tax-s) * .035) calc(var(--tax-s) * .035);
+    -webkit-mask-image:linear-gradient(135deg, transparent 0%, transparent 38%, black 90%);
+    mask-image:linear-gradient(135deg, transparent 0%, transparent 38%, black 90%);
   }
   /* tight-spaced layer: only visible right at the corner tip, on top of the
      first layer, so the two compound into denser-looking dots right at the point */
   .bg-tax .flow-tax-b::after, .bg-tax .flow-tax-c::after, .bg-tax .flow-tax-d::after{
-    background-size:calc(var(--tax-s) * .035) calc(var(--tax-s) * .035);
-    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 62%, black 96%);
-    mask-image:linear-gradient(45deg, transparent 0%, transparent 62%, black 96%);
+    background-size:calc(var(--tax-s) * .018) calc(var(--tax-s) * .018);
+    -webkit-mask-image:linear-gradient(135deg, transparent 0%, transparent 62%, black 96%);
+    mask-image:linear-gradient(135deg, transparent 0%, transparent 62%, black 96%);
   }
   .bg-tax .flow-tax-card span{
     position:relative; z-index:1; text-transform:lowercase;
@@ -516,26 +523,56 @@
   .bg-tax .flow-tax-d{ background:var(--flow-card-taupe); color:var(--flow-taupe-text); z-index:1;
     animation:flowTaxFanD 5s ease-in-out infinite; animation-delay:.18s; }
   /* translate() as % of each card's own box, so the fan spread scales
-     automatically with --tax-s instead of needing hand-tuned px per size */
+     automatically with --tax-s instead of needing hand-tuned px per size.
+     Desktop values below were checked in a real headless-Chromium render at
+     1440×900 — enough gap between each pair that the label of the card
+     behind is fully clear of the card in front. */
   @keyframes flowTaxFanA{
     0%,100%{ transform:translate(0%,0%) rotate(0deg); }
-    20%,55%{ transform:translate(-85%,9%) rotate(-11deg); }
+    20%,55%{ transform:translate(-105%,12%) rotate(-11deg); }
     75%{ transform:translate(0%,0%) rotate(0deg); }
   }
   @keyframes flowTaxFanB{
     0%,100%{ transform:translate(5%,5%) rotate(-2deg); }
-    20%,55%{ transform:translate(-30%,-13%) rotate(-4deg); }
+    20%,55%{ transform:translate(-42%,-18%) rotate(-4deg); }
     75%{ transform:translate(5%,5%) rotate(-2deg); }
   }
   @keyframes flowTaxFanC{
     0%,100%{ transform:translate(10%,10%) rotate(-4deg); }
-    20%,55%{ transform:translate(30%,-13%) rotate(4deg); }
+    20%,55%{ transform:translate(42%,-18%) rotate(4deg); }
     75%{ transform:translate(10%,10%) rotate(-4deg); }
   }
   @keyframes flowTaxFanD{
     0%,100%{ transform:translate(15%,15%) rotate(-6deg); }
-    20%,55%{ transform:translate(85%,9%) rotate(11deg); }
+    20%,55%{ transform:translate(105%,12%) rotate(11deg); }
     75%{ transform:translate(15%,15%) rotate(-6deg); }
+  }
+  /* mobile needs its own, smaller spread: --tax-s clamps to a 160px floor on
+     narrow screens, and the desktop percentages translate to more pixels
+     than the card (inset:0 22px) has room for — checked at 390×700, the
+     labels clipped against the marquee-card's own overflow:hidden edge
+     before this override. */
+  @media(max-width:900px){
+    @keyframes flowTaxFanA{
+      0%,100%{ transform:translate(0%,0%) rotate(0deg); }
+      20%,55%{ transform:translate(-72%,10%) rotate(-9deg); }
+      75%{ transform:translate(0%,0%) rotate(0deg); }
+    }
+    @keyframes flowTaxFanB{
+      0%,100%{ transform:translate(5%,5%) rotate(-2deg); }
+      20%,55%{ transform:translate(-18%,-12%) rotate(-3deg); }
+      75%{ transform:translate(5%,5%) rotate(-2deg); }
+    }
+    @keyframes flowTaxFanC{
+      0%,100%{ transform:translate(10%,10%) rotate(-4deg); }
+      20%,55%{ transform:translate(18%,-12%) rotate(3deg); }
+      75%{ transform:translate(10%,10%) rotate(-4deg); }
+    }
+    @keyframes flowTaxFanD{
+      0%,100%{ transform:translate(15%,15%) rotate(-6deg); }
+      20%,55%{ transform:translate(72%,10%) rotate(9deg); }
+      75%{ transform:translate(15%,15%) rotate(-6deg); }
+    }
   }
   @media (prefers-reduced-motion: reduce){
     .bg-tax .flow-tax-card{ animation:none !important; }
