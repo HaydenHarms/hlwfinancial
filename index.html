@@ -479,14 +479,28 @@
     display:flex; align-items:flex-end; justify-content:flex-start;
     padding:calc(var(--tax-s) * .09);
   }
-  /* halftone shading in the upper-right corner, fading out toward the
-     label — a printmaking texture instead of a flat color block */
-  .bg-tax .flow-tax-card::before{
+  /* halftone shading in the upper-right corner — two dot layers stacked so
+     coverage compounds near the very corner, reading as dots packing closer
+     together rather than just a flat opacity fade. Front-most card (a) gets
+     none of this — it stays a clean, flat card, per reference. */
+  .bg-tax .flow-tax-b::before, .bg-tax .flow-tax-b::after,
+  .bg-tax .flow-tax-c::before, .bg-tax .flow-tax-c::after,
+  .bg-tax .flow-tax-d::before, .bg-tax .flow-tax-d::after{
     content:""; position:absolute; inset:0; pointer-events:none;
     background-image:radial-gradient(rgba(10,7,3,.55) 1px, transparent 1.3px);
-    background-size:calc(var(--tax-s) * .045) calc(var(--tax-s) * .045);
-    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 40%, black 95%);
-    mask-image:linear-gradient(45deg, transparent 0%, transparent 40%, black 95%);
+  }
+  /* wider-spaced layer: the first dots to appear, starting around mid-card */
+  .bg-tax .flow-tax-b::before, .bg-tax .flow-tax-c::before, .bg-tax .flow-tax-d::before{
+    background-size:calc(var(--tax-s) * .07) calc(var(--tax-s) * .07);
+    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 38%, black 90%);
+    mask-image:linear-gradient(45deg, transparent 0%, transparent 38%, black 90%);
+  }
+  /* tight-spaced layer: only visible right at the corner tip, on top of the
+     first layer, so the two compound into denser-looking dots right at the point */
+  .bg-tax .flow-tax-b::after, .bg-tax .flow-tax-c::after, .bg-tax .flow-tax-d::after{
+    background-size:calc(var(--tax-s) * .035) calc(var(--tax-s) * .035);
+    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 62%, black 96%);
+    mask-image:linear-gradient(45deg, transparent 0%, transparent 62%, black 96%);
   }
   .bg-tax .flow-tax-card span{
     position:relative; z-index:1; text-transform:lowercase;
@@ -505,22 +519,22 @@
      automatically with --tax-s instead of needing hand-tuned px per size */
   @keyframes flowTaxFanA{
     0%,100%{ transform:translate(0%,0%) rotate(0deg); }
-    20%,55%{ transform:translate(-58%,7%) rotate(-9deg); }
+    20%,55%{ transform:translate(-85%,9%) rotate(-11deg); }
     75%{ transform:translate(0%,0%) rotate(0deg); }
   }
   @keyframes flowTaxFanB{
     0%,100%{ transform:translate(5%,5%) rotate(-2deg); }
-    20%,55%{ transform:translate(-20%,-10%) rotate(-3deg); }
+    20%,55%{ transform:translate(-30%,-13%) rotate(-4deg); }
     75%{ transform:translate(5%,5%) rotate(-2deg); }
   }
   @keyframes flowTaxFanC{
     0%,100%{ transform:translate(10%,10%) rotate(-4deg); }
-    20%,55%{ transform:translate(20%,-10%) rotate(3deg); }
+    20%,55%{ transform:translate(30%,-13%) rotate(4deg); }
     75%{ transform:translate(10%,10%) rotate(-4deg); }
   }
   @keyframes flowTaxFanD{
     0%,100%{ transform:translate(15%,15%) rotate(-6deg); }
-    20%,55%{ transform:translate(58%,7%) rotate(9deg); }
+    20%,55%{ transform:translate(85%,9%) rotate(11deg); }
     75%{ transform:translate(15%,15%) rotate(-6deg); }
   }
   @media (prefers-reduced-motion: reduce){
