@@ -456,99 +456,79 @@
     .bg-reporting .pulse-motion{ display:none; }
   }
 
-  /* --- bg-tax: fanning document stack (v6) --- */
+  /* --- bg-tax: fanning document stack (v7 — reworked card style) --- */
   .marquee-card.bg-tax::after{
     content:"";position:absolute;inset:0;z-index:1;
     background:linear-gradient(180deg,
       rgba(10,19,15,.08) 0%, rgba(10,19,15,.15) 40%,
       rgba(10,19,15,.85) 68%, rgba(10,19,15,.92) 100%);
   }
-  .bg-tax .flow-bg.tax-lines{
-    background-color:var(--flow-green-deep);
-    background-image:repeating-linear-gradient(180deg,
-      rgba(232,212,160,0.07) 0px, rgba(232,212,160,0.07) 1px,
-      transparent 1px, transparent 27px);
+  .bg-tax .flow-bg{ background:var(--flow-green-deep); }
+  .bg-tax .flow-tax-stack{
+    position:absolute; left:50%; top:50%; width:0; height:0;
+    --tax-s: clamp(160px, 28vmin, 280px);
   }
-  .bg-tax .flow-tax-stack{ position:absolute; left:50%; top:14%; width:0; height:0; }
-  .bg-tax .flow-tax-card,
-  .bg-tax .flow-tax-shadow{
-    position:absolute; width:76px; height:104px; left:-38px; top:-52px;
-    border-radius:10px; transform-origin:center;
-  }
+  /* square, rounded card — border + shadow give it a printed-card feel */
   .bg-tax .flow-tax-card{
-    display:flex; align-items:flex-end; justify-content:flex-end;
-    padding:0 9px 9px 0; border:2.5px solid var(--flow-card-border);
-    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.04em;
-    text-transform:uppercase;
+    position:absolute; width:var(--tax-s); height:var(--tax-s);
+    left:calc(var(--tax-s) / -2); top:calc(var(--tax-s) / -2);
+    border-radius:calc(var(--tax-s) * .11);
+    border:2px solid var(--flow-card-border);
+    box-shadow:0 14px 28px rgba(0,0,0,.35);
+    overflow:hidden; transform-origin:center;
+    display:flex; align-items:flex-end; justify-content:flex-start;
+    padding:calc(var(--tax-s) * .09);
   }
-  .bg-tax .flow-tax-shadow{
-    background-image:radial-gradient(rgba(10,7,3,0.55) 1.1px, transparent 1.4px);
-    background-size:6px 6px;
-    -webkit-mask-image:linear-gradient(135deg, black 0%, black 35%, transparent 80%);
-    mask-image:linear-gradient(135deg, black 0%, black 35%, transparent 80%);
+  /* halftone shading in the upper-right corner, fading out toward the
+     label — a printmaking texture instead of a flat color block */
+  .bg-tax .flow-tax-card::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:radial-gradient(rgba(10,7,3,.55) 1px, transparent 1.3px);
+    background-size:calc(var(--tax-s) * .045) calc(var(--tax-s) * .045);
+    -webkit-mask-image:linear-gradient(45deg, transparent 0%, transparent 40%, black 95%);
+    mask-image:linear-gradient(45deg, transparent 0%, transparent 40%, black 95%);
   }
-  .bg-tax .flow-tax-a{ background:var(--flow-gold); color:var(--cream); z-index:8;
+  .bg-tax .flow-tax-card span{
+    position:relative; z-index:1; text-transform:lowercase;
+    font-family:'JetBrains Mono',monospace; font-weight:500;
+    font-size:calc(var(--tax-s) * .1); letter-spacing:.01em;
+  }
+  .bg-tax .flow-tax-a{ background:var(--flow-gold); color:var(--flow-taupe-text); z-index:4;
     animation:flowTaxFanA 5s ease-in-out infinite; animation-delay:0s; }
-  .bg-tax .flow-tax-b{ background:var(--flow-card-rust); color:var(--cream); z-index:6;
+  .bg-tax .flow-tax-b{ background:var(--flow-card-rust); color:var(--cream); z-index:3;
     animation:flowTaxFanB 5s ease-in-out infinite; animation-delay:.06s; }
-  .bg-tax .flow-tax-c{ background:var(--flow-card-sage); color:var(--cream); z-index:4;
+  .bg-tax .flow-tax-c{ background:var(--flow-card-sage); color:var(--cream); z-index:2;
     animation:flowTaxFanC 5s ease-in-out infinite; animation-delay:.12s; }
-  .bg-tax .flow-tax-d{ background:var(--flow-card-taupe); color:var(--flow-taupe-text); z-index:2;
+  .bg-tax .flow-tax-d{ background:var(--flow-card-taupe); color:var(--flow-taupe-text); z-index:1;
     animation:flowTaxFanD 5s ease-in-out infinite; animation-delay:.18s; }
-  .bg-tax .flow-tax-shadow-a{ z-index:7; animation:flowTaxShadowA 5s ease-in-out infinite; animation-delay:0s; }
-  .bg-tax .flow-tax-shadow-b{ z-index:5; animation:flowTaxShadowB 5s ease-in-out infinite; animation-delay:.06s; }
-  .bg-tax .flow-tax-shadow-c{ z-index:3; animation:flowTaxShadowC 5s ease-in-out infinite; animation-delay:.12s; }
-  .bg-tax .flow-tax-shadow-d{ z-index:1; animation:flowTaxShadowD 5s ease-in-out infinite; animation-delay:.18s; }
+  /* translate() as % of each card's own box, so the fan spread scales
+     automatically with --tax-s instead of needing hand-tuned px per size */
   @keyframes flowTaxFanA{
-    0%,100%{ transform:translate(0px,0px) rotate(0deg); }
-    20%,55%{ transform:translate(-50px,6px) rotate(-9deg); }
-    75%{ transform:translate(0px,0px) rotate(0deg); }
+    0%,100%{ transform:translate(0%,0%) rotate(0deg); }
+    20%,55%{ transform:translate(-58%,7%) rotate(-9deg); }
+    75%{ transform:translate(0%,0%) rotate(0deg); }
   }
   @keyframes flowTaxFanB{
-    0%,100%{ transform:translate(4px,4px) rotate(-2deg); }
-    20%,55%{ transform:translate(-17px,-10px) rotate(-3deg); }
-    75%{ transform:translate(4px,4px) rotate(-2deg); }
+    0%,100%{ transform:translate(5%,5%) rotate(-2deg); }
+    20%,55%{ transform:translate(-20%,-10%) rotate(-3deg); }
+    75%{ transform:translate(5%,5%) rotate(-2deg); }
   }
   @keyframes flowTaxFanC{
-    0%,100%{ transform:translate(8px,8px) rotate(-4deg); }
-    20%,55%{ transform:translate(17px,-10px) rotate(3deg); }
-    75%{ transform:translate(8px,8px) rotate(-4deg); }
+    0%,100%{ transform:translate(10%,10%) rotate(-4deg); }
+    20%,55%{ transform:translate(20%,-10%) rotate(3deg); }
+    75%{ transform:translate(10%,10%) rotate(-4deg); }
   }
   @keyframes flowTaxFanD{
-    0%,100%{ transform:translate(12px,12px) rotate(-6deg); }
-    20%,55%{ transform:translate(50px,6px) rotate(9deg); }
-    75%{ transform:translate(12px,12px) rotate(-6deg); }
-  }
-  @keyframes flowTaxShadowA{
-    0%,100%{ transform:translate(8px,8px) rotate(0deg); }
-    20%,55%{ transform:translate(-42px,14px) rotate(-9deg); }
-    75%{ transform:translate(8px,8px) rotate(0deg); }
-  }
-  @keyframes flowTaxShadowB{
-    0%,100%{ transform:translate(12px,12px) rotate(-2deg); }
-    20%,55%{ transform:translate(-9px,-2px) rotate(-3deg); }
-    75%{ transform:translate(12px,12px) rotate(-2deg); }
-  }
-  @keyframes flowTaxShadowC{
-    0%,100%{ transform:translate(16px,16px) rotate(-4deg); }
-    20%,55%{ transform:translate(25px,-2px) rotate(3deg); }
-    75%{ transform:translate(16px,16px) rotate(-4deg); }
-  }
-  @keyframes flowTaxShadowD{
-    0%,100%{ transform:translate(20px,20px) rotate(-6deg); }
-    20%,55%{ transform:translate(58px,14px) rotate(9deg); }
-    75%{ transform:translate(20px,20px) rotate(-6deg); }
+    0%,100%{ transform:translate(15%,15%) rotate(-6deg); }
+    20%,55%{ transform:translate(58%,7%) rotate(9deg); }
+    75%{ transform:translate(15%,15%) rotate(-6deg); }
   }
   @media (prefers-reduced-motion: reduce){
-    .bg-tax .flow-tax-card, .bg-tax .flow-tax-shadow{ animation:none !important; }
-    .bg-tax .flow-tax-a{ transform:translate(0px,0px) rotate(0deg) !important; }
-    .bg-tax .flow-tax-shadow-a{ transform:translate(8px,8px) rotate(0deg) !important; }
-    .bg-tax .flow-tax-b{ transform:translate(4px,4px) rotate(-2deg) !important; }
-    .bg-tax .flow-tax-shadow-b{ transform:translate(12px,12px) rotate(-2deg) !important; }
-    .bg-tax .flow-tax-c{ transform:translate(8px,8px) rotate(-4deg) !important; }
-    .bg-tax .flow-tax-shadow-c{ transform:translate(16px,16px) rotate(-4deg) !important; }
-    .bg-tax .flow-tax-d{ transform:translate(12px,12px) rotate(-6deg) !important; }
-    .bg-tax .flow-tax-shadow-d{ transform:translate(20px,20px) rotate(-6deg) !important; }
+    .bg-tax .flow-tax-card{ animation:none !important; }
+    .bg-tax .flow-tax-a{ transform:translate(0%,0%) rotate(0deg) !important; }
+    .bg-tax .flow-tax-b{ transform:translate(5%,5%) rotate(-2deg) !important; }
+    .bg-tax .flow-tax-c{ transform:translate(10%,10%) rotate(-4deg) !important; }
+    .bg-tax .flow-tax-d{ transform:translate(15%,15%) rotate(-6deg) !important; }
   }
 
   /* nav row above the marquee — one tab per card, timer fill shows time left */
@@ -982,16 +962,12 @@
         </div>
       </a>
       <a class="marquee-card has-bg bg-tax" href="news.html">
-        <div class="flow-bg tax-lines">
+        <div class="flow-bg">
           <div class="flow-tax-stack">
-            <div class="flow-tax-shadow flow-tax-shadow-d"></div>
-            <div class="flow-tax-card flow-tax-d">1099</div>
-            <div class="flow-tax-shadow flow-tax-shadow-c"></div>
-            <div class="flow-tax-card flow-tax-c">w-2</div>
-            <div class="flow-tax-shadow flow-tax-shadow-b"></div>
-            <div class="flow-tax-card flow-tax-b">sched c</div>
-            <div class="flow-tax-shadow flow-tax-shadow-a"></div>
-            <div class="flow-tax-card flow-tax-a">1040</div>
+            <div class="flow-tax-card flow-tax-d"><span>1099</span></div>
+            <div class="flow-tax-card flow-tax-c"><span>w-2</span></div>
+            <div class="flow-tax-card flow-tax-b"><span>sched c</span></div>
+            <div class="flow-tax-card flow-tax-a"><span>1040</span></div>
           </div>
         </div>
         <span class="mc-news-tag">News</span>
