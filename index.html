@@ -50,6 +50,10 @@
     --flow-card-taupe:#c9b394;
     --flow-taupe-text:#2a2013;
     --flow-card-border:#1a1508;
+    /* flow-counsel (bg-counsel) */
+    --flow-electron:#5fb8ac;
+    --flow-electron-bright:#bdeee5;
+    --flow-electron-glow:#8fdccf;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{width:100%;height:100%;overflow-x:hidden;}
@@ -307,16 +311,6 @@
     background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
   }
   .marquee-card.bg-ledger .marquee-card-inner{position:relative;z-index:2;}
-  .marquee-card.bg-counsel{overflow:hidden;}
-  .marquee-card.bg-counsel video{
-    position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;object-position:center;z-index:0;
-  }
-  .marquee-card.bg-counsel::after{
-    content:"";position:absolute;inset:0;z-index:1;
-    background:linear-gradient(180deg, rgba(20,32,26,0.72), rgba(20,32,26,0.88));
-  }
-  .marquee-card.bg-counsel .marquee-card-inner{position:relative;z-index:2;}
   .marquee-card.bg-news{overflow:hidden;}
   .marquee-card.bg-news video{
     position:absolute;inset:0;width:100%;height:100%;
@@ -580,6 +574,104 @@
     .bg-tax .flow-tax-b{ transform:translate(5%,5%) rotate(-2deg) !important; }
     .bg-tax .flow-tax-c{ transform:translate(10%,10%) rotate(-4deg) !important; }
     .bg-tax .flow-tax-d{ transform:translate(15%,15%) rotate(-6deg) !important; }
+  }
+
+/* ===== bg-counsel ancestor ===== */
+  .marquee-card.bg-counsel{overflow:hidden;background-color:var(--flow-green-deep);border-color:var(--green-deep);}
+  .bg-counsel .flow-bg{position:absolute;inset:0;background:var(--flow-green-deep);}
+  .bg-counsel .flow-svg{width:100%;height:100%;display:block;}
+  .bg-counsel::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(15,30,21,0) 30%,rgba(15,30,21,.82) 100%);z-index:1;pointer-events:none;}
+
+  /* ===================== flow-counsel-* ===================== */
+
+  .flow-counsel-facet{stroke:rgba(6,14,9,.55);stroke-width:.7;fill:var(--fbase);
+    animation-name:flow-counsel-facetPulse;animation-duration:8s;animation-iteration-count:infinite;
+    animation-timing-function:ease-out;}
+
+  @keyframes flow-counsel-facetPulse{
+    0%{fill:var(--fbase);}
+    1.9%{fill:var(--flow-electron-bright);}
+    3.1%{fill:var(--flow-electron);}
+    7%{fill:var(--fbase);}
+    100%{fill:var(--fbase);}
+  }
+
+  .flow-counsel-outline{fill:none;stroke:rgba(232,212,160,.18);stroke-width:1;}
+
+  /* windows */
+  .flow-counsel-win{filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));}
+  .flow-counsel-win-body{fill:#efece3;stroke:#8f8a76;stroke-width:1;}
+  .flow-counsel-win-bar{fill:#ddd8c8;stroke:#8f8a76;stroke-width:1;}
+  .flow-counsel-win-bar-line{stroke:#c3bda9;stroke-width:1;}
+  .flow-counsel-dot-r{fill:#e0645a;}
+  .flow-counsel-dot-y{fill:#e0b23f;}
+  .flow-counsel-dot-g{fill:#63b26a;}
+  .flow-counsel-win-title{font-family:'JetBrains Mono',monospace;font-size:8px;fill:#7c7660;letter-spacing:.04em;}
+  .flow-counsel-win-status{fill:#c3bda9;}
+  .flow-counsel-prompt-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:#9b9581;letter-spacing:.05em;}
+
+  .flow-counsel-typed-q{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;fill:#2a2f28;}
+  .flow-counsel-typed-a{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;fill:#1d5f4e;font-weight:600;}
+
+  .flow-counsel-type-mask-q{
+    animation-name:flow-counsel-typeQ;animation-duration:8s;animation-iteration-count:infinite;
+    animation-timing-function:steps(19,end);
+  }
+  @keyframes flow-counsel-typeQ{
+    0%{width:0;} 3.75%{width:0;} 17.5%{width:100%;} 100%{width:100%;}
+  }
+  .flow-counsel-type-mask-a{
+    animation-name:flow-counsel-typeA;animation-duration:8s;animation-iteration-count:infinite;
+    animation-timing-function:steps(22,end);
+  }
+  @keyframes flow-counsel-typeA{
+    0%{width:0;} 53.75%{width:0;} 68.75%{width:100%;} 100%{width:100%;}
+  }
+
+  .flow-counsel-cursor-q{fill:#2a2f28;
+    animation-name:flow-counsel-cursorQ;animation-duration:8s;animation-iteration-count:infinite;animation-timing-function:linear;}
+  @keyframes flow-counsel-cursorQ{
+    0%{opacity:0;} 3.75%{opacity:0;} 4.2%{opacity:1;} 8%{opacity:0;} 8.4%{opacity:1;}
+    12%{opacity:0;} 12.4%{opacity:1;} 16%{opacity:0;} 16.4%{opacity:1;} 17.5%{opacity:0;} 100%{opacity:0;}
+  }
+  .flow-counsel-cursor-a{fill:#1d5f4e;
+    animation-name:flow-counsel-cursorA;animation-duration:8s;animation-iteration-count:infinite;animation-timing-function:linear;}
+  @keyframes flow-counsel-cursorA{
+    0%{opacity:0;} 53.75%{opacity:0;} 54.2%{opacity:1;} 58%{opacity:0;} 58.4%{opacity:1;}
+    62%{opacity:0;} 62.4%{opacity:1;} 66%{opacity:0;} 66.4%{opacity:1;} 68.75%{opacity:0;} 100%{opacity:0;}
+  }
+
+  .flow-counsel-wire{fill:none;stroke:var(--flow-electron);stroke-width:1.4;stroke-linecap:round;opacity:.55;}
+
+  .flow-counsel-pulse-a,.flow-counsel-pulse-b,.flow-counsel-pulse-c,
+  .flow-counsel-pulse-d,.flow-counsel-pulse-e,.flow-counsel-pulse-f,
+  .flow-counsel-pulse-lead,.flow-counsel-pulse-out{opacity:0;}
+
+  .flow-counsel-scene{
+    animation-name:flow-counsel-fade;animation-duration:8s;animation-iteration-count:infinite;
+    animation-timing-function:linear;
+  }
+  @keyframes flow-counsel-fade{
+    0%{opacity:0;} 3%{opacity:1;} 91%{opacity:1;} 98.5%{opacity:0;} 100%{opacity:0;}
+  }
+
+  /* on narrow cards `meet` letterboxes the scene into a thin band; scale it
+     up so it reads at mobile size. Tuned so the outer window edges stay
+     inside the 22px-inset card - verified by screenshot at 320px. */
+  @media(max-width:900px){
+    .bg-counsel .flow-svg{transform:scale(1.25);transform-origin:center center;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .flow-counsel-facet{animation:none !important;fill:var(--fbase) !important;}
+    .flow-counsel-type-mask-q{animation:none !important;width:100% !important;}
+    .flow-counsel-type-mask-a{animation:none !important;width:100% !important;}
+    .flow-counsel-cursor-q,.flow-counsel-cursor-a{animation:none !important;opacity:0 !important;}
+    .flow-counsel-scene{animation:none !important;opacity:1 !important;}
+    .flow-counsel-pulse-a,.flow-counsel-pulse-b,.flow-counsel-pulse-c,
+    .flow-counsel-pulse-d,.flow-counsel-pulse-e,.flow-counsel-pulse-f,
+    .flow-counsel-pulse-lead,.flow-counsel-pulse-out{display:none;}
   }
 
   /* nav row above the marquee — one tab per card, timer fill shows time left */
@@ -1135,7 +1227,364 @@
         </div>
       </a>
       <a class="marquee-card has-bg bg-counsel" href="news.html">
-        <video src="media/card-counsel-bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+        <div class="flow-bg">
+      <svg class="flow-svg" viewBox="0 0 800 340" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="flow-counsel-glow" x="-300%" y="-300%" width="700%" height="700%">
+            <feGaussianBlur stdDeviation="3.2" result="b"/>
+          </filter>
+
+          <path id="flow-counsel-lead-in" d="M235,112 L253,112"/>
+          <path id="flow-counsel-lead-out" d="M547,112 L565,112"/>
+
+          <path id="flow-counsel-pathA" d="M255,95 C295,66 330,54 362,46 C400,37 448,36 476,44 C500,51 524,66 545,84"/>
+          <path id="flow-counsel-pathB" d="M256,110 C298,94 338,85 378,86 C428,87 480,92 545,101"/>
+          <path id="flow-counsel-pathC" d="M255,121 C294,119 328,123 362,132 C406,144 456,144 496,137 C516,134 533,126 545,117"/>
+          <path id="flow-counsel-pathD" d="M258,142 C294,151 328,157 362,164 C406,173 456,175 496,166 C516,161 534,146 545,133"/>
+          <path id="flow-counsel-pathE" d="M262,166 C289,179 318,183 347,181 C391,178 434,170 471,157 C498,147 526,130 545,116"/>
+          <path id="flow-counsel-pathF" d="M270,74 C294,57 318,48 342,61 C371,76 396,78 420,69 C454,57 496,62 545,90"/>
+        </defs>
+
+        <g class="flow-counsel-scene">
+
+        <!-- ===== brain: low-poly facet mesh ===== -->
+        <g class="flow-counsel-brain">
+<path class="flow-counsel-facet" d="M514.7,191.4 L514.3,174.7 L523.4,181.3 Z" style="--fbase:#1a2e21;animation-delay:3.612s"/>
+<path class="flow-counsel-facet" d="M514.3,174.7 L512.7,171.2 L523.4,181.3 Z" style="--fbase:#20392a;animation-delay:3.614s"/>
+<path class="flow-counsel-facet" d="M504.6,186.7 L484.4,196.1 L487.6,185.4 Z" style="--fbase:#16261c;animation-delay:3.475s"/>
+<path class="flow-counsel-facet" d="M359.6,70.2 L384.7,56.4 L388.1,76.2 Z" style="--fbase:#28402f;animation-delay:2.693s"/>
+<path class="flow-counsel-facet" d="M468.2,122.4 L475.9,143.8 L450.4,126.0 Z" style="--fbase:#132119;animation-delay:3.270s"/>
+<path class="flow-counsel-facet" d="M506.3,183.9 L514.3,174.7 L514.7,191.4 Z" style="--fbase:#1e3526;animation-delay:3.583s"/>
+<path class="flow-counsel-facet" d="M504.6,186.7 L506.3,183.9 L514.7,191.4 Z" style="--fbase:#233c2b;animation-delay:3.538s"/>
+<path class="flow-counsel-facet" d="M506.3,183.9 L512.7,171.2 L514.3,174.7 Z" style="--fbase:#182a1f;animation-delay:3.574s"/>
+<path class="flow-counsel-facet" d="M281.9,86.0 L268.1,83.9 L278.6,72.7 Z" style="--fbase:#1a2e21;animation-delay:2.037s"/>
+<path class="flow-counsel-facet" d="M297.5,87.0 L281.9,86.0 L278.6,72.7 Z" style="--fbase:#20392a;animation-delay:2.112s"/>
+<path class="flow-counsel-facet" d="M268.1,83.9 L281.5,60.3 L278.6,72.7 Z" style="--fbase:#16261c;animation-delay:2.004s"/>
+<path class="flow-counsel-facet" d="M528.8,77.1 L519.2,79.9 L518.0,57.0 Z" style="--fbase:#28402f;animation-delay:3.633s"/>
+<path class="flow-counsel-facet" d="M524.1,98.3 L528.8,77.1 L534.2,97.3 Z" style="--fbase:#132119;animation-delay:3.667s"/>
+<path class="flow-counsel-facet" d="M517.2,87.1 L487.7,106.6 L492.4,74.4 Z" style="--fbase:#1e3526;animation-delay:3.513s"/>
+<path class="flow-counsel-facet" d="M519.2,79.9 L517.2,87.1 L492.4,74.4 Z" style="--fbase:#233c2b;animation-delay:3.575s"/>
+<path class="flow-counsel-facet" d="M528.8,77.1 L517.2,87.1 L519.2,79.9 Z" style="--fbase:#182a1f;animation-delay:3.616s"/>
+<path class="flow-counsel-facet" d="M524.1,98.3 L517.2,87.1 L528.8,77.1 Z" style="--fbase:#1a2e21;animation-delay:3.683s"/>
+<path class="flow-counsel-facet" d="M495.9,47.5 L509.4,61.6 L492.4,74.4 Z" style="--fbase:#20392a;animation-delay:3.523s"/>
+<path class="flow-counsel-facet" d="M509.4,61.6 L519.2,79.9 L492.4,74.4 Z" style="--fbase:#16261c;animation-delay:3.556s"/>
+<path class="flow-counsel-facet" d="M519.2,79.9 L509.4,61.6 L518.0,57.0 Z" style="--fbase:#28402f;animation-delay:3.610s"/>
+<path class="flow-counsel-facet" d="M509.4,61.6 L503.3,41.5 L518.0,57.0 Z" style="--fbase:#132119;animation-delay:3.547s"/>
+<path class="flow-counsel-facet" d="M503.3,41.5 L509.4,61.6 L495.9,47.5 Z" style="--fbase:#1e3526;animation-delay:3.490s"/>
+<path class="flow-counsel-facet" d="M354.8,50.9 L384.7,56.4 L359.6,70.2 Z" style="--fbase:#233c2b;animation-delay:2.624s"/>
+<path class="flow-counsel-facet" d="M323.2,141.0 L338.1,142.7 L350.0,151.1 Z" style="--fbase:#182a1f;animation-delay:2.403s"/>
+<path class="flow-counsel-facet" d="M362.5,103.0 L352.3,124.6 L343.1,95.7 Z" style="--fbase:#1a2e21;animation-delay:2.513s"/>
+<path class="flow-counsel-facet" d="M493.6,143.3 L468.2,122.4 L487.7,106.6 Z" style="--fbase:#20392a;animation-delay:3.374s"/>
+<path class="flow-counsel-facet" d="M468.2,122.4 L493.6,143.3 L475.9,143.8 Z" style="--fbase:#16261c;animation-delay:3.336s"/>
+<path class="flow-counsel-facet" d="M478.8,188.2 L482.3,171.7 L487.6,185.4 Z" style="--fbase:#28402f;animation-delay:3.386s"/>
+<path class="flow-counsel-facet" d="M484.4,196.1 L478.8,188.2 L487.6,185.4 Z" style="--fbase:#132119;animation-delay:3.389s"/>
+<path class="flow-counsel-facet" d="M478.8,188.2 L484.4,196.1 L460.9,200.1 Z" style="--fbase:#1e3526;animation-delay:3.355s"/>
+<path class="flow-counsel-facet" d="M457.4,191.8 L478.8,188.2 L460.9,200.1 Z" style="--fbase:#233c2b;animation-delay:3.276s"/>
+<path class="flow-counsel-facet" d="M482.3,171.7 L451.4,173.8 L475.9,143.8 Z" style="--fbase:#182a1f;animation-delay:3.311s"/>
+<path class="flow-counsel-facet" d="M436.0,186.9 L451.4,173.8 L457.4,191.8 Z" style="--fbase:#1a2e21;animation-delay:3.160s"/>
+<path class="flow-counsel-facet" d="M451.4,173.8 L478.8,188.2 L457.4,191.8 Z" style="--fbase:#20392a;animation-delay:3.264s"/>
+<path class="flow-counsel-facet" d="M478.8,188.2 L451.4,173.8 L482.3,171.7 Z" style="--fbase:#16261c;animation-delay:3.306s"/>
+<path class="flow-counsel-facet" d="M512.7,171.2 L497.2,179.6 L504.5,165.5 Z" style="--fbase:#28402f;animation-delay:3.519s"/>
+<path class="flow-counsel-facet" d="M506.3,183.9 L497.2,179.6 L512.7,171.2 Z" style="--fbase:#132119;animation-delay:3.566s"/>
+<path class="flow-counsel-facet" d="M482.3,171.7 L497.2,179.6 L487.6,185.4 Z" style="--fbase:#1e3526;animation-delay:3.458s"/>
+<path class="flow-counsel-facet" d="M497.2,179.6 L504.6,186.7 L487.6,185.4 Z" style="--fbase:#233c2b;animation-delay:3.498s"/>
+<path class="flow-counsel-facet" d="M497.2,179.6 L506.3,183.9 L504.6,186.7 Z" style="--fbase:#182a1f;animation-delay:3.531s"/>
+<path class="flow-counsel-facet" d="M268.1,83.9 L281.1,98.8 L266.0,107.4 Z" style="--fbase:#1a2e21;animation-delay:1.989s"/>
+<path class="flow-counsel-facet" d="M281.9,86.0 L281.1,98.8 L268.1,83.9 Z" style="--fbase:#20392a;animation-delay:2.019s"/>
+<path class="flow-counsel-facet" d="M281.1,98.8 L281.9,86.0 L297.5,87.0 Z" style="--fbase:#16261c;animation-delay:2.087s"/>
+<path class="flow-counsel-facet" d="M352.3,124.6 L331.5,107.5 L343.1,95.7 Z" style="--fbase:#28402f;animation-delay:2.438s"/>
+<path class="flow-counsel-facet" d="M336.2,75.0 L359.6,70.2 L343.1,95.7 Z" style="--fbase:#132119;animation-delay:2.506s"/>
+<path class="flow-counsel-facet" d="M336.2,75.0 L354.8,50.9 L359.6,70.2 Z" style="--fbase:#1e3526;animation-delay:2.510s"/>
+<path class="flow-counsel-facet" d="M354.8,50.9 L336.2,75.0 L325.1,52.9 Z" style="--fbase:#233c2b;animation-delay:2.461s"/>
+<path class="flow-counsel-facet" d="M331.5,107.5 L336.2,75.0 L343.1,95.7 Z" style="--fbase:#182a1f;animation-delay:2.422s"/>
+<path class="flow-counsel-facet" d="M336.2,75.0 L310.5,108.2 L297.5,87.0 Z" style="--fbase:#1a2e21;animation-delay:2.310s"/>
+<path class="flow-counsel-facet" d="M336.2,75.0 L331.5,107.5 L310.5,108.2 Z" style="--fbase:#20392a;animation-delay:2.378s"/>
+<path class="flow-counsel-facet" d="M522.8,116.6 L514.3,131.9 L487.7,106.6 Z" style="--fbase:#16261c;animation-delay:3.525s"/>
+<path class="flow-counsel-facet" d="M522.8,116.6 L523.4,134.3 L514.3,131.9 Z" style="--fbase:#28402f;animation-delay:3.616s"/>
+<path class="flow-counsel-facet" d="M517.2,87.1 L517.6,101.1 L487.7,106.6 Z" style="--fbase:#132119;animation-delay:3.574s"/>
+<path class="flow-counsel-facet" d="M517.6,101.1 L517.2,87.1 L524.1,98.3 Z" style="--fbase:#1e3526;animation-delay:3.628s"/>
+<path class="flow-counsel-facet" d="M517.6,101.1 L522.8,116.6 L487.7,106.6 Z" style="--fbase:#233c2b;animation-delay:3.591s"/>
+<path class="flow-counsel-facet" d="M522.8,116.6 L517.6,101.1 L524.1,98.3 Z" style="--fbase:#182a1f;animation-delay:3.636s"/>
+<path class="flow-counsel-facet" d="M442.1,35.3 L460.5,30.4 L458.0,54.2 Z" style="--fbase:#1a2e21;animation-delay:3.169s"/>
+<path class="flow-counsel-facet" d="M478.8,37.7 L460.5,30.4 L464.3,22.7 Z" style="--fbase:#20392a;animation-delay:3.297s"/>
+<path class="flow-counsel-facet" d="M460.5,30.4 L478.8,37.7 L458.0,54.2 Z" style="--fbase:#16261c;animation-delay:3.292s"/>
+<path class="flow-counsel-facet" d="M439.0,37.7 L458.0,54.2 L429.5,50.6 Z" style="--fbase:#28402f;animation-delay:3.106s"/>
+<path class="flow-counsel-facet" d="M439.0,37.7 L442.1,35.3 L458.0,54.2 Z" style="--fbase:#132119;animation-delay:3.123s"/>
+<path class="flow-counsel-facet" d="M460.5,30.4 L444.1,28.1 L464.3,22.7 Z" style="--fbase:#1e3526;animation-delay:3.203s"/>
+<path class="flow-counsel-facet" d="M444.1,28.1 L460.5,30.4 L442.1,35.3 Z" style="--fbase:#233c2b;animation-delay:3.192s"/>
+<path class="flow-counsel-facet" d="M439.0,37.7 L444.1,28.1 L442.1,35.3 Z" style="--fbase:#182a1f;animation-delay:3.133s"/>
+<path class="flow-counsel-facet" d="M484.7,52.7 L478.8,37.7 L495.9,47.5 Z" style="--fbase:#1a2e21;animation-delay:3.389s"/>
+<path class="flow-counsel-facet" d="M478.8,37.7 L484.7,52.7 L458.0,54.2 Z" style="--fbase:#20392a;animation-delay:3.313s"/>
+<path class="flow-counsel-facet" d="M484.7,52.7 L495.9,47.5 L492.4,74.4 Z" style="--fbase:#16261c;animation-delay:3.417s"/>
+<path class="flow-counsel-facet" d="M484.4,30.8 L503.3,41.5 L495.9,47.5 Z" style="--fbase:#28402f;animation-delay:3.438s"/>
+<path class="flow-counsel-facet" d="M478.8,37.7 L484.4,30.8 L495.9,47.5 Z" style="--fbase:#132119;animation-delay:3.429s"/>
+<path class="flow-counsel-facet" d="M484.4,30.8 L478.8,37.7 L464.3,22.7 Z" style="--fbase:#1e3526;animation-delay:3.322s"/>
+<path class="flow-counsel-facet" d="M458.0,54.2 L459.2,74.2 L429.5,50.6 Z" style="--fbase:#233c2b;animation-delay:3.168s"/>
+<path class="flow-counsel-facet" d="M459.2,74.2 L484.7,52.7 L492.4,74.4 Z" style="--fbase:#182a1f;animation-delay:3.358s"/>
+<path class="flow-counsel-facet" d="M484.7,52.7 L459.2,74.2 L458.0,54.2 Z" style="--fbase:#1a2e21;animation-delay:3.267s"/>
+<path class="flow-counsel-facet" d="M409.3,87.3 L391.4,107.3 L388.1,76.2 Z" style="--fbase:#20392a;animation-delay:2.832s"/>
+<path class="flow-counsel-facet" d="M335.1,40.2 L354.8,50.9 L325.1,52.9 Z" style="--fbase:#16261c;animation-delay:2.416s"/>
+<path class="flow-counsel-facet" d="M354.8,50.9 L371.8,39.0 L384.7,56.4 Z" style="--fbase:#28402f;animation-delay:2.657s"/>
+<path class="flow-counsel-facet" d="M405.4,36.5 L407.4,50.2 L384.7,56.4 Z" style="--fbase:#132119;animation-delay:2.815s"/>
+<path class="flow-counsel-facet" d="M384.7,56.4 L407.4,50.2 L388.1,76.2 Z" style="--fbase:#1e3526;animation-delay:2.795s"/>
+<path class="flow-counsel-facet" d="M407.4,50.2 L412.4,36.0 L429.5,50.6 Z" style="--fbase:#233c2b;animation-delay:2.934s"/>
+<path class="flow-counsel-facet" d="M412.4,36.0 L407.4,50.2 L405.4,36.5 Z" style="--fbase:#182a1f;animation-delay:2.885s"/>
+<path class="flow-counsel-facet" d="M403.8,29.4 L412.4,36.0 L405.4,36.5 Z" style="--fbase:#1a2e21;animation-delay:2.919s"/>
+<path class="flow-counsel-facet" d="M420.7,102.7 L393.4,137.9 L391.4,107.3 Z" style="--fbase:#20392a;animation-delay:2.873s"/>
+<path class="flow-counsel-facet" d="M409.3,87.3 L420.7,102.7 L391.4,107.3 Z" style="--fbase:#16261c;animation-delay:2.878s"/>
+<path class="flow-counsel-facet" d="M420.7,102.7 L409.3,87.3 L435.9,88.5 Z" style="--fbase:#28402f;animation-delay:3.011s"/>
+<path class="flow-counsel-facet" d="M408.5,157.3 L420.7,102.7 L450.4,126.0 Z" style="--fbase:#132119;animation-delay:3.000s"/>
+<path class="flow-counsel-facet" d="M420.7,102.7 L408.5,157.3 L393.4,137.9 Z" style="--fbase:#1e3526;animation-delay:2.886s"/>
+<path class="flow-counsel-facet" d="M391.4,107.3 L372.4,93.0 L388.1,76.2 Z" style="--fbase:#233c2b;animation-delay:2.759s"/>
+<path class="flow-counsel-facet" d="M362.5,103.0 L372.4,93.0 L391.4,107.3 Z" style="--fbase:#182a1f;animation-delay:2.690s"/>
+<path class="flow-counsel-facet" d="M372.4,93.0 L359.6,70.2 L388.1,76.2 Z" style="--fbase:#1a2e21;animation-delay:2.644s"/>
+<path class="flow-counsel-facet" d="M359.6,70.2 L372.4,93.0 L343.1,95.7 Z" style="--fbase:#20392a;animation-delay:2.599s"/>
+<path class="flow-counsel-facet" d="M372.4,93.0 L362.5,103.0 L343.1,95.7 Z" style="--fbase:#16261c;animation-delay:2.559s"/>
+<path class="flow-counsel-facet" d="M514.3,131.9 L500.2,142.9 L487.7,106.6 Z" style="--fbase:#28402f;animation-delay:3.491s"/>
+<path class="flow-counsel-facet" d="M500.2,142.9 L493.6,143.3 L487.7,106.6 Z" style="--fbase:#132119;animation-delay:3.476s"/>
+<path class="flow-counsel-facet" d="M508.0,146.4 L500.2,142.9 L514.3,131.9 Z" style="--fbase:#1e3526;animation-delay:3.539s"/>
+<path class="flow-counsel-facet" d="M494.1,155.1 L482.3,171.7 L475.9,143.8 Z" style="--fbase:#233c2b;animation-delay:3.384s"/>
+<path class="flow-counsel-facet" d="M493.6,143.3 L494.1,155.1 L475.9,143.8 Z" style="--fbase:#182a1f;animation-delay:3.395s"/>
+<path class="flow-counsel-facet" d="M500.2,142.9 L494.1,155.1 L493.6,143.3 Z" style="--fbase:#1a2e21;animation-delay:3.449s"/>
+<path class="flow-counsel-facet" d="M494.1,155.1 L500.2,142.9 L508.0,146.4 Z" style="--fbase:#20392a;animation-delay:3.510s"/>
+<path class="flow-counsel-facet" d="M501.2,159.8 L494.1,155.1 L508.0,146.4 Z" style="--fbase:#16261c;animation-delay:3.492s"/>
+<path class="flow-counsel-facet" d="M521.3,135.4 L508.0,146.4 L514.3,131.9 Z" style="--fbase:#28402f;animation-delay:3.602s"/>
+<path class="flow-counsel-facet" d="M523.4,134.3 L521.3,135.4 L514.3,131.9 Z" style="--fbase:#132119;animation-delay:3.622s"/>
+<path class="flow-counsel-facet" d="M437.4,194.7 L457.4,191.8 L460.9,200.1 Z" style="--fbase:#1e3526;animation-delay:3.182s"/>
+<path class="flow-counsel-facet" d="M437.4,194.7 L436.0,186.9 L457.4,191.8 Z" style="--fbase:#233c2b;animation-delay:3.157s"/>
+<path class="flow-counsel-facet" d="M408.5,157.3 L439.5,160.8 L420.7,174.7 Z" style="--fbase:#182a1f;animation-delay:2.993s"/>
+<path class="flow-counsel-facet" d="M439.5,160.8 L408.5,157.3 L450.4,126.0 Z" style="--fbase:#1a2e21;animation-delay:3.063s"/>
+<path class="flow-counsel-facet" d="M475.9,143.8 L439.5,160.8 L450.4,126.0 Z" style="--fbase:#20392a;animation-delay:3.228s"/>
+<path class="flow-counsel-facet" d="M451.4,173.8 L439.5,160.8 L475.9,143.8 Z" style="--fbase:#16261c;animation-delay:3.189s"/>
+<path class="flow-counsel-facet" d="M280.1,107.4 L276.1,117.5 L266.0,107.4 Z" style="--fbase:#28402f;animation-delay:1.995s"/>
+<path class="flow-counsel-facet" d="M281.1,98.8 L280.1,107.4 L266.0,107.4 Z" style="--fbase:#132119;animation-delay:2.051s"/>
+<path class="flow-counsel-facet" d="M332.1,138.0 L338.1,142.7 L323.2,141.0 Z" style="--fbase:#1e3526;animation-delay:2.409s"/>
+<path class="flow-counsel-facet" d="M296.3,127.5 L307.6,125.8 L323.2,141.0 Z" style="--fbase:#233c2b;animation-delay:2.230s"/>
+<path class="flow-counsel-facet" d="M522.8,116.6 L532.8,117.5 L523.4,134.3 Z" style="--fbase:#182a1f;animation-delay:3.655s"/>
+<path class="flow-counsel-facet" d="M532.8,117.5 L524.1,98.3 L534.2,97.3 Z" style="--fbase:#1a2e21;animation-delay:3.714s"/>
+<path class="flow-counsel-facet" d="M532.8,117.5 L522.8,116.6 L524.1,98.3 Z" style="--fbase:#20392a;animation-delay:3.702s"/>
+<path class="flow-counsel-facet" d="M444.1,28.1 L423.8,27.9 L424.0,20.0 Z" style="--fbase:#16261c;animation-delay:3.026s"/>
+<path class="flow-counsel-facet" d="M423.8,27.9 L444.1,28.1 L439.0,37.7 Z" style="--fbase:#28402f;animation-delay:3.104s"/>
+<path class="flow-counsel-facet" d="M423.8,27.9 L403.8,29.4 L424.0,20.0 Z" style="--fbase:#132119;animation-delay:2.979s"/>
+<path class="flow-counsel-facet" d="M403.8,29.4 L423.8,27.9 L412.4,36.0 Z" style="--fbase:#1e3526;animation-delay:2.937s"/>
+<path class="flow-counsel-facet" d="M423.8,27.9 L439.0,37.7 L429.5,50.6 Z" style="--fbase:#233c2b;animation-delay:3.040s"/>
+<path class="flow-counsel-facet" d="M412.4,36.0 L423.8,27.9 L429.5,50.6 Z" style="--fbase:#182a1f;animation-delay:2.963s"/>
+<path class="flow-counsel-facet" d="M459.2,74.2 L423.0,69.9 L429.5,50.6 Z" style="--fbase:#1a2e21;animation-delay:3.060s"/>
+<path class="flow-counsel-facet" d="M423.0,69.9 L459.2,74.2 L435.9,88.5 Z" style="--fbase:#20392a;animation-delay:3.130s"/>
+<path class="flow-counsel-facet" d="M409.3,87.3 L423.0,69.9 L435.9,88.5 Z" style="--fbase:#16261c;animation-delay:2.977s"/>
+<path class="flow-counsel-facet" d="M423.0,69.9 L407.4,50.2 L429.5,50.6 Z" style="--fbase:#28402f;animation-delay:2.987s"/>
+<path class="flow-counsel-facet" d="M423.0,69.9 L409.3,87.3 L388.1,76.2 Z" style="--fbase:#132119;animation-delay:2.873s"/>
+<path class="flow-counsel-facet" d="M407.4,50.2 L423.0,69.9 L388.1,76.2 Z" style="--fbase:#1e3526;animation-delay:2.903s"/>
+<path class="flow-counsel-facet" d="M464.5,106.3 L468.2,122.4 L450.4,126.0 Z" style="--fbase:#233c2b;animation-delay:3.250s"/>
+<path class="flow-counsel-facet" d="M468.2,122.4 L464.5,106.3 L487.7,106.6 Z" style="--fbase:#182a1f;animation-delay:3.314s"/>
+<path class="flow-counsel-facet" d="M487.7,106.6 L464.5,106.3 L492.4,74.4 Z" style="--fbase:#1a2e21;animation-delay:3.360s"/>
+<path class="flow-counsel-facet" d="M464.5,106.3 L459.2,74.2 L492.4,74.4 Z" style="--fbase:#20392a;animation-delay:3.330s"/>
+<path class="flow-counsel-facet" d="M326.5,33.5 L335.1,40.2 L325.1,52.9 Z" style="--fbase:#16261c;animation-delay:2.350s"/>
+<path class="flow-counsel-facet" d="M335.1,40.2 L326.5,33.5 L350.0,25.4 Z" style="--fbase:#28402f;animation-delay:2.414s"/>
+<path class="flow-counsel-facet" d="M403.8,29.4 L387.1,29.2 L383.6,21.4 Z" style="--fbase:#132119;animation-delay:2.791s"/>
+<path class="flow-counsel-facet" d="M387.1,29.2 L403.8,29.4 L405.4,36.5 Z" style="--fbase:#1e3526;animation-delay:2.856s"/>
+<path class="flow-counsel-facet" d="M387.1,29.2 L405.4,36.5 L384.7,56.4 Z" style="--fbase:#233c2b;animation-delay:2.800s"/>
+<path class="flow-counsel-facet" d="M371.8,39.0 L387.1,29.2 L384.7,56.4 Z" style="--fbase:#182a1f;animation-delay:2.706s"/>
+<path class="flow-counsel-facet" d="M358.9,34.3 L371.8,39.0 L354.8,50.9 Z" style="--fbase:#1a2e21;animation-delay:2.617s"/>
+<path class="flow-counsel-facet" d="M408.5,157.3 L393.2,150.3 L393.4,137.9 Z" style="--fbase:#20392a;animation-delay:2.815s"/>
+<path class="flow-counsel-facet" d="M405.4,162.5 L393.2,150.3 L408.5,157.3 Z" style="--fbase:#16261c;animation-delay:2.830s"/>
+<path class="flow-counsel-facet" d="M494.1,155.1 L496.5,160.5 L482.3,171.7 Z" style="--fbase:#28402f;animation-delay:3.427s"/>
+<path class="flow-counsel-facet" d="M496.5,160.5 L494.1,155.1 L501.2,159.8 Z" style="--fbase:#132119;animation-delay:3.479s"/>
+<path class="flow-counsel-facet" d="M496.5,160.5 L501.2,159.8 L504.5,165.5 Z" style="--fbase:#1e3526;animation-delay:3.479s"/>
+<path class="flow-counsel-facet" d="M497.2,179.6 L496.5,160.5 L504.5,165.5 Z" style="--fbase:#233c2b;animation-delay:3.477s"/>
+<path class="flow-counsel-facet" d="M496.5,160.5 L497.2,179.6 L482.3,171.7 Z" style="--fbase:#182a1f;animation-delay:3.440s"/>
+<path class="flow-counsel-facet" d="M405.4,162.5 L412.8,175.0 L403.8,167.9 Z" style="--fbase:#1a2e21;animation-delay:2.896s"/>
+<path class="flow-counsel-facet" d="M412.8,175.0 L408.5,157.3 L420.7,174.7 Z" style="--fbase:#20392a;animation-delay:2.913s"/>
+<path class="flow-counsel-facet" d="M412.8,175.0 L405.4,162.5 L408.5,157.3 Z" style="--fbase:#16261c;animation-delay:2.894s"/>
+<path class="flow-counsel-facet" d="M420.6,181.3 L412.8,175.0 L420.7,174.7 Z" style="--fbase:#28402f;animation-delay:2.985s"/>
+<path class="flow-counsel-facet" d="M289.2,116.6 L296.3,127.5 L276.1,117.5 Z" style="--fbase:#132119;animation-delay:2.131s"/>
+<path class="flow-counsel-facet" d="M334.2,122.7 L331.5,107.5 L352.3,124.6 Z" style="--fbase:#1e3526;animation-delay:2.454s"/>
+<path class="flow-counsel-facet" d="M338.1,142.7 L334.2,122.7 L352.3,124.6 Z" style="--fbase:#233c2b;animation-delay:2.470s"/>
+<path class="flow-counsel-facet" d="M332.1,138.0 L334.2,122.7 L338.1,142.7 Z" style="--fbase:#182a1f;animation-delay:2.420s"/>
+<path class="flow-counsel-facet" d="M336.2,75.0 L316.8,64.7 L325.1,52.9 Z" style="--fbase:#1a2e21;animation-delay:2.336s"/>
+<path class="flow-counsel-facet" d="M316.8,64.7 L336.2,75.0 L297.5,87.0 Z" style="--fbase:#20392a;animation-delay:2.269s"/>
+<path class="flow-counsel-facet" d="M303.3,63.2 L316.8,64.7 L297.5,87.0 Z" style="--fbase:#16261c;animation-delay:2.195s"/>
+<path class="flow-counsel-facet" d="M303.0,43.5 L286.8,60.3 L281.5,60.3 Z" style="--fbase:#28402f;animation-delay:2.148s"/>
+<path class="flow-counsel-facet" d="M281.5,60.3 L286.8,60.3 L278.6,72.7 Z" style="--fbase:#132119;animation-delay:2.082s"/>
+<path class="flow-counsel-facet" d="M459.2,74.2 L446.5,97.8 L435.9,88.5 Z" style="--fbase:#1e3526;animation-delay:3.181s"/>
+<path class="flow-counsel-facet" d="M464.5,106.3 L446.5,97.8 L459.2,74.2 Z" style="--fbase:#233c2b;animation-delay:3.187s"/>
+<path class="flow-counsel-facet" d="M446.5,97.8 L464.5,106.3 L450.4,126.0 Z" style="--fbase:#182a1f;animation-delay:3.205s"/>
+<path class="flow-counsel-facet" d="M420.7,102.7 L446.5,97.8 L450.4,126.0 Z" style="--fbase:#1a2e21;animation-delay:3.100s"/>
+<path class="flow-counsel-facet" d="M446.5,97.8 L420.7,102.7 L435.9,88.5 Z" style="--fbase:#20392a;animation-delay:3.083s"/>
+<path class="flow-counsel-facet" d="M313.7,49.3 L326.5,33.5 L325.1,52.9 Z" style="--fbase:#16261c;animation-delay:2.318s"/>
+<path class="flow-counsel-facet" d="M316.8,64.7 L313.7,49.3 L325.1,52.9 Z" style="--fbase:#28402f;animation-delay:2.338s"/>
+<path class="flow-counsel-facet" d="M313.7,49.3 L316.8,64.7 L303.3,63.2 Z" style="--fbase:#132119;animation-delay:2.234s"/>
+<path class="flow-counsel-facet" d="M335.1,40.2 L356.5,32.8 L354.8,50.9 Z" style="--fbase:#1e3526;animation-delay:2.509s"/>
+<path class="flow-counsel-facet" d="M356.5,32.8 L358.9,34.3 L354.8,50.9 Z" style="--fbase:#233c2b;animation-delay:2.573s"/>
+<path class="flow-counsel-facet" d="M356.5,32.8 L335.1,40.2 L350.0,25.4 Z" style="--fbase:#182a1f;animation-delay:2.520s"/>
+<path class="flow-counsel-facet" d="M358.9,34.3 L366.8,32.1 L371.8,39.0 Z" style="--fbase:#1a2e21;animation-delay:2.633s"/>
+<path class="flow-counsel-facet" d="M387.1,29.2 L366.8,32.1 L383.6,21.4 Z" style="--fbase:#20392a;animation-delay:2.719s"/>
+<path class="flow-counsel-facet" d="M366.8,32.1 L387.1,29.2 L371.8,39.0 Z" style="--fbase:#16261c;animation-delay:2.698s"/>
+<path class="flow-counsel-facet" d="M356.5,32.8 L366.8,32.1 L358.9,34.3 Z" style="--fbase:#28402f;animation-delay:2.610s"/>
+<path class="flow-counsel-facet" d="M366.8,32.1 L356.5,32.8 L350.0,25.4 Z" style="--fbase:#132119;animation-delay:2.557s"/>
+<path class="flow-counsel-facet" d="M356.5,147.2 L376.9,159.8 L350.0,151.1 Z" style="--fbase:#1e3526;animation-delay:2.599s"/>
+<path class="flow-counsel-facet" d="M370.7,138.6 L356.5,147.2 L352.3,124.6 Z" style="--fbase:#233c2b;animation-delay:2.603s"/>
+<path class="flow-counsel-facet" d="M338.1,142.7 L356.5,147.2 L350.0,151.1 Z" style="--fbase:#182a1f;animation-delay:2.525s"/>
+<path class="flow-counsel-facet" d="M356.5,147.2 L338.1,142.7 L352.3,124.6 Z" style="--fbase:#1a2e21;animation-delay:2.503s"/>
+<path class="flow-counsel-facet" d="M393.4,137.9 L366.5,121.3 L391.4,107.3 Z" style="--fbase:#20392a;animation-delay:2.754s"/>
+<path class="flow-counsel-facet" d="M370.7,138.6 L366.5,121.3 L393.4,137.9 Z" style="--fbase:#16261c;animation-delay:2.713s"/>
+<path class="flow-counsel-facet" d="M366.5,121.3 L362.5,103.0 L391.4,107.3 Z" style="--fbase:#28402f;animation-delay:2.673s"/>
+<path class="flow-counsel-facet" d="M362.5,103.0 L366.5,121.3 L352.3,124.6 Z" style="--fbase:#132119;animation-delay:2.590s"/>
+<path class="flow-counsel-facet" d="M366.5,121.3 L370.7,138.6 L352.3,124.6 Z" style="--fbase:#1e3526;animation-delay:2.594s"/>
+<path class="flow-counsel-facet" d="M390.4,154.4 L376.9,159.8 L381.0,155.1 Z" style="--fbase:#233c2b;animation-delay:2.735s"/>
+<path class="flow-counsel-facet" d="M390.4,154.4 L405.4,162.5 L403.8,167.9 Z" style="--fbase:#182a1f;animation-delay:2.849s"/>
+<path class="flow-counsel-facet" d="M390.4,154.4 L393.2,150.3 L405.4,162.5 Z" style="--fbase:#1a2e21;animation-delay:2.794s"/>
+<path class="flow-counsel-facet" d="M437.4,194.7 L432.9,185.9 L436.0,186.9 Z" style="--fbase:#20392a;animation-delay:3.084s"/>
+<path class="flow-counsel-facet" d="M420.6,181.3 L432.9,185.9 L437.4,194.7 Z" style="--fbase:#16261c;animation-delay:3.072s"/>
+<path class="flow-counsel-facet" d="M432.9,185.9 L420.6,181.3 L420.7,174.7 Z" style="--fbase:#28402f;animation-delay:3.029s"/>
+<path class="flow-counsel-facet" d="M439.5,160.8 L432.9,185.9 L420.7,174.7 Z" style="--fbase:#132119;animation-delay:3.061s"/>
+<path class="flow-counsel-facet" d="M432.9,185.9 L451.4,173.8 L436.0,186.9 Z" style="--fbase:#1e3526;animation-delay:3.100s"/>
+<path class="flow-counsel-facet" d="M432.9,185.9 L439.5,160.8 L451.4,173.8 Z" style="--fbase:#233c2b;animation-delay:3.128s"/>
+<path class="flow-counsel-facet" d="M298.7,120.3 L307.6,125.8 L296.3,127.5 Z" style="--fbase:#182a1f;animation-delay:2.196s"/>
+<path class="flow-counsel-facet" d="M289.2,116.6 L298.7,120.3 L296.3,127.5 Z" style="--fbase:#1a2e21;animation-delay:2.148s"/>
+<path class="flow-counsel-facet" d="M307.6,125.8 L298.7,120.3 L310.5,108.2 Z" style="--fbase:#20392a;animation-delay:2.243s"/>
+<path class="flow-counsel-facet" d="M310.5,108.2 L286.3,111.3 L297.5,87.0 Z" style="--fbase:#16261c;animation-delay:2.149s"/>
+<path class="flow-counsel-facet" d="M286.3,111.3 L281.1,98.8 L297.5,87.0 Z" style="--fbase:#28402f;animation-delay:2.124s"/>
+<path class="flow-counsel-facet" d="M298.7,120.3 L286.3,111.3 L310.5,108.2 Z" style="--fbase:#132119;animation-delay:2.148s"/>
+<path class="flow-counsel-facet" d="M286.3,111.3 L298.7,120.3 L289.2,116.6 Z" style="--fbase:#1e3526;animation-delay:2.136s"/>
+<path class="flow-counsel-facet" d="M286.3,111.3 L280.1,107.4 L281.1,98.8 Z" style="--fbase:#233c2b;animation-delay:2.070s"/>
+<path class="flow-counsel-facet" d="M280.1,107.4 L286.3,111.3 L276.1,117.5 Z" style="--fbase:#182a1f;animation-delay:2.044s"/>
+<path class="flow-counsel-facet" d="M286.3,111.3 L289.2,116.6 L276.1,117.5 Z" style="--fbase:#1a2e21;animation-delay:2.092s"/>
+<path class="flow-counsel-facet" d="M317.9,123.9 L332.1,138.0 L323.2,141.0 Z" style="--fbase:#20392a;animation-delay:2.346s"/>
+<path class="flow-counsel-facet" d="M317.9,123.9 L334.2,122.7 L332.1,138.0 Z" style="--fbase:#16261c;animation-delay:2.377s"/>
+<path class="flow-counsel-facet" d="M307.6,125.8 L317.9,123.9 L323.2,141.0 Z" style="--fbase:#28402f;animation-delay:2.318s"/>
+<path class="flow-counsel-facet" d="M317.9,123.9 L307.6,125.8 L310.5,108.2 Z" style="--fbase:#132119;animation-delay:2.250s"/>
+<path class="flow-counsel-facet" d="M331.5,107.5 L317.9,123.9 L310.5,108.2 Z" style="--fbase:#1e3526;animation-delay:2.288s"/>
+<path class="flow-counsel-facet" d="M334.2,122.7 L317.9,123.9 L331.5,107.5 Z" style="--fbase:#233c2b;animation-delay:2.357s"/>
+<path class="flow-counsel-facet" d="M303.3,63.2 L294.1,64.6 L303.0,43.5 Z" style="--fbase:#182a1f;animation-delay:2.197s"/>
+<path class="flow-counsel-facet" d="M294.1,64.6 L286.8,60.3 L303.0,43.5 Z" style="--fbase:#1a2e21;animation-delay:2.133s"/>
+<path class="flow-counsel-facet" d="M286.8,60.3 L294.1,64.6 L278.6,72.7 Z" style="--fbase:#20392a;animation-delay:2.077s"/>
+<path class="flow-counsel-facet" d="M294.1,64.6 L297.5,87.0 L278.6,72.7 Z" style="--fbase:#16261c;animation-delay:2.145s"/>
+<path class="flow-counsel-facet" d="M294.1,64.6 L303.3,63.2 L297.5,87.0 Z" style="--fbase:#28402f;animation-delay:2.184s"/>
+<path class="flow-counsel-facet" d="M326.5,33.5 L308.5,45.3 L303.0,43.5 Z" style="--fbase:#132119;animation-delay:2.266s"/>
+<path class="flow-counsel-facet" d="M313.7,49.3 L308.5,45.3 L326.5,33.5 Z" style="--fbase:#1e3526;animation-delay:2.316s"/>
+<path class="flow-counsel-facet" d="M308.5,45.3 L303.3,63.2 L303.0,43.5 Z" style="--fbase:#233c2b;animation-delay:2.208s"/>
+<path class="flow-counsel-facet" d="M308.5,45.3 L313.7,49.3 L303.3,63.2 Z" style="--fbase:#182a1f;animation-delay:2.252s"/>
+<path class="flow-counsel-facet" d="M356.5,147.2 L379.0,153.6 L376.9,159.8 Z" style="--fbase:#1a2e21;animation-delay:2.633s"/>
+<path class="flow-counsel-facet" d="M379.0,153.6 L356.5,147.2 L370.7,138.6 Z" style="--fbase:#20392a;animation-delay:2.634s"/>
+<path class="flow-counsel-facet" d="M376.9,159.8 L379.0,153.6 L381.0,155.1 Z" style="--fbase:#16261c;animation-delay:2.723s"/>
+<path class="flow-counsel-facet" d="M379.0,153.6 L370.7,138.6 L393.4,137.9 Z" style="--fbase:#28402f;animation-delay:2.744s"/>
+<path class="flow-counsel-facet" d="M393.2,150.3 L379.0,153.6 L393.4,137.9 Z" style="--fbase:#132119;animation-delay:2.791s"/>
+<path class="flow-counsel-facet" d="M379.0,153.6 L390.4,154.4 L381.0,155.1 Z" style="--fbase:#1e3526;animation-delay:2.727s"/>
+<path class="flow-counsel-facet" d="M390.4,154.4 L379.0,153.6 L393.2,150.3 Z" style="--fbase:#233c2b;animation-delay:2.766s"/>
+        </g>
+
+        <!-- ===== connectors ===== -->
+        <use href="#flow-counsel-lead-in" class="flow-counsel-wire"/>
+        <use href="#flow-counsel-lead-out" class="flow-counsel-wire"/>
+
+        <!-- ===== electrons ===== -->
+        <g class="flow-counsel-electrons">
+          <circle r="3.4" fill="var(--flow-gold-bright)" class="flow-counsel-pulse-lead" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.2125;0.25;1"
+              calcMode="linear"><mpath href="#flow-counsel-lead-in"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.2125;0.225;0.2375;0.25;1" values="0;0;1;1;0;0"/>
+          </circle>
+
+          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-a" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.25;0.475;1"
+              calcMode="linear"><mpath href="#flow-counsel-pathA"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.25;0.2625;0.4625;0.475;1" values="0;0;1;1;0;0"/>
+          </circle>
+          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-b" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.26;0.485;1"
+              calcMode="linear"><mpath href="#flow-counsel-pathB"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.26;0.2725;0.4725;0.485;1" values="0;0;1;1;0;0"/>
+          </circle>
+          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-c" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.2225;0.4475;1"
+              calcMode="linear"><mpath href="#flow-counsel-pathC"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.2225;0.235;0.435;0.4475;1" values="0;0;1;1;0;0"/>
+          </circle>
+          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-d" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.235;0.46;1"
+              calcMode="linear"><mpath href="#flow-counsel-pathD"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.235;0.2475;0.4475;0.46;1" values="0;0;1;1;0;0"/>
+          </circle>
+          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-e" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.245;0.4675;1"
+              calcMode="linear"><mpath href="#flow-counsel-pathE"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.245;0.2575;0.455;0.4675;1" values="0;0;1;1;0;0"/>
+          </circle>
+          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-f" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.2175;0.44;1"
+              calcMode="linear"><mpath href="#flow-counsel-pathF"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.2175;0.23;0.4275;0.44;1" values="0;0;1;1;0;0"/>
+          </circle>
+
+          <circle r="3.4" fill="var(--flow-gold-bright)" class="flow-counsel-pulse-out" filter="url(#flow-counsel-glow)">
+            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.485;0.5125;1"
+              calcMode="linear"><mpath href="#flow-counsel-lead-out"/></animateMotion>
+            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+              keyTimes="0;0.485;0.4975;0.5;0.5125;1" values="0;0;1;1;0;0"/>
+          </circle>
+        </g>
+
+        <!-- ===== left window: the question ===== -->
+        <g class="flow-counsel-win" transform="translate(15,37)">
+          <rect class="flow-counsel-win-body" x="0" y="0" width="220" height="150" rx="7"/>
+          <rect class="flow-counsel-win-bar" x="0" y="0" width="220" height="20" rx="7"/>
+          <rect class="flow-counsel-win-bar" x="0" y="11" width="220" height="9"/>
+          <line class="flow-counsel-win-bar-line" x1="0" y1="20" x2="220" y2="20"/>
+          <circle class="flow-counsel-dot-r" cx="14" cy="10" r="3.4"/>
+          <circle class="flow-counsel-dot-y" cx="26" cy="10" r="3.4"/>
+          <circle class="flow-counsel-dot-g" cx="38" cy="10" r="3.4"/>
+          <rect class="flow-counsel-win-status" x="196" y="7.5" width="10" height="5" rx="1.4" opacity=".55"/>
+          <text class="flow-counsel-win-title" x="110" y="13.5" text-anchor="middle">ask&#8203;hlw</text>
+          <text class="flow-counsel-prompt-label" x="16" y="38">CLIENT PROMPT</text>
+          <line class="flow-counsel-win-bar-line" x1="16" y1="45" x2="204" y2="45"/>
+          <g clip-path="url(#flow-counsel-clip-q)">
+            <text class="flow-counsel-typed-q" x="16" y="74">what is my profit?</text>
+          </g>
+          <clipPath id="flow-counsel-clip-q">
+            <rect class="flow-counsel-type-mask-q" x="16" y="58" height="24" width="0"/>
+          </clipPath>
+          <rect class="flow-counsel-cursor-q" x="176" y="60" width="2" height="16"/>
+          <line class="flow-counsel-win-bar-line" x1="16" y1="118" x2="204" y2="118"/>
+          <rect class="flow-counsel-win-status" x="16" y="128" width="46" height="4" rx="2" opacity=".45"/>
+          <rect class="flow-counsel-win-status" x="68" y="128" width="26" height="4" rx="2" opacity=".3"/>
+        </g>
+
+        <!-- ===== right window: the answer (mirrored position) ===== -->
+        <g class="flow-counsel-win" transform="translate(565,37)">
+          <rect class="flow-counsel-win-body" x="0" y="0" width="220" height="150" rx="7"/>
+          <rect class="flow-counsel-win-bar" x="0" y="0" width="220" height="20" rx="7"/>
+          <rect class="flow-counsel-win-bar" x="0" y="11" width="220" height="9"/>
+          <line class="flow-counsel-win-bar-line" x1="0" y1="20" x2="220" y2="20"/>
+          <circle class="flow-counsel-dot-r" cx="14" cy="10" r="3.4"/>
+          <circle class="flow-counsel-dot-y" cx="26" cy="10" r="3.4"/>
+          <circle class="flow-counsel-dot-g" cx="38" cy="10" r="3.4"/>
+          <rect class="flow-counsel-win-status" x="196" y="7.5" width="10" height="5" rx="1.4" opacity=".55"/>
+          <text class="flow-counsel-win-title" x="110" y="13.5" text-anchor="middle">ask&#8203;hlw</text>
+          <text class="flow-counsel-prompt-label" x="16" y="38">ADVISOR RESPONSE</text>
+          <line class="flow-counsel-win-bar-line" x1="16" y1="45" x2="204" y2="45"/>
+          <g clip-path="url(#flow-counsel-clip-a)">
+            <text class="flow-counsel-typed-a" x="16" y="74">$184,200 net.</text>
+          </g>
+          <clipPath id="flow-counsel-clip-a">
+            <rect class="flow-counsel-type-mask-a" x="16" y="58" height="24" width="0"/>
+          </clipPath>
+          <rect class="flow-counsel-cursor-a" x="140" y="60" width="2" height="16"/>
+          <line class="flow-counsel-win-bar-line" x1="16" y1="118" x2="204" y2="118"/>
+          <rect class="flow-counsel-win-status" x="16" y="128" width="46" height="4" rx="2" opacity=".45"/>
+          <rect class="flow-counsel-win-status" x="68" y="128" width="26" height="4" rx="2" opacity=".3"/>
+        </g>
+
+        </g>
+      </svg>
+    </div>
         <span class="mc-news-tag">News</span>
         <div class="marquee-card-inner">
           <div class="mc-idx">Counsel</div>
