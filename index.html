@@ -689,26 +689,27 @@
     .flow-counsel-pulse-lead,.flow-counsel-pulse-out{display:none;}
   }
 
-  /* nav row above the marquee — one tab per card, timer fill shows time left */
+  /* nav row above the marquee — one tab per card, timer fill shows time left.
+     No visible labels: each tab is just a big horizontal bar spanning
+     (almost) the full row, filling with gold over the card's dwell time.
+     The label text stays in the DOM (font-size:0 just hides it visually)
+     so screen readers still get real button names. */
   .marquee-tabs{
-    max-width:1400px;margin:0 auto;padding:0 60px 24px;
-    display:grid;grid-template-columns:repeat(6,1fr);column-gap:14px;border-bottom:1px solid var(--line);
+    max-width:1400px;width:100%;margin:0 auto;padding:0 60px 24px;
+    display:flex;gap:12px;
     margin-top:48px;margin-bottom:28px;
   }
   .marquee-tab{
-    position:relative;background:none;border:none;cursor:pointer;text-align:center;
-    padding:0 0 18px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--muted);transition:color .3s ease;
+    position:relative;flex:1;background:none;border:none;cursor:pointer;
+    padding:10px 0;font-size:0;line-height:0;
   }
-  .marquee-tab:hover{color:var(--ink-soft);}
-  .marquee-tab.is-active{color:var(--green);}
-  /* equal grid columns (not content-sized flex items) are what actually
-     make the spacing between tracks even — centering a fixed-width track
-     on a variable-width button made the visible gap depend on each word's
-     own length (2.5px between some pairs, 29px between others). This
-     container is only ~546px wide (a narrower nested column, not the full
-     page), verified against real measurements, hence the compact size. */
-  .marquee-tab .mt-track{position:absolute;left:50%;width:54px;transform:translateX(-50%);bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
+  /* the bar itself: thin at rest, thicker on hover to read as clickable */
+  .marquee-tab .mt-track{
+    display:block;width:100%;height:4px;border-radius:2px;
+    background:var(--line);overflow:hidden;
+    transition:height .2s ease;
+  }
+  .marquee-tab:hover .mt-track{height:9px;}
   .marquee-tab .mt-fill{width:100%;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;display:block;}
 
   .rule{height:1px;background:var(--line);width:100%;}
@@ -980,13 +981,10 @@
     .feature-gap{height:32px;}
     .feature-tabs{display:none;}
     .marquee-tabs{
-      display:flex;justify-content:space-between;overflow-x:auto;-webkit-overflow-scrolling:touch;
-      gap:10px;padding:0 22px 16px;margin-top:28px;margin-bottom:16px;
-      scrollbar-width:none;
+      padding:0 22px 16px;margin-top:28px;margin-bottom:16px;gap:8px;
     }
-    .marquee-tabs::-webkit-scrollbar{display:none;}
-    .marquee-tab{flex:0 0 auto;padding-bottom:10px;white-space:nowrap;font-size:9px;}
-    .marquee-tab .mt-track{width:54px;}
+    .marquee-tab{padding:8px 0;}
+    .marquee-tab:hover .mt-track{height:6px;} /* hover doesn't apply on touch anyway; keep the bump modest */
     .feature-path{padding:0 0 60px;}
     .feature-sticky{position:relative;height:auto;}
     .feature-sticky-head{padding:28px 22px 18px;}
