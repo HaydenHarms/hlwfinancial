@@ -648,13 +648,11 @@
   .flow-counsel-pulse-d,.flow-counsel-pulse-e,.flow-counsel-pulse-f,
   .flow-counsel-pulse-lead,.flow-counsel-pulse-out{opacity:0;}
 
-  .flow-counsel-scene{
-    animation-name:flow-counsel-fade;animation-duration:8s;animation-iteration-count:infinite;
-    animation-timing-function:linear;
-  }
-  @keyframes flow-counsel-fade{
-    0%{opacity:0;} 3%{opacity:1;} 91%{opacity:1;} 98.5%{opacity:0;} 100%{opacity:0;}
-  }
+  /* the structure (brain, windows, wires) stays visible at all times —
+     no fade in/out between loops. Only the typed text and the electron
+     pulses reset and restart, on their own animation-duration:8s cycles
+     below, independent of this wrapper. */
+  .flow-counsel-scene{ opacity:1; }
 
   /* on narrow cards `meet` letterboxes the scene into a thin band; scale it
      up so it reads at mobile size. Tuned so the outer window edges stay
@@ -1228,7 +1226,7 @@
       </a>
       <a class="marquee-card has-bg bg-counsel" href="news.html">
         <div class="flow-bg">
-      <svg class="flow-svg" viewBox="0 0 800 340" preserveAspectRatio="xMidYMid meet">
+      <svg class="flow-svg" viewBox="0 -20 800 260" preserveAspectRatio="xMidYMid meet">
         <defs>
           <filter id="flow-counsel-glow" x="-300%" y="-300%" width="700%" height="700%">
             <feGaussianBlur stdDeviation="3.2" result="b"/>
@@ -1589,7 +1587,7 @@
         <div class="marquee-card-inner">
           <div class="mc-idx">Counsel</div>
           <h3>One advisor, always.</h3>
-          <p>A single CPA across the personal and business side, in confidence.</p>
+          <p>One advisor across the personal and business side, in confidence.</p>
         </div>
       </a>
       <a class="marquee-card has-bg bg-news" href="news.html">
@@ -1780,25 +1778,34 @@
       }
     }
 
-    function startMarqueeAutoplay(){
+    function startMarqueeAutoplay(forceRestart){
+      // called two ways: (1) after a manual tab click, where the new card
+      // should get its full dwell time — forceRestart=true, always resets;
+      // (2) as "make sure autoplay is running" after a card closes, which
+      // fires on every ordinary mouseleave even when nothing ever paused
+      // it. Without this guard, a plain mouse pass over the card (which
+      // fills most of the viewport) kept resetting the countdown before it
+      // could ever reach MARQUEE_DURATION — the marquee looked frozen.
+      if(marqueeTimer && !forceRestart) return;
       clearInterval(marqueeTimer);
       marqueeTimer = setInterval(()=> goToMarqueeCard(marqueeIndex + 1), MARQUEE_DURATION);
     }
 
     function stopMarqueeAutoplay(){
       clearInterval(marqueeTimer);
+      marqueeTimer = null;
     }
 
     marqueeTabs.forEach((tab, idx)=>{
       tab.addEventListener('click', ()=>{
         if(idx === marqueeIndex) return;
         goToMarqueeCard(idx);
-        startMarqueeAutoplay();
+        startMarqueeAutoplay(true);
       });
     });
 
     goToMarqueeCard(0);
-    startMarqueeAutoplay();
+    startMarqueeAutoplay(true);
 
     // exposed so touch-tap handling (below) can pause/resume autoplay
     window.__marqueeAutoplay = { start: startMarqueeAutoplay, stop: stopMarqueeAutoplay };
