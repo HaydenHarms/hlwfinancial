@@ -602,7 +602,7 @@
   .flow-counsel-win{filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));}
   .flow-counsel-win-body{fill:#efece3;stroke:#8f8a76;stroke-width:1;}
   .flow-counsel-win-bar{fill:#ddd8c8;stroke:#8f8a76;stroke-width:1;}
-  .flow-counsel-win-bar-line{stroke:#c3bda9;stroke-width:1;}
+  .flow-counsel-win-bar-line{stroke:#c3bda9;stroke-width:1;opacity:.2;}
   .flow-counsel-dot-r{fill:#e0645a;}
   .flow-counsel-dot-y{fill:#e0b23f;}
   .flow-counsel-dot-g{fill:#63b26a;}
@@ -643,10 +643,9 @@
     62%{opacity:0;} 62.4%{opacity:1;} 66%{opacity:0;} 66.4%{opacity:1;} 68.75%{opacity:0;} 100%{opacity:0;}
   }
 
+
   .flow-counsel-wire{fill:none;stroke:var(--flow-electron);stroke-width:1.4;stroke-linecap:round;opacity:.55;}
 
-  .flow-counsel-pulse-a,.flow-counsel-pulse-b,.flow-counsel-pulse-c,
-  .flow-counsel-pulse-d,.flow-counsel-pulse-e,.flow-counsel-pulse-f,
   .flow-counsel-pulse-lead,.flow-counsel-pulse-out{opacity:0;}
 
   /* the electron dots are native SVG SMIL animations (animateMotion /
@@ -674,8 +673,6 @@
     .flow-counsel-type-mask-a{animation:none !important;width:100% !important;}
     .flow-counsel-cursor-q,.flow-counsel-cursor-a{animation:none !important;opacity:0 !important;}
     .flow-counsel-scene{animation:none !important;opacity:1 !important;}
-    .flow-counsel-pulse-a,.flow-counsel-pulse-b,.flow-counsel-pulse-c,
-    .flow-counsel-pulse-d,.flow-counsel-pulse-e,.flow-counsel-pulse-f,
     .flow-counsel-pulse-lead,.flow-counsel-pulse-out{display:none;}
   }
 
@@ -1676,43 +1673,6 @@
               keyTimes="0;0.2125;0.225;0.2375;0.25;1" values="0;0;1;1;0;0"/>
           </circle>
 
-          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-a" filter="url(#flow-counsel-glow)">
-            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.25;0.475;1"
-              calcMode="linear"><mpath href="#flow-counsel-pathA"/></animateMotion>
-            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
-              keyTimes="0;0.25;0.2625;0.4625;0.475;1" values="0;0;1;1;0;0"/>
-          </circle>
-          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-b" filter="url(#flow-counsel-glow)">
-            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.26;0.485;1"
-              calcMode="linear"><mpath href="#flow-counsel-pathB"/></animateMotion>
-            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
-              keyTimes="0;0.26;0.2725;0.4725;0.485;1" values="0;0;1;1;0;0"/>
-          </circle>
-          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-c" filter="url(#flow-counsel-glow)">
-            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.2225;0.4475;1"
-              calcMode="linear"><mpath href="#flow-counsel-pathC"/></animateMotion>
-            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
-              keyTimes="0;0.2225;0.235;0.435;0.4475;1" values="0;0;1;1;0;0"/>
-          </circle>
-          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-d" filter="url(#flow-counsel-glow)">
-            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.235;0.46;1"
-              calcMode="linear"><mpath href="#flow-counsel-pathD"/></animateMotion>
-            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
-              keyTimes="0;0.235;0.2475;0.4475;0.46;1" values="0;0;1;1;0;0"/>
-          </circle>
-          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-e" filter="url(#flow-counsel-glow)">
-            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.245;0.4675;1"
-              calcMode="linear"><mpath href="#flow-counsel-pathE"/></animateMotion>
-            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
-              keyTimes="0;0.245;0.2575;0.455;0.4675;1" values="0;0;1;1;0;0"/>
-          </circle>
-          <circle r="2.6" fill="var(--electron-bright)" class="flow-counsel-pulse-f" filter="url(#flow-counsel-glow)">
-            <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.2175;0.44;1"
-              calcMode="linear"><mpath href="#flow-counsel-pathF"/></animateMotion>
-            <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
-              keyTimes="0;0.2175;0.23;0.4275;0.44;1" values="0;0;1;1;0;0"/>
-          </circle>
-
           <circle r="3.4" fill="var(--flow-gold-bright)" class="flow-counsel-pulse-out" filter="url(#flow-counsel-glow)">
             <animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.485;0.5125;1"
               calcMode="linear"><mpath href="#flow-counsel-lead-out"/></animateMotion>
@@ -1724,9 +1684,8 @@
         <!-- ===== left window: the question ===== -->
         <g class="flow-counsel-win" transform="translate(15,37)">
           <rect class="flow-counsel-win-body" x="0" y="0" width="220" height="150" rx="7"/>
-          <rect class="flow-counsel-win-bar" x="0" y="0" width="220" height="20" rx="7"/>
-          <rect class="flow-counsel-win-bar" x="0" y="11" width="220" height="9"/>
-          <line class="flow-counsel-win-bar-line" x1="0" y1="20" x2="220" y2="20"/>
+          <rect class="flow-counsel-win-bar" x="0" y="0" width="220" height="20" rx="7" style="stroke:none"/>
+          <rect class="flow-counsel-win-bar" x="0" y="11" width="220" height="9" style="stroke:none"/>
           <circle class="flow-counsel-dot-r" cx="14" cy="10" r="3.4"/>
           <circle class="flow-counsel-dot-y" cx="26" cy="10" r="3.4"/>
           <circle class="flow-counsel-dot-g" cx="38" cy="10" r="3.4"/>
@@ -1749,9 +1708,8 @@
         <!-- ===== right window: the answer (mirrored position) ===== -->
         <g class="flow-counsel-win" transform="translate(565,37)">
           <rect class="flow-counsel-win-body" x="0" y="0" width="220" height="150" rx="7"/>
-          <rect class="flow-counsel-win-bar" x="0" y="0" width="220" height="20" rx="7"/>
-          <rect class="flow-counsel-win-bar" x="0" y="11" width="220" height="9"/>
-          <line class="flow-counsel-win-bar-line" x1="0" y1="20" x2="220" y2="20"/>
+          <rect class="flow-counsel-win-bar" x="0" y="0" width="220" height="20" rx="7" style="stroke:none"/>
+          <rect class="flow-counsel-win-bar" x="0" y="11" width="220" height="9" style="stroke:none"/>
           <circle class="flow-counsel-dot-r" cx="14" cy="10" r="3.4"/>
           <circle class="flow-counsel-dot-y" cx="26" cy="10" r="3.4"/>
           <circle class="flow-counsel-dot-g" cx="38" cy="10" r="3.4"/>
