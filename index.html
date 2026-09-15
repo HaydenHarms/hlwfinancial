@@ -702,7 +702,7 @@
   }
   .marquee-tab:hover{color:var(--ink-soft);}
   .marquee-tab.is-active{color:var(--green);}
-  .marquee-tab .mt-track{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
+  .marquee-tab .mt-track{position:absolute;left:0;width:32px;bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
   .marquee-tab .mt-fill{width:100%;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;display:block;}
 
   .rule{height:1px;background:var(--line);width:100%;}
@@ -1733,7 +1733,7 @@
 
   const marqueeCards = document.querySelectorAll('#marqueeTrack .marquee-card');
   const marqueeTabs = document.querySelectorAll('#marqueeTabs .marquee-tab');
-  const MARQUEE_DURATION = 5000; // ms each card stays active before advancing
+  const MARQUEE_DURATION = 7000; // ms each card stays active before advancing
 
   if(marqueeCards.length){
     let marqueeIndex = 0;
