@@ -692,21 +692,23 @@
   /* nav row above the marquee — one tab per card, timer fill shows time left */
   .marquee-tabs{
     max-width:1400px;margin:0 auto;padding:0 60px 24px;
-    display:flex;justify-content:space-between;gap:28px;border-bottom:1px solid var(--line);
+    display:grid;grid-template-columns:repeat(6,1fr);column-gap:14px;border-bottom:1px solid var(--line);
     margin-top:48px;margin-bottom:28px;
   }
   .marquee-tab{
-    position:relative;flex:0 0 auto;background:none;border:none;cursor:pointer;text-align:center;
-    padding:0 0 18px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;
+    position:relative;background:none;border:none;cursor:pointer;text-align:center;
+    padding:0 0 18px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--muted);transition:color .3s ease;
   }
   .marquee-tab:hover{color:var(--ink-soft);}
   .marquee-tab.is-active{color:var(--green);}
-  /* fixed width matched to the longest label ("Reporting", ~71.5px
-     measured) so every underline is the same length, centered under its
-     own word rather than left-anchored under whichever word happens to
-     start at the box's left edge. */
-  .marquee-tab .mt-track{position:absolute;left:50%;width:76px;transform:translateX(-50%);bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
+  /* equal grid columns (not content-sized flex items) are what actually
+     make the spacing between tracks even — centering a fixed-width track
+     on a variable-width button made the visible gap depend on each word's
+     own length (2.5px between some pairs, 29px between others). This
+     container is only ~546px wide (a narrower nested column, not the full
+     page), verified against real measurements, hence the compact size. */
+  .marquee-tab .mt-track{position:absolute;left:50%;width:54px;transform:translateX(-50%);bottom:-1px;height:2px;background:var(--line);overflow:hidden;}
   .marquee-tab .mt-fill{width:100%;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;display:block;}
 
   .rule{height:1px;background:var(--line);width:100%;}
