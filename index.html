@@ -585,7 +585,16 @@
 
   /* ===================== flow-counsel-* ===================== */
 
-  .flow-counsel-facet{stroke:rgba(6,14,9,.55);stroke-width:.7;fill:var(--fbase);
+  /* animations below only run while this card is the active one — this
+     scene has ~200 continuously-pulsing facets plus electrons and two
+     typewriter loops, and it's only on-screen for 1 of the marquee's 6
+     slots. Left running while inactive, that's enough sustained
+     style/paint work to compete with the marquee's own slide transition.
+     Scoping animation-name to .is-active also means each activation
+     restarts the animation cleanly from 0% (a newly-matching rule always
+     starts its animation fresh) rather than resuming mid-cycle. */
+  .flow-counsel-facet{stroke:rgba(6,14,9,.55);stroke-width:.7;fill:var(--fbase);}
+  .bg-counsel.is-active .flow-counsel-facet{
     animation-name:flow-counsel-facetPulse;animation-duration:8s;animation-iteration-count:infinite;
     animation-timing-function:ease-out;}
 
@@ -614,14 +623,14 @@
   .flow-counsel-typed-q{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;fill:#2a2f28;}
   .flow-counsel-typed-a{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;fill:#1d5f4e;font-weight:600;}
 
-  .flow-counsel-type-mask-q{
+  .bg-counsel.is-active .flow-counsel-type-mask-q{
     animation-name:flow-counsel-typeQ;animation-duration:8s;animation-iteration-count:infinite;
     animation-timing-function:steps(19,end);
   }
   @keyframes flow-counsel-typeQ{
     0%{width:0;} 3.75%{width:0;} 17.5%{width:100%;} 100%{width:100%;}
   }
-  .flow-counsel-type-mask-a{
+  .bg-counsel.is-active .flow-counsel-type-mask-a{
     animation-name:flow-counsel-typeA;animation-duration:8s;animation-iteration-count:infinite;
     animation-timing-function:steps(22,end);
   }
@@ -629,13 +638,15 @@
     0%{width:0;} 53.75%{width:0;} 68.75%{width:100%;} 100%{width:100%;}
   }
 
-  .flow-counsel-cursor-q{fill:#2a2f28;
+  .flow-counsel-cursor-q{fill:#2a2f28;}
+  .bg-counsel.is-active .flow-counsel-cursor-q{
     animation-name:flow-counsel-cursorQ;animation-duration:8s;animation-iteration-count:infinite;animation-timing-function:linear;}
   @keyframes flow-counsel-cursorQ{
     0%{opacity:0;} 3.75%{opacity:0;} 4.2%{opacity:1;} 8%{opacity:0;} 8.4%{opacity:1;}
     12%{opacity:0;} 12.4%{opacity:1;} 16%{opacity:0;} 16.4%{opacity:1;} 17.5%{opacity:0;} 100%{opacity:0;}
   }
-  .flow-counsel-cursor-a{fill:#1d5f4e;
+  .flow-counsel-cursor-a{fill:#1d5f4e;}
+  .bg-counsel.is-active .flow-counsel-cursor-a{
     animation-name:flow-counsel-cursorA;animation-duration:8s;animation-iteration-count:infinite;animation-timing-function:linear;}
   @keyframes flow-counsel-cursorA{
     0%{opacity:0;} 53.75%{opacity:0;} 54.2%{opacity:1;} 58%{opacity:0;} 58.4%{opacity:1;}
@@ -647,6 +658,12 @@
   .flow-counsel-pulse-a,.flow-counsel-pulse-b,.flow-counsel-pulse-c,
   .flow-counsel-pulse-d,.flow-counsel-pulse-e,.flow-counsel-pulse-f,
   .flow-counsel-pulse-lead,.flow-counsel-pulse-out{opacity:0;}
+
+  /* the electron dots are native SVG SMIL animations (animateMotion /
+     animate), not CSS — animation-play-state doesn't govern those, so
+     hiding the whole group is what actually stops their paint cost while
+     this card isn't the active one. */
+  .bg-counsel:not(.is-active) .flow-counsel-electrons{ display:none; }
 
   /* the structure (brain, windows, wires) stays visible at all times —
      no fade in/out between loops. Only the typed text and the electron
