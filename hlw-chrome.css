@@ -200,10 +200,17 @@
 /* ===== FOOTER ===== */
 .footer{position:relative;z-index:2;background:var(--page-bg);padding:44px 60px;}
 .footer-inner{
-  max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
+  max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:24px;
 }
 .footer .mark{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.14em;color:var(--green);}
 .footer .fine{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.03em;}
+.footer .footer-links{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.03em;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.footer .footer-links a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent;transition:color .2s ease,border-color .2s ease;}
+.footer .footer-links a:hover{color:var(--green);border-color:var(--line);}
+.footer .footer-links .footer-sep{color:var(--muted);opacity:.5;}
 
 @media(max-width:900px){
   .footer{padding:32px 22px;}

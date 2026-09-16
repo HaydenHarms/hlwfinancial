@@ -83,6 +83,11 @@
     '<div class="footer-inner">' +
       '<div class="mark">HLW FINANCIAL</div>' +
       '<div class="fine">DALLAS, TEXAS &nbsp;·&nbsp; BY REFERRAL &amp; INTRODUCTION</div>' +
+      '<div class="footer-links">' +
+        '<a href="privacy-policy.html">Privacy Policy</a>' +
+        '<span class="footer-sep">·</span>' +
+        '<a href="terms-of-use.html">Terms of Use</a>' +
+      '</div>' +
     '</div>';
 
   // ---- inject into the mount points every page provides ----
