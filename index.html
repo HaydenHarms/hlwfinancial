@@ -2542,7 +2542,16 @@
 
     marqueeTabs.forEach((tab, idx)=>{
       tab.addEventListener('click', ()=>{
-        if(idx === marqueeIndex) return;
+        if(idx === marqueeIndex){
+          // already on this card — restart its dwell timer and refill the
+          // progress bar, but don't touch is-active. goToMarqueeCard toggles
+          // is-active off/on, which would restart this card's own gated
+          // CSS animations from scratch; skipping it keeps those running
+          // continuously and only resets the slide timer.
+          paintMarqueeFills(marqueeIndex);
+          startMarqueeAutoplay(true);
+          return;
+        }
         goToMarqueeCard(idx);
         startMarqueeAutoplay(true);
       });
