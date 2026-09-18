@@ -2493,8 +2493,10 @@
 <script>
 // ===== NEWSROOM — "Card Swap" =====
 // Stacked cards. Nothing moves on its own: hover the stack and it enlarges, then scroll to step
-// through the posts (down = next, up = previous). At the first/last post the scroll wheel is let
-// through so the page never gets stuck; the arrow buttons (and taps on touch screens) wrap around.
+// through the posts (down = next, up = previous). It loops: scrolling down past the last post goes
+// back to the first, and scrolling up from the first goes to the last. While the stack is hovered
+// the wheel belongs to it (move the mouse off to scroll the page). The arrow buttons and taps on
+// touch screens step the same way.
 // Stacking/swap motion adapted from React Bits' Card Swap (reactbits.dev/components/card-swap,
 // MIT + Commons Clause), ported to plain JS. Cards come from ARTICLES (hlw-articles.js): publish a
 // post there and it joins the stack. Until there are MIN_CARDS posts, "coming soon" cards for the
@@ -2663,7 +2665,6 @@
     const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
     if(!dy) return;
     const dir = dy > 0 ? 1 : -1;
-    if((dir === 1 && pos >= total - 1) || (dir === -1 && pos <= 0)) return;   // at an end: let the page scroll
     e.preventDefault();
     const now = performance.now();
     const gap = now - lastWheel;
