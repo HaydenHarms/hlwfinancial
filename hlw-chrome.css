@@ -101,6 +101,20 @@
 }
 .nav-links a.nav-btn-primary:hover{background:#9c8a4a;}
 
+/* Client Access — caution tape slapped across the button (the portal isn't live yet).
+   Purely decorative: pointer-events:none lets every click fall through to the button
+   underneath, so Client Access stays fully clickable. Hidden with the button on mobile. */
+.nav-links a.nav-btn:not(.nav-btn-primary){position:relative;}
+.nav-links a.nav-btn:not(.nav-btn-primary)::after{
+  content:"";position:absolute;z-index:2;
+  left:-16px;right:-16px;top:50%;height:13px;margin-top:-6px;
+  transform:rotate(-9deg);
+  background:repeating-linear-gradient(135deg,#f4c20d 0 8px,#121212 8px 16px);
+  /* swallow-tail cut on both ends so it reads as a strip of tape */
+  clip-path:polygon(0 0,100% 0,98.5% 50%,100% 100%,0 100%,1.5% 50%);
+  pointer-events:none;
+}
+
 @media(max-width:900px){
   .site-nav{padding:18px 22px;}
   .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
