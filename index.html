@@ -279,7 +279,7 @@
     border:1px solid var(--line);background:var(--panel-bg);
     transform:translateX(112%);
     transition:transform .9s cubic-bezier(.65,0,.35,1);
-    display:block;text-decoration:none;color:inherit;cursor:pointer;
+    display:block;color:inherit;cursor:default;
   }
   .marquee-card.no-transition{transition:none;}
   .marquee-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
@@ -304,6 +304,33 @@
   }
   .marquee-card.is-active{transform:translateX(0);}
   .marquee-card.is-prev{transform:translateX(-112%);}
+
+  /* ===== marquee hotspots: circular "more info" buttons on key parts of the card animations.
+     The card text layer used to sit on top of the artwork and swallow every click, so it now
+     lets pointer events fall through (its text is display-only). ===== */
+  .marquee-card-inner{pointer-events:none;}
+  .hs{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent;}
+  .hs-hit{fill:transparent;pointer-events:all;}
+  .hs-ring{fill:none;stroke:#E3C27A;stroke-width:1.5;opacity:.55;transform-box:fill-box;transform-origin:center;}
+  .hs-dot{fill:#E3C27A;stroke:rgba(15,30,21,.9);stroke-width:1.5;transform-box:fill-box;transform-origin:center;transition:transform .2s ease, fill .2s ease;}
+  .hs-plus{fill:none;stroke:#1c1608;stroke-width:2;stroke-linecap:round;transform-box:fill-box;transform-origin:center;transition:transform .25s ease;}
+  .hs:hover .hs-dot{fill:#FFE4A3;transform:scale(1.15);}
+  .hs:focus-visible .hs-dot{stroke:#fff;stroke-width:2.5;}
+  .hs[aria-expanded="true"] .hs-plus{transform:rotate(45deg);}
+  .hs[aria-expanded="true"] .hs-ring{animation:none;opacity:.9;}
+  .marquee-card.is-active .hs-ring{animation:hsPulse 2.4s ease-out infinite;}
+  @keyframes hsPulse{0%{transform:scale(1);opacity:.75;}70%,100%{transform:scale(2.5);opacity:0;}}
+  @media (prefers-reduced-motion:reduce){.marquee-card.is-active .hs-ring{animation:none;}}
+  .hs-pop{
+    position:absolute;z-index:6;width:max-content;max-width:min(270px,calc(100% - 24px));
+    background:var(--panel-bg);color:var(--ink);border:1px solid var(--line);border-top:3px solid var(--gold);
+    padding:14px 16px 16px;box-shadow:0 14px 34px rgba(0,0,0,.35);
+    opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px);
+    transition:opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
+  }
+  .hs-pop.is-shown{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .2s ease, transform .2s ease;}
+  .hs-pop-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+  .hs-pop-text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;color:var(--ink-soft);}
 
   .marquee-card.has-bg{
     background-size:cover;background-position:center;border-color:var(--green-deep);
@@ -1340,7 +1367,7 @@
 
   <div class="facts-wrap">
     <div class="marquee-track" id="marqueeTrack">
-      <a class="marquee-card has-bg bg-ledger">
+      <div class="marquee-card has-bg bg-ledger">
         <div class="flow-bg">
         <div class="flow-ledger" role="img" aria-label="QuickBooks and tax software feed data into HLW Financial, which sends data out to the client portal">
 <svg viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet">
@@ -1378,6 +1405,7 @@
 <circle class="flow-ledger-dot" cx="-6" cy="-35.5" r=".8"/><circle class="flow-ledger-dot" cx="6" cy="-27.5" r=".8"/>
 <rect class="flow-ledger-fine" x="-17" y="-24" width="11" height="5" rx=".8"/><line class="flow-ledger-fine" x1="-15" y1="-21.5" x2="-8" y2="-21.5"/>
 <g class="flow-ledger-ports"><circle cx="-3" cy="15" r=".8"/><circle cx="0" cy="15" r=".8"/><circle cx="3" cy="15" r=".8"/></g>
+<g class="hs" transform="translate(22 -32)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Client portal" data-hs="portal" data-hs-title="Client portal" data-hs-text="A private place for clients to see where things stand and reach us. On its way. In the meantime, just get in touch."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
 </g><g class="flow-ledger-node flow-ledger-node-quickbooks" transform="translate(180 76)">
 <text class="flow-ledger-label" x="0" y="-54">QuickBooks</text>
 <polygon class="flow-ledger-slab-top" points="0,-11 36,0 0,11 -36,0"/>
@@ -1396,6 +1424,7 @@
 <path class="flow-ledger-ink-line" d="M9 -29.2h6M9 -24.7h4M9 -20.2h6"/>
 <path class="flow-ledger-ink-line" d="M-15 -29.2h5M-15 -24.7h4M-15 -20.2h5M-6 -29.2h9M-6 -24.7h7"/>
 <g class="flow-ledger-ports"><circle cx="-3" cy="15" r=".8"/><circle cx="0" cy="15" r=".8"/><circle cx="3" cy="15" r=".8"/></g>
+<g class="hs" transform="translate(22 -32)" role="button" tabindex="0" aria-expanded="false" aria-label="More about QuickBooks" data-hs="quickbooks" data-hs-title="QuickBooks" data-hs-text="Your books live here. We categorize and reconcile as transactions clear, so your balance sheet is never more than a day old."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
 </g><g class="flow-ledger-node flow-ledger-node-taxact" transform="translate(290 76)">
 <text class="flow-ledger-label" x="0" y="-54">Tax software</text>
 <polygon class="flow-ledger-slab-top" points="0,-11 36,0 0,11 -36,0"/>
@@ -1415,12 +1444,13 @@
 <line class="flow-ledger-fine" x1="-2" y1="-22.5" x2="5" y2="-22.5"/>
 <g class="flow-ledger-accent-stroke"><circle cx="13" cy="-24" r="4.2" class="flow-ledger-badge"/><path d="M11.2 -22 l3.6 -4"/><circle cx="11.5" cy="-25.6" r=".6"/><circle cx="14.5" cy="-22.4" r=".6"/></g>
 <g class="flow-ledger-ports"><circle cx="-3" cy="15" r=".8"/><circle cx="0" cy="15" r=".8"/><circle cx="3" cy="15" r=".8"/></g>
+<g class="hs" transform="translate(22 -32)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Tax software" data-hs="taxact" data-hs-title="Tax software" data-hs-text="Returns are built from books that are already right. One simple upload, no reconstruction, no scramble in March."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
 </g>
 </svg>
         </div>
         </div>
-</a>
-      <a class="marquee-card has-bg bg-close">
+</div>
+      <div class="marquee-card has-bg bg-close">
         <div class="flow-bg">
           <svg class="flow-svg" viewBox="0 0 640 260" preserveAspectRatio="xMidYMid slice">
             <path class="line" d="M100,130 L260,130" stroke-dasharray="160"
@@ -1448,10 +1478,11 @@
             <rect class="module" x="540" y="170" width="80" height="40" rx="6"
               style="animation-name:closeModuleActivate;animation-delay:1.25s"/>
             <text class="module-label" x="580" y="194" text-anchor="middle">review</text>
+            <g class="hs" transform="translate(540 50)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Categorize" data-hs="categorize" data-hs-title="Categorize" data-hs-text="Every transaction is coded to the right account as it clears, not months after the fact."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g><g class="hs" transform="translate(540 110)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Reconcile" data-hs="reconcile" data-hs-title="Reconcile" data-hs-text="Bank and card activity is matched to the ledger continuously, so nothing piles up at month-end."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g><g class="hs" transform="translate(540 170)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Review" data-hs="review" data-hs-title="Review" data-hs-text="We check the work ourselves before it reaches you, so the numbers you see are ones we stand behind."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
           </svg>
         </div>
-</a>
-      <a class="marquee-card has-bg bg-tax">
+</div>
+      <div class="marquee-card has-bg bg-tax">
         <div class="flow-bg">
           <div class="flow-tax-stack">
             <div class="flow-tax-card flow-tax-d"><span>1099</span></div>
@@ -1460,8 +1491,8 @@
             <div class="flow-tax-card flow-tax-a"><span>1040</span></div>
           </div>
         </div>
-</a>
-      <a class="marquee-card has-bg bg-reporting">
+</div>
+      <div class="marquee-card has-bg bg-reporting">
         <div class="flow-bg">
           <svg class="flow-svg" viewBox="80 0 400 250" preserveAspectRatio="xMidYMid meet">
             <defs>
@@ -1558,10 +1589,11 @@
               <path class="plane-fg-top" d="M360,25 L398,44 L360,63 L322,44 Z"/>
               <text class="module-label" fill="#1c1608" x="360" y="48" text-anchor="middle">advise</text>
             </g>
+            <g class="hs" transform="translate(219 34.5)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Report" data-hs="report" data-hs-title="Report" data-hs-text="Clean, branded financials that are ready to forward the moment a lender or partner asks."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g><g class="hs" transform="translate(379 34.5)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Advise" data-hs="advise" data-hs-title="Advise" data-hs-text="One advisor who already knows the answer. Same person, same context, no re-explaining."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
           </svg>
         </div>
-</a>
-      <a class="marquee-card has-bg bg-counsel">
+</div>
+      <div class="marquee-card has-bg bg-counsel">
         <div class="flow-bg">
       <svg class="flow-svg" viewBox="0 -20 800 260" preserveAspectRatio="xMidYMid meet">
         <defs>
@@ -1879,10 +1911,11 @@
         </g>
 
         </g>
+        <g class="hs" transform="translate(235 37)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Ask HLW" data-hs="prompt" data-hs-title="Ask HLW" data-hs-text="Ask a plain-English question about your business and get a straight answer back."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
       </svg>
     </div>
-</a>
-      <a class="marquee-card has-bg bg-news">
+</div>
+      <div class="marquee-card has-bg bg-news">
         <div class="flow-bg">
    <svg class="flow-news-svg" viewBox="159 80 326 101" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
    <g class="flow-news-scene">
@@ -2332,7 +2365,7 @@
    </g>
    </svg>
   </div>
-</a>
+</div>
     </div>
   </div>
 </div>
@@ -2450,7 +2483,7 @@
 
   const marqueeCards = document.querySelectorAll('#marqueeTrack .marquee-card');
   const marqueeTabs = document.querySelectorAll('#marqueeTabs .marquee-tab');
-  const MARQUEE_DURATION = 8500; // ms each card stays active before advancing
+  const MARQUEE_DURATION = 10000; // ms each card stays active before advancing
 
   if(marqueeCards.length){
     let marqueeIndex = 0;
@@ -2551,8 +2584,115 @@
     startMarqueeAutoplay(true);
 
     // exposed so touch-tap handling (below) can pause/resume autoplay
-    window.__marqueeAutoplay = { start: startMarqueeAutoplay, stop: stopMarqueeAutoplay };
+    window.__marqueeAutoplay = { start: startMarqueeAutoplay, stop: stopMarqueeAutoplay, refill: ()=> paintMarqueeFills(marqueeIndex) };
   }
+
+
+  // ===== marquee hotspots =====
+  // Circular buttons on key parts of the card animations (see .hs markup in each card's SVG).
+  // Tapping one opens a small popover; the slideshow pauses while it is open.
+  (function(){
+    const track = document.getElementById('marqueeTrack');
+    if(!track) return;
+    const hotspots = Array.from(track.querySelectorAll('.hs'));
+    if(!hotspots.length) return;
+
+    // keep each button a constant pixel size, however much its SVG is scaled
+    const svgs = Array.from(new Set(hotspots.map(h => h.ownerSVGElement)));
+    function syncScale(svg){
+      const m = svg.getScreenCTM();
+      if(!m || !m.a) return;
+      const k = 1 / m.a;
+      svg.querySelectorAll('.hs-scale').forEach(g => g.setAttribute('transform', 'scale(' + k + ')'));
+    }
+    svgs.forEach(svg => {
+      syncScale(svg);
+      if('ResizeObserver' in window) new ResizeObserver(() => syncScale(svg)).observe(svg);
+    });
+    window.addEventListener('resize', () => svgs.forEach(syncScale));
+
+    // only the visible card's buttons should be reachable by keyboard (off-screen
+    // focus would otherwise scroll the overflow:hidden marquee sideways)
+    const cards = Array.from(track.querySelectorAll('.marquee-card'));
+    function syncFocusable(){
+      hotspots.forEach(h => h.setAttribute('tabindex', h.closest('.marquee-card').classList.contains('is-active') ? '0' : '-1'));
+    }
+    if('MutationObserver' in window){
+      const mo = new MutationObserver(syncFocusable);
+      cards.forEach(c => mo.observe(c, {attributes:true, attributeFilter:['class']}));
+    }
+    syncFocusable();
+
+    let openHs = null, safetyTimer = null;
+
+    function popFor(card){
+      let pop = card.querySelector(':scope > .hs-pop');
+      if(!pop){
+        pop = document.createElement('div');
+        pop.className = 'hs-pop';
+        pop.setAttribute('role', 'dialog');
+        pop.innerHTML = '<div class="hs-pop-title"></div><div class="hs-pop-text"></div>';
+        card.appendChild(pop);
+      }
+      return pop;
+    }
+
+    function closeHotspot(){
+      if(!openHs) return;
+      const card = openHs.closest('.marquee-card');
+      const pop = card.querySelector(':scope > .hs-pop');
+      if(pop) pop.classList.remove('is-shown');
+      openHs.setAttribute('aria-expanded', 'false');
+      openHs = null;
+      clearTimeout(safetyTimer);
+      const ap = window.__marqueeAutoplay;
+      if(ap){ ap.start(true); if(ap.refill) ap.refill(); }
+    }
+
+    function openHotspot(hs){
+      if(openHs === hs){ closeHotspot(); return; }
+      if(openHs) closeHotspot();
+      const card = hs.closest('.marquee-card');
+      const pop = popFor(card);
+      pop.querySelector('.hs-pop-title').textContent = hs.dataset.hsTitle || '';
+      pop.querySelector('.hs-pop-text').textContent = hs.dataset.hsText || '';
+
+      // place beside the button, flipping/clamping so it stays inside the card
+      const cr = card.getBoundingClientRect();
+      const dr = hs.querySelector('.hs-dot').getBoundingClientRect();
+      const cx = dr.left + dr.width / 2 - cr.left;
+      const cy = dr.top + dr.height / 2 - cr.top;
+      const w = pop.offsetWidth, h = pop.offsetHeight, gap = 18, pad = 12;
+      let x = cx + gap, y = cy + gap;
+      if(x + w > cr.width - pad) x = cx - gap - w;
+      if(y + h > cr.height - pad) y = cy - gap - h;
+      x = Math.max(pad, Math.min(x, cr.width - w - pad));
+      y = Math.max(pad, Math.min(y, cr.height - h - pad));
+      pop.style.left = x + 'px';
+      pop.style.top = y + 'px';
+
+      pop.classList.add('is-shown');
+      hs.setAttribute('aria-expanded', 'true');
+      openHs = hs;
+      if(window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
+      clearTimeout(safetyTimer);
+      safetyTimer = setTimeout(closeHotspot, 15000); // never leave the slideshow paused for good
+    }
+
+    hotspots.forEach(hs => {
+      hs.addEventListener('click', e => { e.stopPropagation(); openHotspot(hs); });
+      hs.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); e.stopPropagation(); openHotspot(hs); }
+      });
+    });
+
+    // cards stop click propagation, so watch in the capture phase for taps elsewhere on the track
+    track.addEventListener('click', e => { if(!e.target.closest('.hs, .hs-pop')) closeHotspot(); }, true);
+    document.addEventListener('click', closeHotspot);
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeHotspot(); });
+    // mouse users: moving off the card dismisses it (touch users tap elsewhere instead)
+    cards.forEach(c => c.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse') closeHotspot(); }));
+  })();
 
   const frames = document.querySelectorAll('.feature-frame');
   const counter = document.getElementById('fcCounter');
@@ -2840,7 +2980,8 @@
       // directly rather than inferred from history, so it can't get stuck
       // paused however the card ended up closing.
       const anyOpen = document.querySelector('#marqueeTrack .marquee-card.is-open');
-      if(!anyOpen && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
+      const popOpen = document.querySelector('#marqueeTrack .hs-pop.is-shown');
+      if(!anyOpen && !popOpen && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
     },
     {touchMode:'scroll'}
   );
