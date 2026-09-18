@@ -45,6 +45,13 @@
   .news-hero{
     max-width:1400px;margin:0 auto;padding:150px 60px 0;
   }
+  .news-back{
+    display:inline-flex;align-items:center;gap:8px;margin-bottom:30px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px;
+    transition:color .25s ease, border-color .25s ease;
+  }
+  .news-back:hover{color:var(--ink);border-color:var(--ink);}
   .news-hero h1{
     font-weight:500;font-size:clamp(56px,11vw,168px);line-height:.95;letter-spacing:-.03em;
     color:var(--ink);
@@ -119,6 +126,7 @@
 <header class="site-nav" id="siteNav" data-nav-mode="light"></header>
 
 <div class="news-hero">
+  <a class="news-back" href="index.html">&larr; Back to home</a>
   <h1>The Newsroom</h1>
 </div>
 <div class="news-rule"><span></span></div>
