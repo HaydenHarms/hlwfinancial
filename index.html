@@ -311,16 +311,19 @@
   .marquee-card-inner{pointer-events:none;}
   .hs{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent;}
   .hs-hit{fill:transparent;pointer-events:all;}
-  .hs-ring{fill:none;stroke:#E3C27A;stroke-width:1.5;opacity:.55;transform-box:fill-box;transform-origin:center;}
-  .hs-dot{fill:#E3C27A;stroke:rgba(15,30,21,.9);stroke-width:1.5;transform-box:fill-box;transform-origin:center;transition:transform .2s ease, fill .2s ease;}
-  .hs-plus{fill:none;stroke:#1c1608;stroke-width:2;stroke-linecap:round;transform-box:fill-box;transform-origin:center;transition:transform .25s ease;}
+  .hs-ring{fill:none;stroke:#E3C27A;stroke-width:2;vector-effect:non-scaling-stroke;opacity:.55;transform-box:fill-box;transform-origin:center;}
+  .hs-dot{fill:#E3C27A;stroke:rgba(15,30,21,.9);stroke-width:2;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;transition:transform .2s ease, fill .2s ease;}
+  .hs-plus{fill:none;stroke:#1c1608;stroke-width:3.5;vector-effect:non-scaling-stroke;stroke-linecap:round;transform-box:fill-box;transform-origin:center;transition:transform .25s ease;}
   .hs:hover .hs-dot{fill:#FFE4A3;transform:scale(1.15);}
-  .hs:focus-visible .hs-dot{stroke:#fff;stroke-width:2.5;}
+  .hs:focus-visible .hs-dot{stroke:#fff;stroke-width:3;}
   .hs[aria-expanded="true"] .hs-plus{transform:rotate(45deg);}
   .hs[aria-expanded="true"] .hs-ring{animation:none;opacity:.9;}
   .marquee-card.is-active .hs-ring{animation:hsPulse 2.4s ease-out infinite;}
   @keyframes hsPulse{0%{transform:scale(1);opacity:.75;}70%,100%{transform:scale(2.5);opacity:0;}}
   @media (prefers-reduced-motion:reduce){.marquee-card.is-active .hs-ring{animation:none;}}
+  /* invisible hover targets (Tax + News cards): big on purpose, they wrap the whole animated asset */
+  .hs-zone{fill:transparent;pointer-events:all;}
+  div.hs-zone{position:absolute;z-index:10;left:calc(var(--tax-s) * -1);top:calc(var(--tax-s) * -1);width:calc(var(--tax-s) * 2);height:calc(var(--tax-s) * 2);}
   .hs-pop{
     position:absolute;z-index:6;width:max-content;max-width:min(270px,calc(100% - 24px));
     background:var(--panel-bg);color:var(--ink);border:1px solid var(--line);border-top:3px solid var(--gold);
@@ -328,7 +331,7 @@
     opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px);
     transition:opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
   }
-  .hs-pop.is-shown{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .2s ease, transform .2s ease;}
+  .hs-pop.is-shown{opacity:1;visibility:visible;transform:none;transition:opacity .2s ease, transform .2s ease;}
   .hs-pop-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
   .hs-pop-text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;color:var(--ink-soft);}
 
@@ -1405,7 +1408,7 @@
 <circle class="flow-ledger-dot" cx="-6" cy="-35.5" r=".8"/><circle class="flow-ledger-dot" cx="6" cy="-27.5" r=".8"/>
 <rect class="flow-ledger-fine" x="-17" y="-24" width="11" height="5" rx=".8"/><line class="flow-ledger-fine" x1="-15" y1="-21.5" x2="-8" y2="-21.5"/>
 <g class="flow-ledger-ports"><circle cx="-3" cy="15" r=".8"/><circle cx="0" cy="15" r=".8"/><circle cx="3" cy="15" r=".8"/></g>
-<g class="hs" transform="translate(22 -32)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Client portal" data-hs="portal" data-hs-title="Client portal" data-hs-text="A private place for clients to see where things stand and reach us. On its way. In the meantime, just get in touch."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
+<g class="hs" transform="translate(28 -36)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Client portal" data-hs="portal" data-hs-title="Client portal" data-hs-text="A private place for clients to see where things stand and reach us. On its way. In the meantime, just get in touch."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
 </g><g class="flow-ledger-node flow-ledger-node-quickbooks" transform="translate(180 76)">
 <text class="flow-ledger-label" x="0" y="-54">QuickBooks</text>
 <polygon class="flow-ledger-slab-top" points="0,-11 36,0 0,11 -36,0"/>
@@ -1424,7 +1427,7 @@
 <path class="flow-ledger-ink-line" d="M9 -29.2h6M9 -24.7h4M9 -20.2h6"/>
 <path class="flow-ledger-ink-line" d="M-15 -29.2h5M-15 -24.7h4M-15 -20.2h5M-6 -29.2h9M-6 -24.7h7"/>
 <g class="flow-ledger-ports"><circle cx="-3" cy="15" r=".8"/><circle cx="0" cy="15" r=".8"/><circle cx="3" cy="15" r=".8"/></g>
-<g class="hs" transform="translate(22 -32)" role="button" tabindex="0" aria-expanded="false" aria-label="More about QuickBooks" data-hs="quickbooks" data-hs-title="QuickBooks" data-hs-text="Your books live here. We categorize and reconcile as transactions clear, so your balance sheet is never more than a day old."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
+<g class="hs" transform="translate(28 -36)" role="button" tabindex="0" aria-expanded="false" aria-label="More about QuickBooks" data-hs="quickbooks" data-hs-title="QuickBooks" data-hs-text="Your books live here. We categorize and reconcile as transactions clear, so your balance sheet is never more than a day old."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
 </g><g class="flow-ledger-node flow-ledger-node-taxact" transform="translate(290 76)">
 <text class="flow-ledger-label" x="0" y="-54">Tax software</text>
 <polygon class="flow-ledger-slab-top" points="0,-11 36,0 0,11 -36,0"/>
@@ -1444,7 +1447,7 @@
 <line class="flow-ledger-fine" x1="-2" y1="-22.5" x2="5" y2="-22.5"/>
 <g class="flow-ledger-accent-stroke"><circle cx="13" cy="-24" r="4.2" class="flow-ledger-badge"/><path d="M11.2 -22 l3.6 -4"/><circle cx="11.5" cy="-25.6" r=".6"/><circle cx="14.5" cy="-22.4" r=".6"/></g>
 <g class="flow-ledger-ports"><circle cx="-3" cy="15" r=".8"/><circle cx="0" cy="15" r=".8"/><circle cx="3" cy="15" r=".8"/></g>
-<g class="hs" transform="translate(22 -32)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Tax software" data-hs="taxact" data-hs-title="Tax software" data-hs-text="Returns are built from books that are already right. One simple upload, no reconstruction, no scramble in March."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
+<g class="hs" transform="translate(28 -36)" role="button" tabindex="0" aria-expanded="false" aria-label="More about Tax software" data-hs="taxact" data-hs-title="Tax software" data-hs-text="Returns are built from books that are already right. One simple upload, no reconstruction, no scramble in March."><g class="hs-scale"><circle class="hs-hit" r="22"/><circle class="hs-ring" r="9"/><circle class="hs-dot" r="8"/><path class="hs-plus" d="M-3.4 0H3.4M0 -3.4V3.4"/></g></g>
 </g>
 </svg>
         </div>
@@ -1489,6 +1492,7 @@
             <div class="flow-tax-card flow-tax-c"><span>w-2</span></div>
             <div class="flow-tax-card flow-tax-b"><span>sched c</span></div>
             <div class="flow-tax-card flow-tax-a"><span>1040</span></div>
+            <div class="hs-zone" data-hs-title="Tax" data-hs-text="1099s, W-2s, Schedule C and your 1040. Everything a return needs, assembled from books that are already right."></div>
           </div>
         </div>
 </div>
@@ -2363,6 +2367,7 @@
     <g class="flow-news-electron flow-news-e-up"><circle class="flow-news-electron-glow" r="3"/><circle class="flow-news-electron-core" r="1.1"/></g>
     <g class="flow-news-electron flow-news-e-dn"><circle class="flow-news-electron-glow" r="3"/><circle class="flow-news-electron-core" r="1.1"/></g>
    </g>
+   <rect class="hs-zone" x="162" y="82" width="322" height="96" data-hs-title="Accounts receivable" data-hs-text="Every balance breaks down into the transactions behind it, so any number can be traced back to where it came from."/>
    </svg>
   </div>
 </div>
@@ -2589,20 +2594,28 @@
 
 
   // ===== marquee hotspots =====
-  // Circular buttons on key parts of the card animations (see .hs markup in each card's SVG).
-  // Tapping one opens a small popover; the slideshow pauses while it is open.
+  // Two kinds of hover target inside the marquee cards:
+  //  .hs       circular gold buttons (Ledger / Close / Reporting / Counsel). Hovering one shows a
+  //            callout and pauses the slideshow timer until the mouse leaves.
+  //  .hs-zone  invisible, deliberately large areas over the animated assets (Tax / News). Hovering
+  //            shows the same callout but the slideshow keeps running.
+  // On touch screens (no hover) a tap toggles the callout instead.
   (function(){
     const track = document.getElementById('marqueeTrack');
     if(!track) return;
-    const hotspots = Array.from(track.querySelectorAll('.hs'));
-    if(!hotspots.length) return;
+    const buttons = Array.from(track.querySelectorAll('.hs'));
+    const zones = Array.from(track.querySelectorAll('.hs-zone'));
+    const targets = buttons.concat(zones);
+    if(!targets.length) return;
+
+    const HS_SIZE = 2.5; // button size multiplier (1 = the original ~16px dot)
 
     // keep each button a constant pixel size, however much its SVG is scaled
-    const svgs = Array.from(new Set(hotspots.map(h => h.ownerSVGElement)));
+    const svgs = Array.from(new Set(buttons.map(h => h.ownerSVGElement)));
     function syncScale(svg){
       const m = svg.getScreenCTM();
       if(!m || !m.a) return;
-      const k = 1 / m.a;
+      const k = HS_SIZE / m.a;
       svg.querySelectorAll('.hs-scale').forEach(g => g.setAttribute('transform', 'scale(' + k + ')'));
     }
     svgs.forEach(svg => {
@@ -2611,19 +2624,23 @@
     });
     window.addEventListener('resize', () => svgs.forEach(syncScale));
 
-    // only the visible card's buttons should be reachable by keyboard (off-screen
-    // focus would otherwise scroll the overflow:hidden marquee sideways)
     const cards = Array.from(track.querySelectorAll('.marquee-card'));
-    function syncFocusable(){
-      hotspots.forEach(h => h.setAttribute('tabindex', h.closest('.marquee-card').classList.contains('is-active') ? '0' : '-1'));
+    let openEl = null, safetyTimer = null;
+
+    // only the visible card's buttons should be reachable by keyboard (off-screen
+    // focus would otherwise scroll the overflow:hidden marquee sideways); also
+    // dismiss a callout whose card has slid away
+    function syncCards(){
+      buttons.forEach(h => h.setAttribute('tabindex', h.closest('.marquee-card').classList.contains('is-active') ? '0' : '-1'));
+      if(openEl && !openEl.closest('.marquee-card').classList.contains('is-active')) closeHotspot();
     }
     if('MutationObserver' in window){
-      const mo = new MutationObserver(syncFocusable);
+      const mo = new MutationObserver(syncCards);
       cards.forEach(c => mo.observe(c, {attributes:true, attributeFilter:['class']}));
     }
-    syncFocusable();
+    syncCards();
 
-    let openHs = null, safetyTimer = null;
+    const pausesSlideshow = el => !el.classList.contains('hs-zone');
 
     function popFor(card){
       let pop = card.querySelector(':scope > .hs-pop');
@@ -2638,31 +2655,40 @@
     }
 
     function closeHotspot(){
-      if(!openHs) return;
-      const card = openHs.closest('.marquee-card');
-      const pop = card.querySelector(':scope > .hs-pop');
-      if(pop) pop.classList.remove('is-shown');
-      openHs.setAttribute('aria-expanded', 'false');
-      openHs = null;
+      if(!openEl) return;
+      const el = openEl;
+      openEl = null;
+      const pop = el.closest('.marquee-card').querySelector(':scope > .hs-pop');
+      if(pop) pop.classList.remove('is-shown', 'is-pausing');
+      if(el.classList.contains('hs')) el.setAttribute('aria-expanded', 'false');
       clearTimeout(safetyTimer);
-      const ap = window.__marqueeAutoplay;
-      if(ap){ ap.start(true); if(ap.refill) ap.refill(); }
+      if(pausesSlideshow(el)){
+        // the slideshow was paused for this callout: give the card a fresh full dwell and refill its bar
+        const ap = window.__marqueeAutoplay;
+        if(ap){ ap.start(true); if(ap.refill) ap.refill(); }
+      }
     }
 
-    function openHotspot(hs){
-      if(openHs === hs){ closeHotspot(); return; }
-      if(openHs) closeHotspot();
-      const card = hs.closest('.marquee-card');
+    // pt = {x,y} viewport coords of the pointer (used for zones); sticky = opened by tap/keyboard,
+    // so add a safety timeout in case nothing ever dismisses it
+    function showHotspot(el, pt, sticky){
+      if(openEl) closeHotspot();
+      const card = el.closest('.marquee-card');
       const pop = popFor(card);
-      pop.querySelector('.hs-pop-title').textContent = hs.dataset.hsTitle || '';
-      pop.querySelector('.hs-pop-text').textContent = hs.dataset.hsText || '';
+      pop.querySelector('.hs-pop-title').textContent = el.dataset.hsTitle || '';
+      pop.querySelector('.hs-pop-text').textContent = el.dataset.hsText || '';
 
-      // place beside the button, flipping/clamping so it stays inside the card
+      // place beside the button (or pointer), flipping/clamping so it stays inside the card
       const cr = card.getBoundingClientRect();
-      const dr = hs.querySelector('.hs-dot').getBoundingClientRect();
-      const cx = dr.left + dr.width / 2 - cr.left;
-      const cy = dr.top + dr.height / 2 - cr.top;
-      const w = pop.offsetWidth, h = pop.offsetHeight, gap = 18, pad = 12;
+      let ax, ay, gap;
+      if(el.classList.contains('hs')){
+        const dr = el.querySelector('.hs-dot').getBoundingClientRect();
+        ax = dr.left + dr.width / 2; ay = dr.top + dr.height / 2; gap = dr.width / 2 + 14;
+      } else {
+        ax = pt.x; ay = pt.y; gap = 20;
+      }
+      const cx = ax - cr.left, cy = ay - cr.top;
+      const w = pop.offsetWidth, h = pop.offsetHeight, pad = 12;
       let x = cx + gap, y = cy + gap;
       if(x + w > cr.width - pad) x = cx - gap - w;
       if(y + h > cr.height - pad) y = cy - gap - h;
@@ -2672,25 +2698,47 @@
       pop.style.top = y + 'px';
 
       pop.classList.add('is-shown');
-      hs.setAttribute('aria-expanded', 'true');
-      openHs = hs;
-      if(window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
+      pop.classList.toggle('is-pausing', pausesSlideshow(el));
+      if(el.classList.contains('hs')) el.setAttribute('aria-expanded', 'true');
+      openEl = el;
+      if(pausesSlideshow(el) && window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
       clearTimeout(safetyTimer);
-      safetyTimer = setTimeout(closeHotspot, 15000); // never leave the slideshow paused for good
+      if(sticky) safetyTimer = setTimeout(closeHotspot, 15000);
     }
 
-    hotspots.forEach(hs => {
-      hs.addEventListener('click', e => { e.stopPropagation(); openHotspot(hs); });
-      hs.addEventListener('keydown', e => {
-        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); e.stopPropagation(); openHotspot(hs); }
+    function toggleHotspot(el, pt){
+      if(openEl === el) closeHotspot(); else showHotspot(el, pt, true);
+    }
+
+    targets.forEach(el => {
+      // mouse: hover in / hover out
+      el.addEventListener('pointerenter', e => {
+        if(e.pointerType !== 'mouse') return;
+        showHotspot(el, {x:e.clientX, y:e.clientY}, false);
+      });
+      el.addEventListener('pointerleave', e => {
+        if(e.pointerType !== 'mouse') return;
+        if(openEl === el) closeHotspot();
+      });
+      // touch/pen: tap toggles (a real mouse click is ignored, hover already handled it)
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        if(e.pointerType === 'mouse') return;
+        toggleHotspot(el, {x:e.clientX, y:e.clientY});
+      });
+    });
+    // keyboard: buttons are focusable
+    buttons.forEach(el => {
+      el.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); e.stopPropagation(); toggleHotspot(el, {x:0, y:0}); }
       });
     });
 
     // cards stop click propagation, so watch in the capture phase for taps elsewhere on the track
-    track.addEventListener('click', e => { if(!e.target.closest('.hs, .hs-pop')) closeHotspot(); }, true);
+    track.addEventListener('click', e => { if(!e.target.closest('.hs, .hs-zone, .hs-pop')) closeHotspot(); }, true);
     document.addEventListener('click', closeHotspot);
     document.addEventListener('keydown', e => { if(e.key === 'Escape') closeHotspot(); });
-    // mouse users: moving off the card dismisses it (touch users tap elsewhere instead)
+    // mouse users: leaving the card always dismisses any callout
     cards.forEach(c => c.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse') closeHotspot(); }));
   })();
 
@@ -2980,7 +3028,7 @@
       // directly rather than inferred from history, so it can't get stuck
       // paused however the card ended up closing.
       const anyOpen = document.querySelector('#marqueeTrack .marquee-card.is-open');
-      const popOpen = document.querySelector('#marqueeTrack .hs-pop.is-shown');
+      const popOpen = document.querySelector('#marqueeTrack .hs-pop.is-shown.is-pausing');
       if(!anyOpen && !popOpen && window.__marqueeAutoplay) window.__marqueeAutoplay.start();
     },
     {touchMode:'scroll'}
