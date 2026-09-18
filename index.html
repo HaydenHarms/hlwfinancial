@@ -596,6 +596,7 @@
   }
   /* hover-activated: the card sits as a tidy stack until .hs-play is added (see the marquee hotspot script) */
   .bg-tax:not(.hs-play) .flow-tax-card{ animation:none; }
+  .bg-tax.hs-play .flow-tax-card{ animation-fill-mode:both; }
   .bg-tax:not(.hs-play) .flow-tax-a{ transform:translate(0%,0%) rotate(0deg); }
   .bg-tax:not(.hs-play) .flow-tax-b{ transform:translate(5%,5%) rotate(-2deg); }
   .bg-tax:not(.hs-play) .flow-tax-c{ transform:translate(10%,10%) rotate(-4deg); }
@@ -2610,8 +2611,8 @@
   //  .hs       circular gold buttons (Ledger / Close / Reporting / Counsel). Hovering one shows a
   //            callout and pauses the slideshow timer until the mouse leaves.
   //  .hs-zone  invisible, deliberately large areas over the animated assets (Tax / News). Hovering
-  //            shows the same callout and starts that card's animation (which is otherwise at
-  //            rest); the slideshow keeps running.
+  //            shows the same callout and starts that card's animation (otherwise at rest);
+  //            moving away rewinds it from wherever it is back to rest. The slideshow keeps running.
   // On touch screens (no hover) a tap toggles the callout instead.
   (function(){
     const track = document.getElementById('marqueeTrack');
@@ -2639,7 +2640,7 @@
 
     const cards = Array.from(track.querySelectorAll('.marquee-card'));
     let openEl = null, safetyTimer = null;
-    const playState = new Map(); // hover-activated cards (Tax / News): card -> {want, timer}
+    const playState = new Map(); // hover-activated cards (Tax / News): card -> {want, gen}
 
     // only the visible card's buttons should be reachable by keyboard (off-screen
     // focus would otherwise scroll the overflow:hidden marquee sideways); also
@@ -2652,7 +2653,7 @@
         if(!c.classList.contains('is-active') && c.classList.contains('hs-play')){
           c.classList.remove('hs-play');
           const st = playState.get(c);
-          if(st){ st.want = false; clearTimeout(st.timer); }
+          if(st){ st.want = false; st.gen++; }
         }
       });
     }
@@ -2664,28 +2665,53 @@
 
     const pausesSlideshow = el => !el.classList.contains('hs-zone');
 
-    // Tax + News animations only run while .hs-play is on the card. Hovering starts them; moving
-    // away lets the current cycle finish (every keyframe set ends where it began, so stopping at a
-    // cycle boundary never jumps) and then returns the card to rest.
+    // Tax + News animations only run while .hs-play is on the card. Hovering starts them. Moving
+    // away doesn't cut them off or let them finish: each running animation is reversed from
+    // exactly where it is (Web Animations playbackRate < 0) until it reaches its first frame, which
+    // is the resting state, and only then is .hs-play removed. Hovering back in mid-rewind turns
+    // it around and plays forward again from that point.
+    const REWIND_SPEED = 1; // 1 = rewinds at the same speed it played; raise it for a snappier reset
+
+    function cardAnims(card){
+      return card.getAnimations({subtree:true}).filter(a => a.animationName); // CSS animations only
+    }
+
     function setPlay(card, on){
       let st = playState.get(card);
-      if(!st){ st = {want:false, timer:null}; playState.set(card, st); }
+      if(!st){ st = {want:false, gen:0}; playState.set(card, st); }
       st.want = on;
-      clearTimeout(st.timer);
+      const gen = ++st.gen;
+
       if(on){
-        card.classList.add('hs-play');
-      } else if(card.classList.contains('hs-play')){
-        // fallback in case no iteration event arrives (e.g. reduced motion): one full cycle + a beat
-        st.timer = setTimeout(() => card.classList.remove('hs-play'), (card.classList.contains('bg-news') ? 10000 : 5000) + 400);
+        if(card.classList.contains('hs-play')){
+          // hovered back in while rewinding: turn around and carry on forward from here
+          cardAnims(card).forEach(a => {
+            a.effect.updateTiming({iterations:Infinity});
+            a.playbackRate = 1;
+          });
+        } else {
+          card.classList.add('hs-play');
+        }
+        return;
       }
+
+      if(!card.classList.contains('hs-play')) return;
+      const anims = cardAnims(card);
+      if(!anims.length){ card.classList.remove('hs-play'); return; }
+      anims.forEach(a => {
+        const t = a.effect.getComputedTiming();
+        // rewind only the current pass (not every loop played so far): fold the position into
+        // one iteration, then run that iteration backwards to time 0
+        a.effect.updateTiming({iterations:1, fill:'both'});
+        if(t.phase === 'active' && t.progress != null){
+          a.currentTime = (t.delay || 0) + t.progress * Number(t.duration);
+        }
+        a.playbackRate = -REWIND_SPEED;
+      });
+      Promise.all(anims.map(a => a.finished)).then(() => {
+        if(st.gen === gen && !st.want) card.classList.remove('hs-play');
+      }).catch(() => {});
     }
-    cards.forEach(c => c.addEventListener('animationiteration', () => {
-      const st = playState.get(c);
-      if(st && !st.want && c.classList.contains('hs-play')){
-        c.classList.remove('hs-play');
-        clearTimeout(st.timer);
-      }
-    }));
 
     function popFor(card){
       let pop = card.querySelector(':scope > .hs-pop');
