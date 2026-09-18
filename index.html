@@ -592,6 +592,12 @@
       75%{ transform:translate(15%,15%) rotate(-6deg); }
     }
   }
+  /* hover-activated: the card sits as a tidy stack until .hs-play is added (see the marquee hotspot script) */
+  .bg-tax:not(.hs-play) .flow-tax-card{ animation:none; }
+  .bg-tax:not(.hs-play) .flow-tax-a{ transform:translate(0%,0%) rotate(0deg); }
+  .bg-tax:not(.hs-play) .flow-tax-b{ transform:translate(5%,5%) rotate(-2deg); }
+  .bg-tax:not(.hs-play) .flow-tax-c{ transform:translate(10%,10%) rotate(-4deg); }
+  .bg-tax:not(.hs-play) .flow-tax-d{ transform:translate(15%,15%) rotate(-6deg); }
   @media (prefers-reduced-motion: reduce){
     .bg-tax .flow-tax-card{ animation:none !important; }
     .bg-tax .flow-tax-a{ transform:translate(0%,0%) rotate(0deg) !important; }
@@ -735,29 +741,33 @@
   .flow-news-electron-glow{fill:#f5c542;filter:blur(1.8px);}
 
   /* every animated rule carries an explicit duration + timing + count; animation-name is
-     only attached while the card is active so each activation restarts from 0% */
+     only attached while the card has .hs-play (added on hover by the marquee hotspot script) so each
+     activation restarts from 0%. At rest the coins sit stacked and centred, which is the 0% state. */
   .flow-news-mv,.flow-news-lit,.flow-news-wire,.flow-news-boxfill,.flow-news-label,.flow-news-electron,.flow-news-scene{
     animation-duration:10s;animation-iteration-count:infinite;animation-fill-mode:both;}
   .flow-news-mv,.flow-news-scene{animation-timing-function:cubic-bezier(.65,0,.35,1);}
   .flow-news-wire,.flow-news-electron{animation-timing-function:linear;}
   .flow-news-lit,.flow-news-boxfill,.flow-news-label{animation-timing-function:ease-in-out;}
-  .bg-news.is-active .flow-news-c0 .flow-news-mv{animation-name:flow-news-mv0;}
-  .bg-news.is-active .flow-news-c1 .flow-news-mv{animation-name:flow-news-mv1;}
-  .bg-news.is-active .flow-news-c2 .flow-news-mv{animation-name:flow-news-mv2;}
-  .bg-news.is-active .flow-news-c3 .flow-news-mv{animation-name:flow-news-mv3;}
-  .bg-news.is-active .flow-news-c4 .flow-news-mv{animation-name:flow-news-mv4;}
-  .bg-news.is-active .flow-news-c5 .flow-news-mv{animation-name:flow-news-mv5;}
-  .bg-news.is-active .flow-news-c6 .flow-news-mv{animation-name:flow-news-mv6;}
-  .bg-news.is-active .flow-news-lit{animation-name:flow-news-lit;}
-  .bg-news.is-active .flow-news-scene{animation-name:flow-news-scene;}
-  .bg-news.is-active .flow-news-w-lead{animation-name:flow-news-w-lead;}
-  .bg-news.is-active .flow-news-w-up{animation-name:flow-news-w-up;}
-  .bg-news.is-active .flow-news-w-dn{animation-name:flow-news-w-dn;}
-  .bg-news.is-active .flow-news-e-lead{animation-name:flow-news-e-lead;}
-  .bg-news.is-active .flow-news-e-up{animation-name:flow-news-e-up;}
-  .bg-news.is-active .flow-news-e-dn{animation-name:flow-news-e-dn;}
-  .bg-news.is-active .flow-news-boxfill{animation-name:flow-news-fill;}
-  .bg-news.is-active .flow-news-label{animation-name:flow-news-label;}
+  .bg-news.hs-play .flow-news-c0 .flow-news-mv{animation-name:flow-news-mv0;}
+  .bg-news.hs-play .flow-news-c1 .flow-news-mv{animation-name:flow-news-mv1;}
+  .bg-news.hs-play .flow-news-c2 .flow-news-mv{animation-name:flow-news-mv2;}
+  .bg-news.hs-play .flow-news-c3 .flow-news-mv{animation-name:flow-news-mv3;}
+  .bg-news.hs-play .flow-news-c4 .flow-news-mv{animation-name:flow-news-mv4;}
+  .bg-news.hs-play .flow-news-c5 .flow-news-mv{animation-name:flow-news-mv5;}
+  .bg-news.hs-play .flow-news-c6 .flow-news-mv{animation-name:flow-news-mv6;}
+  .bg-news.hs-play .flow-news-lit{animation-name:flow-news-lit;}
+  .bg-news.hs-play .flow-news-scene{animation-name:flow-news-scene;}
+  .bg-news.hs-play .flow-news-w-lead{animation-name:flow-news-w-lead;}
+  .bg-news.hs-play .flow-news-w-up{animation-name:flow-news-w-up;}
+  .bg-news.hs-play .flow-news-w-dn{animation-name:flow-news-w-dn;}
+  .bg-news.hs-play .flow-news-e-lead{animation-name:flow-news-e-lead;}
+  .bg-news.hs-play .flow-news-e-up{animation-name:flow-news-e-up;}
+  .bg-news.hs-play .flow-news-e-dn{animation-name:flow-news-e-dn;}
+  .bg-news.hs-play .flow-news-boxfill{animation-name:flow-news-fill;}
+  .bg-news.hs-play .flow-news-label{animation-name:flow-news-label;}
+  @media (prefers-reduced-motion: no-preference){
+    .bg-news:not(.hs-play) .flow-news-scene{transform:translate(104px,0px);}
+  }
   @keyframes flow-news-mv0{
     0%,6%{transform:translate(0px,0px);}
     18%,90%{transform:translate(0px,42px);}
@@ -2598,7 +2608,8 @@
   //  .hs       circular gold buttons (Ledger / Close / Reporting / Counsel). Hovering one shows a
   //            callout and pauses the slideshow timer until the mouse leaves.
   //  .hs-zone  invisible, deliberately large areas over the animated assets (Tax / News). Hovering
-  //            shows the same callout but the slideshow keeps running.
+  //            shows the same callout and starts that card's animation (which is otherwise at
+  //            rest); the slideshow keeps running.
   // On touch screens (no hover) a tap toggles the callout instead.
   (function(){
     const track = document.getElementById('marqueeTrack');
@@ -2626,6 +2637,7 @@
 
     const cards = Array.from(track.querySelectorAll('.marquee-card'));
     let openEl = null, safetyTimer = null;
+    const playState = new Map(); // hover-activated cards (Tax / News): card -> {want, timer}
 
     // only the visible card's buttons should be reachable by keyboard (off-screen
     // focus would otherwise scroll the overflow:hidden marquee sideways); also
@@ -2633,6 +2645,14 @@
     function syncCards(){
       buttons.forEach(h => h.setAttribute('tabindex', h.closest('.marquee-card').classList.contains('is-active') ? '0' : '-1'));
       if(openEl && !openEl.closest('.marquee-card').classList.contains('is-active')) closeHotspot();
+      // a hover-activated card that has slid away goes back to rest immediately
+      cards.forEach(c => {
+        if(!c.classList.contains('is-active') && c.classList.contains('hs-play')){
+          c.classList.remove('hs-play');
+          const st = playState.get(c);
+          if(st){ st.want = false; clearTimeout(st.timer); }
+        }
+      });
     }
     if('MutationObserver' in window){
       const mo = new MutationObserver(syncCards);
@@ -2641,6 +2661,29 @@
     syncCards();
 
     const pausesSlideshow = el => !el.classList.contains('hs-zone');
+
+    // Tax + News animations only run while .hs-play is on the card. Hovering starts them; moving
+    // away lets the current cycle finish (every keyframe set ends where it began, so stopping at a
+    // cycle boundary never jumps) and then returns the card to rest.
+    function setPlay(card, on){
+      let st = playState.get(card);
+      if(!st){ st = {want:false, timer:null}; playState.set(card, st); }
+      st.want = on;
+      clearTimeout(st.timer);
+      if(on){
+        card.classList.add('hs-play');
+      } else if(card.classList.contains('hs-play')){
+        // fallback in case no iteration event arrives (e.g. reduced motion): one full cycle + a beat
+        st.timer = setTimeout(() => card.classList.remove('hs-play'), (card.classList.contains('bg-news') ? 10000 : 5000) + 400);
+      }
+    }
+    cards.forEach(c => c.addEventListener('animationiteration', () => {
+      const st = playState.get(c);
+      if(st && !st.want && c.classList.contains('hs-play')){
+        c.classList.remove('hs-play');
+        clearTimeout(st.timer);
+      }
+    }));
 
     function popFor(card){
       let pop = card.querySelector(':scope > .hs-pop');
@@ -2662,6 +2705,7 @@
       if(pop) pop.classList.remove('is-shown', 'is-pausing');
       if(el.classList.contains('hs')) el.setAttribute('aria-expanded', 'false');
       clearTimeout(safetyTimer);
+      if(!pausesSlideshow(el)) setPlay(el.closest('.marquee-card'), false);
       if(pausesSlideshow(el)){
         // the slideshow was paused for this callout: give the card a fresh full dwell and refill its bar
         const ap = window.__marqueeAutoplay;
@@ -2701,6 +2745,7 @@
       pop.classList.toggle('is-pausing', pausesSlideshow(el));
       if(el.classList.contains('hs')) el.setAttribute('aria-expanded', 'true');
       openEl = el;
+      if(!pausesSlideshow(el)) setPlay(card, true);
       if(pausesSlideshow(el) && window.__marqueeAutoplay) window.__marqueeAutoplay.stop();
       clearTimeout(safetyTimer);
       if(sticky) safetyTimer = setTimeout(closeHotspot, 15000);
