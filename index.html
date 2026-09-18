@@ -2519,7 +2519,7 @@
 
   // ---- build the card list ----
   const real = (typeof ARTICLES !== 'undefined' && ARTICLES.length) ? ARTICLES.slice(0, MAX_CARDS) : [];
-  const items = real.map(a => ({ category:a.category, date:a.date, title:a.title, excerpt:a.excerpt, href:'news.html#' + encodeURIComponent(a.id), cta:'Read the post' }));
+  const items = real.map(a => ({ category:a.category, date:a.date, title:a.title, excerpt:a.excerpt, href:a.url, cta:'Read the post', newTab:true }));
   for(let i = 0; items.length < MIN_CARDS && i < TEASERS.length; i++){
     items.push({ category:TEASERS[i].category, date:'Coming soon', title:TEASERS[i].title, excerpt:TEASERS[i].excerpt, href:'news.html', cta:'Visit the newsroom', teaser:true });
   }
@@ -2535,6 +2535,7 @@
     meta.append(mk('span','cs-cat',it.category), mk('span','cs-date',it.date));
     const foot = document.createElement('div'); foot.className = 'cs-foot';
     const link = document.createElement('a'); link.href = it.href; link.textContent = it.cta + ' \u2192';
+    if(it.newTab){ link.target = '_blank'; link.rel = 'noopener'; }
     foot.append(link, mk('span','cs-num',String(i + 1).padStart(2,'0')));
     el.append(meta, mk('h3','',it.title), mk('p','',it.excerpt), foot);
     container.appendChild(el);

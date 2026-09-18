@@ -41,217 +41,73 @@
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
   }
 
-  /* ===== NEWSROOM HEADER — breadcrumb, filter tabs, title block ===== */
-  .news-header{
-    padding:150px 60px 50px;
-    max-width:1400px;margin:0 auto;
+  /* ===== NEWSROOM — a big title, one rule, then every post listed under its month ===== */
+  .news-hero{
+    max-width:1400px;margin:0 auto;padding:150px 60px 0;
   }
-  .news-back{
-    display:inline-flex;align-items:center;gap:8px;
-    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--ink-soft);text-decoration:none;margin-bottom:22px;
-    transition:color .25s ease;
-  }
-  .news-back:hover{color:var(--gold);}
-  .news-crumb{
-    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;
-    color:var(--muted);margin-bottom:34px;
-  }
-  .news-crumb a{color:var(--ink-soft);text-decoration:none;}
-  .news-crumb a:hover{color:var(--gold);}
-  .news-crumb span{color:var(--muted);}
-
-  /* tabs are used inline inside the "Read the Latest" row now, not as
-     their own standalone bordered row up top — no bottom border/margin
-     of their own here, since .news-latest-head already draws that line */
-  .news-tabs{
-    display:flex;flex-wrap:wrap;gap:28px;
-  }
-  .news-tab{
-    background:none;border:none;cursor:pointer;padding:0;
-    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;
-    color:var(--ink-soft);white-space:nowrap;
-    transition:color .25s ease;
-  }
-  .news-tab:hover{color:var(--ink);}
-  .news-tab.is-active{color:var(--green);font-weight:600;}
-
-  .news-title-row h1{
-    font-weight:500;font-size:clamp(46px,7vw,96px);line-height:1;letter-spacing:-.01em;
+  .news-hero h1{
+    font-weight:500;font-size:clamp(56px,11vw,168px);line-height:.95;letter-spacing:-.03em;
     color:var(--ink);
   }
-  .news-title-row h1 em{font-style:italic;color:var(--gold);font-weight:400;}
-  .news-title-row p{
-    margin-top:22px;font-size:19px;line-height:1.6;color:var(--ink-soft);max-width:560px;
-  }
+  .news-rule{max-width:1400px;margin:44px auto 0;padding:0 60px;}
+  .news-rule span{display:block;border-top:1px solid var(--ink);}
 
-  /* ===== FEATURED STORY — dark placeholder block, mirrors the
-     newsroom's real "featured video" slot; centered logo mark stands
-     in until there's real footage/imagery to drop in ===== */
-  .news-featured{
-    max-width:1400px;margin:0 auto;padding:0 60px 30px;
+  .news-groups{max-width:1400px;margin:0 auto;padding:0 60px 140px;}
+  .news-group{
+    display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);column-gap:32px;
+    padding:56px 0 64px;
   }
-  .news-featured-link{
-    display:block;width:100%;text-align:left;
-    background:none;border:none;padding:0;margin:0;cursor:pointer;
-    font-family:inherit;color:inherit;
+  .news-group + .news-group{border-top:1px solid var(--line);}
+  .news-group-label{
+    font-weight:400;font-size:clamp(26px,3vw,40px);line-height:1.1;letter-spacing:-.01em;color:var(--ink);
+    position:sticky;top:110px;align-self:start;
   }
-  .news-featured-media{
-    position:relative;
-    height:52vh;min-height:340px;
-    background:var(--green-deep);
-    overflow:hidden;
+  .news-items{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:32px;row-gap:56px;align-items:start;
   }
-  .news-featured-media img{
-    position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;object-position:center;z-index:0;
+  .news-item{opacity:0;transform:translateY(10px);transition:opacity .5s ease, transform .5s ease;}
+  .news-item.is-shown{opacity:1;transform:translateY(0);}
+  .news-item .date{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);
+    margin-bottom:14px;
   }
-  /* dims the image and keeps it from reading as the centerpiece —
-     same technique as the homepage's photo-backed product cards */
-  .news-featured-media::after{
-    content:"";position:absolute;inset:0;z-index:1;
-    background:linear-gradient(180deg, rgba(19,37,24,0.35) 0%, rgba(19,37,24,0.55) 55%, rgba(19,37,24,0.88) 100%);
+  .news-item h3{
+    font-weight:400;font-size:22px;line-height:1.28;letter-spacing:-.005em;
   }
-  .news-featured-tag{
-    position:absolute;top:20px;left:24px;z-index:2;
-    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-    color:rgba(247,245,239,0.75);
+  .news-item h3 a{color:var(--ink);text-decoration:none;transition:color .25s ease;}
+  .news-item h3 a:hover{color:var(--gold);}
+  .news-tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin-top:16px;}
+  .news-tag{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:#6f6230;border:1px solid var(--line);padding:4px 8px;
   }
-  /* title + date overlaid bottom-left, matching the product cards'
-     inner layout exactly */
-  .news-featured-cap{
-    position:relative;z-index:2;height:100%;
-    display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
-    padding:0 40px 34px;
+  .news-read{
+    display:inline-flex;align-items:center;gap:6px;margin-top:22px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.04em;
+    color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;
+    transition:color .25s ease, border-color .25s ease;
   }
-  .news-featured-cap h2{
-    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
-    font-size:clamp(26px,3vw,40px);line-height:1.2;color:var(--cream);max-width:760px;
-  }
-  .news-featured-cap .date{
-    margin-top:12px;
-    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:rgba(247,245,239,0.7);
-    white-space:nowrap;
-  }
-
-  /* ===== "READ THE LATEST" section header — now also hosts the
-     category filter tabs, on the right where the arrow used to be ===== */
-  .news-latest-head{
-    max-width:1400px;margin:70px auto 0;padding:0 60px;
-    display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
-    border-bottom:1px solid var(--line);padding-bottom:18px;
-  }
-  .news-latest-head h3{
-    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;font-size:22px;color:var(--ink);
-  }
-
-  /* ===== ARTICLE GRID — same card language as the marquee/product
-     cards: thin top accent, hover lift, JetBrains Mono meta text ===== */
-  .news-grid{
-    max-width:1400px;margin:0 auto;padding:44px 60px 120px;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:28px;
-  }
-  .news-card{
-    position:relative;
-    border:1px solid var(--line);background:var(--panel-bg);
-    text-decoration:none;color:inherit;
-    padding:26px 26px 30px;
-    transition:transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1);
-    opacity:0;transform:translateY(14px);
-  }
-  .news-card.is-shown{opacity:1;transform:translateY(0);}
-  .news-card.is-hidden{display:none;}
-  @media(hover:hover) and (pointer:fine){
-    .news-card:hover{
-      transform:translateY(-4px);
-      box-shadow:0 18px 36px rgba(19,37,24,0.14);
-    }
-  }
-  .news-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
-  .news-card .meta{
-    display:flex;gap:12px;align-items:center;
-    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--gold);margin-bottom:16px;
-  }
-  .news-card .meta .date{color:var(--muted);text-transform:none;letter-spacing:.02em;}
-  .news-card h4{
-    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;font-size:21px;line-height:1.3;
-    color:var(--green);margin-bottom:12px;
-  }
-  .news-card p{
-    font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--ink-soft);
-  }
+  .news-read:hover{color:var(--ink);border-color:var(--ink);}
+  .news-read svg{flex:0 0 auto;}
 
   .news-empty{
-    max-width:1400px;margin:0 auto;padding:0 60px 120px;
+    max-width:1400px;margin:0 auto;padding:56px 60px 140px;
     font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);
-    display:none;
-  }
-  .news-empty.is-shown{display:block;}
-
-  /* ===== ARTICLE READER — dimmed scrim behind, a centered reading
-     panel in front (not a full-screen takeover). Same open/close
-     pattern as the Get Started panel (scrim click, close button,
-     Escape), but a centered scale/fade instead of a side slide-in,
-     since this is "opening up" an article rather than a form. ===== */
-  .article-overlay{
-    position:fixed;inset:0;z-index:250;
-    display:flex;align-items:center;justify-content:center;
-    padding:40px 24px;
-    visibility:hidden;
-    transition:visibility 0s linear .4s;
-  }
-  .article-overlay.is-open{visibility:visible;transition-delay:0s;}
-  .article-scrim{
-    position:absolute;inset:0;
-    background:rgba(11,18,13,0.62);
-    opacity:0;transition:opacity .4s ease;
-  }
-  .article-overlay.is-open .article-scrim{opacity:1;}
-  .article-panel{
-    position:relative;z-index:2;
-    width:100%;max-width:720px;max-height:85vh;overflow-y:auto;
-    background:var(--panel-bg);border:1px solid var(--line);
-    box-shadow:0 40px 90px rgba(11,18,13,0.35);
-    padding:52px 52px 60px;
-    opacity:0;transform:translateY(18px) scale(.97);
-    transition:opacity .4s cubic-bezier(.2,.7,.3,1), transform .4s cubic-bezier(.2,.7,.3,1);
-  }
-  .article-overlay.is-open .article-panel{opacity:1;transform:translateY(0) scale(1);}
-  .article-panel::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--green);}
-  .article-close{
-    position:absolute;top:22px;right:24px;
-    background:none;border:none;cursor:pointer;
-    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--ink-soft);padding:4px;
-    transition:color .3s ease;
-  }
-  .article-close:hover{color:var(--gold);}
-  .article-panel .meta{
-    display:flex;gap:12px;align-items:center;
-    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--gold);margin-bottom:20px;padding-right:60px;
-  }
-  .article-panel .meta .date{color:var(--muted);text-transform:none;letter-spacing:.02em;}
-  .article-panel h2{
-    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
-    font-size:clamp(26px,3vw,36px);line-height:1.2;color:var(--green);margin-bottom:26px;
-  }
-  .article-panel .body p{
-    font-size:16px;line-height:1.75;color:var(--ink-soft);margin-bottom:18px;
-  }
-  .article-panel .body p:last-child{margin-bottom:0;}
-
-  @media(max-width:640px){
-    .article-panel{padding:60px 26px 40px;max-height:88vh;}
   }
 
+  @media(max-width:1100px){
+    .news-items{grid-template-columns:repeat(2,minmax(0,1fr));}
+  }
   @media(max-width:900px){
-    .news-header{padding:120px 22px 40px;}
-    .news-tabs{gap:18px;}
-    .news-featured{padding:0 22px 24px;}
-    .news-latest-head{padding:0 22px;margin-top:50px;}
-    .news-grid{padding:36px 22px 80px;grid-template-columns:1fr;gap:20px;}
+    .news-hero{padding:120px 22px 0;}
+    .news-rule{padding:0 22px;margin-top:32px;}
+    .news-groups{padding:0 22px 90px;}
+    .news-group{grid-template-columns:minmax(0,1fr);row-gap:28px;padding:40px 0 48px;}
+    .news-group-label{position:static;}
+    .news-empty{padding:40px 22px 90px;}
+  }
+  @media(max-width:560px){
+    .news-items{grid-template-columns:minmax(0,1fr);}
   }
 </style>
 </head>
@@ -262,50 +118,13 @@
      page so the logo always links home and gets the same hover "lift" effect. -->
 <header class="site-nav" id="siteNav" data-nav-mode="light"></header>
 
-<div class="news-header">
-  <a href="index.html" class="news-back">← Back</a>
-  <div class="news-crumb"><a href="index.html">HLW Financial</a> <span>/ Newsroom</span></div>
-
-  <div class="news-title-row">
-    <h1>The <em>Newsroom.</em></h1>
-    <p>Firm news, tax and regulatory insights, and updates from HLW Financial.</p>
-  </div>
+<div class="news-hero">
+  <h1>The Newsroom</h1>
 </div>
+<div class="news-rule"><span></span></div>
 
-<div class="news-featured">
-  <button class="news-featured-link" id="newsFeaturedLink" type="button">
-    <div class="news-featured-media">
-      <img src="media/hlwinitials.PNG" alt="HLW Financial — Harms, Lindsey, Wigley">
-      <div class="news-featured-tag">Featured</div>
-      <div class="news-featured-cap">
-        <h2 id="newsFeaturedTitle"></h2>
-        <span class="date" id="newsFeaturedMeta"></span>
-      </div>
-    </div>
-  </button>
-</div>
-
-<div class="news-latest-head">
-  <h3>Read the Latest</h3>
-  <div class="news-tabs" id="newsTabs">
-    <button class="news-tab is-active" data-filter="all">All</button>
-    <button class="news-tab" data-filter="firm">Firm News</button>
-    <button class="news-tab" data-filter="insights">Insights</button>
-  </div>
-</div>
-
-<div class="news-grid" id="newsGrid"></div>
-<p class="news-empty" id="newsEmpty">Nothing in this category yet.</p>
-
-<div class="article-overlay" id="articleOverlay">
-  <div class="article-scrim" id="articleScrim"></div>
-  <div class="article-panel">
-    <button class="article-close" id="articleClose" type="button">Close ✕</button>
-    <div class="meta"><span id="articleCategory"></span><span class="date" id="articleDate"></span></div>
-    <h2 id="articleTitle"></h2>
-    <div class="body" id="articleBody"></div>
-  </div>
-</div>
+<div class="news-groups" id="newsGroups"></div>
+<p class="news-empty" id="newsEmpty" hidden>Nothing here yet.</p>
 
 <div class="footer" id="siteFooter"></div>
 
@@ -314,115 +133,81 @@
 <script src="hlw-chrome.js"></script>
 <script src="hlw-articles.js"></script>
 <script>
-  // ===== NEWSROOM ARTICLES — loaded from hlw-articles.js (see that
-  // file's header comment for how to publish a new post). The card
-  // grid, the featured slot, and the reader panel below all render
-  // from that same shared ARTICLES array. =====
-
-  // ===== render cards from ARTICLES =====
+  // ===== NEWSROOM — every post from hlw-articles.js (newest first), grouped by month + year.
+  // hlw-articles.js is generated from the files in /articles (see articles/README.md), and
+  // already carries each post's page address, tags and month group. Titles and "Read" links
+  // open the post's own page in a new tab. =====
   (function(){
-    const grid = document.getElementById('newsGrid');
+    const root = document.getElementById('newsGroups');
     const emptyMsg = document.getElementById('newsEmpty');
+    if(!ARTICLES.length){ emptyMsg.hidden = false; return; }
 
-    function cardHTML(a){
-      return '<a href="#" class="news-card" data-id="' + a.id + '" data-category="' + a.filterKey + '">' +
-        '<div class="meta"><span>' + a.category + '</span><span class="date">' + a.date + '</span></div>' +
-        '<h4>' + a.title + '</h4>' +
-        '<p>' + a.excerpt + '</p>' +
-      '</a>';
+    const SVG = 'http://www.w3.org/2000/svg';
+    function icon(paths, w, h){
+      const s = document.createElementNS(SVG, 'svg');
+      s.setAttribute('width', w); s.setAttribute('height', h); s.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '1.3');
+      s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true');
+      paths.forEach(d => { const p = document.createElementNS(SVG, 'path'); p.setAttribute('d', d); s.appendChild(p); });
+      return s;
     }
-    grid.innerHTML = ARTICLES.map(cardHTML).join('');
+    const el = (tag, cls, text) => { const n = document.createElement(tag); if(cls) n.className = cls; if(text != null) n.textContent = text; return n; };
 
-    // featured slot — first article flagged featured:true
-    const featured = ARTICLES.find(a => a.featured) || ARTICLES[0];
-    if(featured){
-      document.getElementById('newsFeaturedTitle').textContent = featured.title;
-      document.getElementById('newsFeaturedMeta').textContent = featured.date + ' · ' + featured.category;
-      document.getElementById('newsFeaturedLink').dataset.id = featured.id;
-    }
-
-    if(!ARTICLES.length) emptyMsg.classList.add('is-shown');
-  })();
-
-  // ===== ARTICLE READER — dimmed scrim behind, centered panel in
-  // front. Opens on any card click or the featured block, populated
-  // from the matching ARTICLES entry. =====
-  (function(){
-    const overlay = document.getElementById('articleOverlay');
-    const scrim = document.getElementById('articleScrim');
-    const closeBtn = document.getElementById('articleClose');
-    if(!overlay) return;
-
-    function openArticle(id){
-      const a = ARTICLES.find(x => x.id === id);
-      if(!a) return;
-      document.getElementById('articleCategory').textContent = a.category;
-      document.getElementById('articleDate').textContent = a.date;
-      document.getElementById('articleTitle').textContent = a.title;
-      document.getElementById('articleBody').innerHTML = a.body.map(p => '<p>' + p + '</p>').join('');
-      overlay.classList.add('is-open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeArticle(){
-      overlay.classList.remove('is-open');
-      document.body.style.overflow = '';
-    }
-
-    // delegated click — covers cards (re-rendered dynamically) and the
-    // featured block without needing to rebind listeners after render
-    document.addEventListener('click', function(e){
-      const card = e.target.closest('.news-card');
-      const featured = e.target.closest('#newsFeaturedLink');
-      if(card){
-        e.preventDefault();
-        openArticle(card.dataset.id);
-      } else if(featured){
-        e.preventDefault();
-        openArticle(featured.dataset.id);
+    // group consecutive posts that share a month + year (the array is newest-first)
+    const groups = [];
+    ARTICLES.forEach(a => {
+      let g = groups[groups.length - 1];
+      if(!g || g.key !== a.groupKey){
+        g = { key:a.groupKey, label:a.groupLabel, posts:[] };
+        groups.push(g);
       }
+      g.posts.push(a);
     });
 
-    scrim.addEventListener('click', closeArticle);
-    closeBtn.addEventListener('click', closeArticle);
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape') closeArticle();
-    });
+    const items = [];
+    groups.forEach(g => {
+      const section = el('section', 'news-group');
+      section.setAttribute('aria-label', g.label);
+      section.appendChild(el('h2', 'news-group-label', g.label));
+      const list = el('div', 'news-items');
 
-    // deep link from the homepage's newsroom cards: news.html#<article-id> opens that post
-    if(location.hash.length > 1) openArticle(decodeURIComponent(location.hash.slice(1)));
-  })();
+      g.posts.forEach(a => {
+        const href = a.url;
+        const item = el('article', 'news-item');
+        item.appendChild(el('div', 'date', a.dateNumeric));
 
-  // ===== NEWSROOM — category tab filtering + card reveal on load =====
-  (function(){
-    const tabs = document.querySelectorAll('#newsTabs .news-tab');
-    const emptyMsg = document.getElementById('newsEmpty');
+        const h3 = el('h3');
+        const titleLink = el('a', '', a.title);
+        titleLink.href = href; titleLink.target = '_blank'; titleLink.rel = 'noopener';
+        h3.appendChild(titleLink);
+        item.appendChild(h3);
 
-    function applyFilter(filter){
-      const cards = document.querySelectorAll('#newsGrid .news-card');
-      let visibleCount = 0;
-      cards.forEach(card=>{
-        const match = filter === 'all' || card.dataset.category === filter;
-        card.classList.toggle('is-hidden', !match);
-        if(match) visibleCount++;
+        const tags = a.tags || [];
+        if(tags.length){
+          const ul = el('ul', 'news-tags');
+          tags.forEach(t => ul.appendChild(el('li', 'news-tag', t)));
+          item.appendChild(ul);
+        }
+
+        const read = el('a', 'news-read');
+        read.href = href; read.target = '_blank'; read.rel = 'noopener';
+        read.setAttribute('aria-label', 'Read: ' + a.title + ' (opens in a new tab)');
+        read.appendChild(icon(['M2 2v5h6', 'M6 5l2 2-2 2'], 11, 11));
+        read.appendChild(document.createTextNode('Read'));
+        read.appendChild(icon(['M2.5 8.5l6-6', 'M3.5 2.5h5v5'], 11, 11));
+        item.appendChild(read);
+
+        list.appendChild(item);
+        items.push(item);
       });
-      emptyMsg.classList.toggle('is-shown', visibleCount === 0);
-    }
 
-    tabs.forEach(tab=>{
-      tab.addEventListener('click', ()=>{
-        tabs.forEach(t=>t.classList.remove('is-active'));
-        tab.classList.add('is-active');
-        applyFilter(tab.dataset.filter);
-      });
+      section.appendChild(list);
+      root.appendChild(section);
     });
 
-    // simple staggered reveal on load, matching the rest of the site's
-    // scroll/entry animations rather than snapping straight in
-    document.querySelectorAll('#newsGrid .news-card').forEach((card, i)=>{
-      setTimeout(()=> card.classList.add('is-shown'), 80 + i * 60);
-    });
+    // simple staggered reveal on load, matching the rest of the site's entry animations
+    items.forEach((item, i) => setTimeout(() => item.classList.add('is-shown'), 80 + i * 60));
   })();
 </script>
-
 </body>
 </html>
