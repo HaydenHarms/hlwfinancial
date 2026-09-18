@@ -387,6 +387,9 @@
     document.addEventListener('keydown', function(e){
       if(e.key === 'Escape') closeArticle();
     });
+
+    // deep link from the homepage's newsroom cards: news.html#<article-id> opens that post
+    if(location.hash.length > 1) openArticle(decodeURIComponent(location.hash.slice(1)));
   })();
 
   // ===== NEWSROOM — category tab filtering + card reveal on load =====

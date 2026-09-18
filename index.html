@@ -95,29 +95,92 @@
     content:'';position:absolute;inset:0;z-index:0;
     background:var(--cream);opacity:var(--fuse,0);pointer-events:none;
   }
-  /* newsroom promo — a compact bridge section between the product cards
-     and the marquee, dark to match the marquee cards below it. */
+  /* newsroom — "Card Swap" section between the product cards and the marquee. The stacking/swap
+     motion is adapted from React Bits (reactbits.dev/components/card-swap, MIT + Commons Clause).
+     Same dark as the marquee cards; headings use the hero's Helvetica Neue. Cards are built from
+     ARTICLES by the newsroom script near the bottom of the page. */
   #newsroomSection{
     min-height:0;justify-content:center;
-    background:var(--green-deep);color:var(--cream);
-    padding:64px 60px;
+    background:var(--flow-green-deep);color:var(--cream);
+    padding:72px 60px;overflow:hidden;
   }
-  .newsroom-promo-inner{max-width:900px;margin:0 auto;width:100%;}
+  .newsroom-promo-inner{
+    max-width:1320px;margin:0 auto;width:100%;
+    display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);column-gap:60px;align-items:center;
+  }
   .newsroom-promo-label{
     font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--gold);margin-bottom:14px;
   }
   .newsroom-promo-inner h2{
-    font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;
-    font-size:clamp(30px,4vw,44px);line-height:1.15;color:var(--cream);margin-bottom:14px;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:clamp(40px,4.6vw,64px);line-height:1.03;letter-spacing:-.01em;
+    color:#f4f1e8;margin-bottom:18px;
   }
-  .newsroom-promo-inner h2 em{color:var(--gold);font-style:italic;}
-  .newsroom-promo-inner p{
+  .newsroom-promo-inner h2 em{color:var(--gold);font-style:italic;font-weight:400;}
+  .newsroom-promo-copy{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-    font-size:16px;line-height:1.6;color:rgba(247,245,239,.72);max-width:520px;margin-bottom:26px;
+    font-size:16px;line-height:1.6;color:rgba(247,245,239,.72);max-width:400px;margin-bottom:26px;
   }
+  /* readout under the copy: follows whichever card is in front */
+  .nr-now{
+    margin-top:44px;padding-top:18px;border-top:1px solid rgba(247,245,239,.16);
+    display:flex;align-items:center;gap:14px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(247,245,239,.62);
+  }
+  .nr-now b{font-weight:500;color:var(--cream);}
+  .nr-now .cat{color:#d9bf78;}
+  .nr-now .hint{margin-left:auto;}
+  .cs-stage{
+    position:relative;height:640px;overflow:hidden;
+    background:radial-gradient(circle at 58% 55%, rgba(95,217,126,.08), transparent 58%);
+  }
+  .cs-container{
+    position:absolute;right:110px;bottom:40px;
+    perspective:900px;overflow:visible;
+    transform-origin:bottom right;
+  }
+  .cs-card{
+    position:absolute;top:50%;left:50%;
+    background:var(--panel-bg);border:1px solid var(--line);border-top:3px solid var(--gold);
+    padding:34px 38px 28px;display:flex;flex-direction:column;gap:16px;color:var(--ink);
+    box-shadow:0 26px 56px rgba(0,0,0,.42);
+    transform-style:preserve-3d;will-change:transform;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  }
+  .cs-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  }
+  .cs-cat{color:#6f6230;font-weight:500;}
+  .cs-date{color:var(--ink-soft);}
+  .cs-card h3{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:500;
+    font-size:36px;line-height:1.08;letter-spacing:-.01em;color:var(--green);
+  }
+  .cs-card p{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:var(--ink-soft);}
+  .cs-card.is-teaser h3{color:var(--ink-soft);}
+  .cs-foot{
+    margin-top:auto;display:flex;justify-content:space-between;align-items:center;
+    padding-top:16px;border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  }
+  .cs-foot a{color:var(--green);text-decoration:none;font-weight:500;}
+  .cs-foot a:hover{color:var(--gold);}
+  .cs-num{color:var(--ink-soft);}
+  /* narrow layouts: smaller cards with a tighter stack (sized by the script) */
+  .cs-container.is-narrow .cs-card{padding:26px 26px 22px;gap:12px;}
+  .cs-container.is-narrow .cs-card h3{font-size:26px;}
+  .cs-container.is-narrow .cs-card p{font-size:14px;line-height:1.5;}
+  /* if GSAP can't load, just show the newest card */
+  .cs-container.is-static{position:relative;right:auto;bottom:auto;width:auto!important;height:auto!important;}
+  .cs-container.is-static .cs-card{position:relative;top:auto;left:auto;width:auto!important;height:auto!important;}
+  .cs-container.is-static .cs-card:not(:first-child){display:none;}
   @media(max-width:900px){
-    #newsroomSection{padding:44px 22px;}
+    #newsroomSection{padding:48px 22px;}
+    .newsroom-promo-inner{grid-template-columns:minmax(0,1fr);row-gap:8px;}
+    .nr-now .hint{display:none;}
   }
 
   /* Same issue on the marquee section itself: it used to be the first
@@ -1364,10 +1427,20 @@
 
 <div class="snap-section" id="newsroomSection">
   <div class="newsroom-promo-inner">
-    <div class="newsroom-promo-label">From the firm</div>
-    <h2>Notes from the <em>newsroom</em>.</h2>
-    <p>Filing deadlines, planning windows, and the occasional editorial — collected in one place.</p>
-    <a class="cta-inline" href="news.html">Visit the newsroom &rarr;</a>
+    <div class="nr-text">
+      <div class="newsroom-promo-label">From the firm</div>
+      <h2>Notes from the <em>newsroom</em>.</h2>
+      <p class="newsroom-promo-copy">Filing deadlines, planning windows, and the occasional editorial — collected in one place.</p>
+      <a class="cta-inline" href="news.html">Visit the newsroom &rarr;</a>
+      <div class="nr-now" aria-live="polite">
+        <span><b id="nrIdx">01</b> / <span id="nrTotal">01</span></span>
+        <span class="cat" id="nrCat"></span>
+        <span class="hint">Hover to pause</span>
+      </div>
+    </div>
+    <div class="cs-stage" id="csStage">
+      <div class="cs-container" id="csContainer" role="group" aria-label="Latest from the newsroom"></div>
+    </div>
   </div>
 </div>
 
@@ -2411,6 +2484,155 @@
 
 <script src="hlw-chrome.js"></script>
 <script src="hlw-articles.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+// ===== NEWSROOM — "Card Swap" =====
+// Stacked cards, front card drops out and rejoins at the back. Motion adapted from React Bits'
+// Card Swap (reactbits.dev/components/card-swap, MIT + Commons Clause), ported to plain JS.
+// Cards come from ARTICLES (hlw-articles.js): publish a post there and it joins the stack.
+// Until there are MIN_CARDS posts, "coming soon" cards for the site's usual topics fill the rest
+// and get pushed out automatically as real posts are published.
+(function(){
+  const stage = document.getElementById('csStage');
+  const container = document.getElementById('csContainer');
+  if(!stage || !container) return;
+
+  const MIN_CARDS = 4, MAX_CARDS = 6;
+  const DELAY = 5000;          // ms between swaps
+  const SKEW = 6;              // degrees of skewY on every card
+  const PAUSE_ON_HOVER = true;
+  const TINTS = ['#fdfcf8', '#f6f3e8', '#eeeadb', '#e6e1cf', '#dfd9c4', '#d8d2bb'];
+  const TEASERS = [
+    { category:'Deadlines', title:'Filing deadlines',         excerpt:'The dates that matter, and what each one means for you.' },
+    { category:'Planning',  title:'Planning windows',         excerpt:'The moments in the year when a decision can still change the number.' },
+    { category:'Editorial', title:'The occasional editorial', excerpt:'Longer takes from the founders, when there is something worth saying.' }
+  ];
+
+  // ---- build the card list ----
+  const real = (typeof ARTICLES !== 'undefined' && ARTICLES.length) ? ARTICLES.slice(0, MAX_CARDS) : [];
+  const items = real.map(a => ({ category:a.category, date:a.date, title:a.title, excerpt:a.excerpt, href:'news.html#' + encodeURIComponent(a.id), cta:'Read the post' }));
+  for(let i = 0; items.length < MIN_CARDS && i < TEASERS.length; i++){
+    items.push({ category:TEASERS[i].category, date:'Coming soon', title:TEASERS[i].title, excerpt:TEASERS[i].excerpt, href:'news.html', cta:'Visit the newsroom', teaser:true });
+  }
+  const total = items.length;
+
+  const cards = items.map((it, i) => {
+    const el = document.createElement('article');
+    el.className = 'cs-card' + (it.teaser ? ' is-teaser' : '');
+    el.dataset.cat = it.category;
+    el.style.background = TINTS[i % TINTS.length];
+    const mk = (tag, cls, text) => { const n = document.createElement(tag); if(cls) n.className = cls; n.textContent = text; return n; };
+    const meta = document.createElement('div'); meta.className = 'cs-meta';
+    meta.append(mk('span','cs-cat',it.category), mk('span','cs-date',it.date));
+    const foot = document.createElement('div'); foot.className = 'cs-foot';
+    const link = document.createElement('a'); link.href = it.href; link.textContent = it.cta + ' \u2192';
+    foot.append(link, mk('span','cs-num',String(i + 1).padStart(2,'0')));
+    el.append(meta, mk('h3','',it.title), mk('p','',it.excerpt), foot);
+    container.appendChild(el);
+    return el;
+  });
+
+  const idxEl = document.getElementById('nrIdx');
+  const catEl = document.getElementById('nrCat');
+  document.getElementById('nrTotal').textContent = String(total).padStart(2,'0');
+  let frontIdx = 0;
+  function showFront(i){
+    frontIdx = i;
+    idxEl.textContent = String(i + 1).padStart(2,'0');
+    catEl.textContent = cards[i].dataset.cat;
+    cards.forEach((c, k) => { const a = c.querySelector('a'); if(a) a.tabIndex = (k === i) ? 0 : -1; });
+  }
+  showFront(0);
+
+  // no GSAP (blocked CDN etc.) or a single card: just show the newest one, flat
+  if(typeof gsap === 'undefined' || total < 2){ container.classList.add('is-static'); return; }
+
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const CFG = { ease:'elastic.out(0.6,0.9)', durDrop:2, durMove:2, durReturn:2, promoteOverlap:0.9, returnDelay:0.05 };
+
+  // ---- sizing: full-size stack when there's room, a tighter stack of smaller cards otherwise ----
+  let M = null;
+  function metrics(){
+    const W = stage.clientWidth;
+    if(W >= 700){
+      const s = Math.min(1, W / 760);
+      return { narrow:false, key:'w'+s.toFixed(3), w:520, h:340, dx:60, dy:70, right:110 * s, bottom:40, scale:s, stageH:640 };
+    }
+    const w = Math.max(220, Math.min(380, W - 64));
+    return { narrow:true, key:'n'+w, w:w, h:340, dx:18, dy:26, right:30, bottom:32, scale:1, stageH:340 + 3 * 26 + 90 };
+  }
+  const slot = (i) => ({ x:i * M.dx, y:-i * M.dy, z:-i * M.dx * 1.5, zIndex:total - i });
+  const place = (el, sl) => gsap.set(el, { x:sl.x, y:sl.y, z:sl.z, xPercent:-50, yPercent:-50, skewY:SKEW, transformOrigin:'center center', zIndex:sl.zIndex, force3D:true });
+
+  let order = cards.map((_, i) => i);
+  let tl = null, timer = null, hovering = false, inView = false;
+
+  function layout(){
+    M = metrics();
+    if(tl){ tl.kill(); tl = null; }
+    order = cards.map((_, i) => i);
+    container.classList.toggle('is-narrow', M.narrow);
+    container.style.width = M.w + 'px';
+    container.style.height = M.h + 'px';
+    container.style.right = M.right + 'px';
+    container.style.bottom = M.bottom + 'px';
+    container.style.transform = M.scale === 1 ? '' : 'scale(' + M.scale + ')';
+    stage.style.height = M.stageH + 'px';
+    cards.forEach((c, i) => { c.style.width = M.w + 'px'; c.style.height = M.h + 'px'; place(c, slot(i)); });
+    showFront(0);
+    syncRun();
+  }
+
+  function swap(){
+    if(order.length < 2) return;
+    const [front, ...rest] = order;
+    const elFront = cards[front];
+    tl = gsap.timeline();
+    tl.to(elFront, { y:'+=500', duration:CFG.durDrop, ease:CFG.ease });
+    tl.addLabel('promote', '-=' + (CFG.durDrop * CFG.promoteOverlap));
+    tl.call(() => showFront(rest[0]), undefined, 'promote');
+    rest.forEach((idx, i) => {
+      const el = cards[idx], sl = slot(i);
+      tl.set(el, { zIndex:sl.zIndex }, 'promote');
+      tl.to(el, { x:sl.x, y:sl.y, z:sl.z, duration:CFG.durMove, ease:CFG.ease }, 'promote+=' + (i * 0.15));
+    });
+    const back = slot(total - 1);
+    tl.addLabel('return', 'promote+=' + (CFG.durMove * CFG.returnDelay));
+    tl.call(() => gsap.set(elFront, { zIndex:back.zIndex }), undefined, 'return');
+    tl.to(elFront, { x:back.x, y:back.y, z:back.z, duration:CFG.durReturn, ease:CFG.ease }, 'return');
+    tl.call(() => { order = [...rest, front]; });
+  }
+
+  // run only while the section is on screen and not hovered (and never with reduced motion)
+  function syncRun(){
+    const run = !reduced && inView && !(PAUSE_ON_HOVER && hovering);
+    if(run){
+      if(tl) tl.play();
+      if(!timer) timer = window.setInterval(swap, DELAY);
+    } else {
+      if(timer){ clearInterval(timer); timer = null; }
+      if(tl) tl.pause();
+    }
+  }
+
+  layout();
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(es => { inView = es[0].isIntersecting; syncRun(); }, { threshold:0.15 }).observe(stage);
+  } else { inView = true; syncRun(); }
+
+  container.addEventListener('pointerenter', e => { if(e.pointerType === 'mouse'){ hovering = true; syncRun(); } });
+  container.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse'){ hovering = false; syncRun(); } });
+
+  // re-layout when the available width crosses a size bucket
+  let rz = null;
+  if('ResizeObserver' in window){
+    new ResizeObserver(() => {
+      clearTimeout(rz);
+      rz = setTimeout(() => { if(metrics().key !== M.key) layout(); }, 120);
+    }).observe(stage);
+  }
+})();
+</script>
 <script>
   // ===== VIDEO AUTOPLAY HARDENING =====
   // Some mobile browsers (older iOS Safari, Low Power Mode, some in-app
