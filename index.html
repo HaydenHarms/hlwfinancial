@@ -117,7 +117,6 @@
     font-size:clamp(40px,4.6vw,64px);line-height:1.03;letter-spacing:-.01em;
     color:#f4f1e8;margin-bottom:18px;
   }
-  .newsroom-promo-inner h2 em{color:var(--gold);font-style:italic;font-weight:400;}
   .newsroom-promo-copy{
     font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
     font-size:16px;line-height:1.6;color:rgba(247,245,239,.72);max-width:400px;margin-bottom:26px;
@@ -131,7 +130,13 @@
   }
   .nr-now b{font-weight:500;color:var(--cream);}
   .nr-now .cat{color:#d9bf78;}
-  .nr-now .hint{margin-left:auto;}
+  .nr-arrows{margin-left:auto;display:flex;gap:8px;}
+  .nr-arrows button{
+    width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+    background:transparent;color:var(--cream);border:1px solid rgba(247,245,239,.3);cursor:pointer;
+    transition:border-color .25s ease, color .25s ease;
+  }
+  .nr-arrows button:hover{border-color:#d9bf78;color:#d9bf78;}
   .cs-stage{
     position:relative;height:640px;overflow:hidden;
     background:radial-gradient(circle at 58% 55%, rgba(95,217,126,.08), transparent 58%);
@@ -139,7 +144,6 @@
   .cs-container{
     position:absolute;right:110px;bottom:40px;
     perspective:900px;overflow:visible;
-    transform-origin:bottom right;
   }
   .cs-card{
     position:absolute;top:50%;left:50%;
@@ -180,7 +184,6 @@
   @media(max-width:900px){
     #newsroomSection{padding:48px 22px;}
     .newsroom-promo-inner{grid-template-columns:minmax(0,1fr);row-gap:8px;}
-    .nr-now .hint{display:none;}
   }
 
   /* Same issue on the marquee section itself: it used to be the first
@@ -1429,13 +1432,16 @@
   <div class="newsroom-promo-inner">
     <div class="nr-text">
       <div class="newsroom-promo-label">From the firm</div>
-      <h2>Notes from the <em>newsroom</em>.</h2>
+      <h2>Newsroom</h2>
       <p class="newsroom-promo-copy">Filing deadlines, planning windows, and the occasional editorial — collected in one place.</p>
       <a class="cta-inline" href="news.html">Visit the newsroom &rarr;</a>
       <div class="nr-now" aria-live="polite">
         <span><b id="nrIdx">01</b> / <span id="nrTotal">01</span></span>
         <span class="cat" id="nrCat"></span>
-        <span class="hint">Hover to pause</span>
+        <span class="nr-arrows">
+          <button type="button" id="nrPrev" aria-label="Previous post"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 2.5L4 7l4.5 4.5"></path></svg></button>
+          <button type="button" id="nrNext" aria-label="Next post"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 2.5L10 7l-4.5 4.5"></path></svg></button>
+        </span>
       </div>
     </div>
     <div class="cs-stage" id="csStage">
@@ -2487,20 +2493,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
 // ===== NEWSROOM — "Card Swap" =====
-// Stacked cards, front card drops out and rejoins at the back. Motion adapted from React Bits'
-// Card Swap (reactbits.dev/components/card-swap, MIT + Commons Clause), ported to plain JS.
-// Cards come from ARTICLES (hlw-articles.js): publish a post there and it joins the stack.
-// Until there are MIN_CARDS posts, "coming soon" cards for the site's usual topics fill the rest
-// and get pushed out automatically as real posts are published.
+// Stacked cards. Nothing moves on its own: hover the stack and it enlarges, then scroll to step
+// through the posts (down = next, up = previous). At the first/last post the scroll wheel is let
+// through so the page never gets stuck; the arrow buttons (and taps on touch screens) wrap around.
+// Stacking/swap motion adapted from React Bits' Card Swap (reactbits.dev/components/card-swap,
+// MIT + Commons Clause), ported to plain JS. Cards come from ARTICLES (hlw-articles.js): publish a
+// post there and it joins the stack. Until there are MIN_CARDS posts, "coming soon" cards for the
+// site's usual topics fill the rest and get pushed out automatically as real posts are published.
 (function(){
   const stage = document.getElementById('csStage');
   const container = document.getElementById('csContainer');
   if(!stage || !container) return;
 
   const MIN_CARDS = 4, MAX_CARDS = 6;
-  const DELAY = 5000;          // ms between swaps
-  const SKEW = 6;              // degrees of skewY on every card
-  const PAUSE_ON_HOVER = true;
+  const SKEW = 6;                 // degrees of skewY on every card
+  const HOVER_SCALE = 1.14;       // how much the whole stack enlarges on hover (narrow layouts get less)
+  const WHEEL_STEP = 40;          // wheel distance that counts as one "step"
   const TINTS = ['#fdfcf8', '#f6f3e8', '#eeeadb', '#e6e1cf', '#dfd9c4', '#d8d2bb'];
   const TEASERS = [
     { category:'Deadlines', title:'Filing deadlines',         excerpt:'The dates that matter, and what each one means for you.' },
@@ -2535,9 +2543,7 @@
   const idxEl = document.getElementById('nrIdx');
   const catEl = document.getElementById('nrCat');
   document.getElementById('nrTotal').textContent = String(total).padStart(2,'0');
-  let frontIdx = 0;
   function showFront(i){
-    frontIdx = i;
     idxEl.textContent = String(i + 1).padStart(2,'0');
     catEl.textContent = cards[i].dataset.cat;
     cards.forEach((c, k) => { const a = c.querySelector('a'); if(a) a.tabIndex = (k === i) ? 0 : -1; });
@@ -2545,10 +2551,16 @@
   showFront(0);
 
   // no GSAP (blocked CDN etc.) or a single card: just show the newest one, flat
-  if(typeof gsap === 'undefined' || total < 2){ container.classList.add('is-static'); return; }
+  if(typeof gsap === 'undefined' || total < 2){
+    container.classList.add('is-static');
+    document.querySelector('.nr-arrows').style.display = 'none';
+    return;
+  }
 
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const CFG = { ease:'elastic.out(0.6,0.9)', durDrop:2, durMove:2, durReturn:2, promoteOverlap:0.9, returnDelay:0.05 };
+  const CFG = reduced
+    ? { ease:'none', durDrop:0, durMove:0, durReturn:0, promoteOverlap:0, returnDelay:0 }
+    : { ease:'elastic.out(0.6,0.9)', durDrop:0.7, durMove:1.1, durReturn:1.1, promoteOverlap:0.85, returnDelay:0.05 };
 
   // ---- sizing: full-size stack when there's room, a tighter stack of smaller cards otherwise ----
   let M = null;
@@ -2556,79 +2568,129 @@
     const W = stage.clientWidth;
     if(W >= 700){
       const s = Math.min(1, W / 760);
-      return { narrow:false, key:'w'+s.toFixed(3), w:520, h:340, dx:60, dy:70, right:110 * s, bottom:40, scale:s, stageH:640 };
+      return { narrow:false, key:'w'+s.toFixed(3), w:520, h:340, dx:60, dy:70, right:110 * s, bottom:40, scale:s, hover:HOVER_SCALE, stageH:640 };
     }
     const w = Math.max(220, Math.min(380, W - 64));
-    return { narrow:true, key:'n'+w, w:w, h:340, dx:18, dy:26, right:30, bottom:32, scale:1, stageH:340 + 3 * 26 + 90 };
+    return { narrow:true, key:'n'+w, w:w, h:340, dx:18, dy:26, right:30, bottom:32, scale:1, hover:1 + (HOVER_SCALE - 1) * 0.55, stageH:340 + 3 * 26 + 90 };
   }
   const slot = (i) => ({ x:i * M.dx, y:-i * M.dy, z:-i * M.dx * 1.5, zIndex:total - i });
   const place = (el, sl) => gsap.set(el, { x:sl.x, y:sl.y, z:sl.z, xPercent:-50, yPercent:-50, skewY:SKEW, transformOrigin:'center center', zIndex:sl.zIndex, force3D:true });
 
-  let order = cards.map((_, i) => i);
-  let tl = null, timer = null, hovering = false, inView = false;
+  let order = cards.map((_, i) => i);   // order[0] is the front card
+  let pos = 0;                          // which post is in front (0 .. total-1)
+  let tl = null, hovering = false, wheelAcc = 0, lastWheel = 0, needQuiet = false;
 
   function layout(){
     M = metrics();
     if(tl){ tl.kill(); tl = null; }
     order = cards.map((_, i) => i);
+    pos = 0;
     container.classList.toggle('is-narrow', M.narrow);
     container.style.width = M.w + 'px';
     container.style.height = M.h + 'px';
     container.style.right = M.right + 'px';
     container.style.bottom = M.bottom + 'px';
-    container.style.transform = M.scale === 1 ? '' : 'scale(' + M.scale + ')';
     stage.style.height = M.stageH + 'px';
+    gsap.set(container, { transformOrigin:'100% 100%', scale:M.scale });
     cards.forEach((c, i) => { c.style.width = M.w + 'px'; c.style.height = M.h + 'px'; place(c, slot(i)); });
     showFront(0);
-    syncRun();
   }
 
-  function swap(){
-    if(order.length < 2) return;
+  // a new step first snaps any step still in flight to its end, so positions are always consistent
+  function run(build){
+    if(tl){ tl.progress(1); tl.kill(); }
+    tl = gsap.timeline();
+    build(tl);
+  }
+
+  // front card drops out and rejoins at the back (the React Bits swap)
+  function stepNext(){
     const [front, ...rest] = order;
     const elFront = cards[front];
-    tl = gsap.timeline();
-    tl.to(elFront, { y:'+=500', duration:CFG.durDrop, ease:CFG.ease });
-    tl.addLabel('promote', '-=' + (CFG.durDrop * CFG.promoteOverlap));
-    tl.call(() => showFront(rest[0]), undefined, 'promote');
-    rest.forEach((idx, i) => {
-      const el = cards[idx], sl = slot(i);
-      tl.set(el, { zIndex:sl.zIndex }, 'promote');
-      tl.to(el, { x:sl.x, y:sl.y, z:sl.z, duration:CFG.durMove, ease:CFG.ease }, 'promote+=' + (i * 0.15));
+    order = [...rest, front];
+    pos = (pos + 1) % total;
+    showFront(order[0]);
+    run(t => {
+      t.to(elFront, { y:'+=500', duration:CFG.durDrop, ease:CFG.ease });
+      t.addLabel('promote', '-=' + (CFG.durDrop * CFG.promoteOverlap));
+      rest.forEach((idx, i) => {
+        const el = cards[idx], sl = slot(i);
+        t.set(el, { zIndex:sl.zIndex }, 'promote');
+        t.to(el, { x:sl.x, y:sl.y, z:sl.z, duration:CFG.durMove, ease:CFG.ease }, 'promote+=' + (i * 0.15));
+      });
+      const back = slot(total - 1);
+      t.addLabel('return', 'promote+=' + (CFG.durMove * CFG.returnDelay));
+      t.set(elFront, { zIndex:back.zIndex }, 'return');
+      t.to(elFront, { x:back.x, y:back.y, z:back.z, duration:CFG.durReturn, ease:CFG.ease }, 'return');
     });
-    const back = slot(total - 1);
-    tl.addLabel('return', 'promote+=' + (CFG.durMove * CFG.returnDelay));
-    tl.call(() => gsap.set(elFront, { zIndex:back.zIndex }), undefined, 'return');
-    tl.to(elFront, { x:back.x, y:back.y, z:back.z, duration:CFG.durReturn, ease:CFG.ease }, 'return');
-    tl.call(() => { order = [...rest, front]; });
   }
 
-  // run only while the section is on screen and not hovered (and never with reduced motion)
-  function syncRun(){
-    const run = !reduced && inView && !(PAUSE_ON_HOVER && hovering);
-    if(run){
-      if(tl) tl.play();
-      if(!timer) timer = window.setInterval(swap, DELAY);
-    } else {
-      if(timer){ clearInterval(timer); timer = null; }
-      if(tl) tl.pause();
-    }
+  // the exact reverse: everyone steps back one slot and the back card rises into the front
+  function stepPrev(){
+    const back = order[order.length - 1];
+    const rest = order.slice(0, -1);
+    const elBack = cards[back];
+    order = [back, ...rest];
+    pos = (pos - 1 + total) % total;
+    showFront(back);
+    run(t => {
+      rest.forEach((idx, i) => {
+        const el = cards[idx], sl = slot(i + 1);
+        t.set(el, { zIndex:sl.zIndex }, 0);
+        t.to(el, { x:sl.x, y:sl.y, z:sl.z, duration:CFG.durMove, ease:CFG.ease }, i * 0.08);
+      });
+      const s0 = slot(0);
+      t.set(elBack, { zIndex:s0.zIndex, x:s0.x, y:s0.y + 500, z:s0.z }, 0);
+      t.to(elBack, { y:s0.y, duration:CFG.durReturn, ease:CFG.ease }, 0.15);
+    });
   }
 
   layout();
-  if('IntersectionObserver' in window){
-    new IntersectionObserver(es => { inView = es[0].isIntersecting; syncRun(); }, { threshold:0.15 }).observe(stage);
-  } else { inView = true; syncRun(); }
 
-  container.addEventListener('pointerenter', e => { if(e.pointerType === 'mouse'){ hovering = true; syncRun(); } });
-  container.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse'){ hovering = false; syncRun(); } });
+  // ---- hover: the whole stack enlarges ----
+  function setHover(on){
+    if(hovering === on) return;
+    hovering = on;
+    wheelAcc = 0; needQuiet = false;
+    if(reduced) return;
+    gsap.to(container, { scale:on ? M.scale * M.hover : M.scale, duration:0.5, ease:'power2.out', overwrite:'auto' });
+  }
+  container.addEventListener('pointerenter', e => { if(e.pointerType === 'mouse') setHover(true); });
+  container.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse') setHover(false); });
+
+  // ---- scroll wheel steps through the cards while hovering ----
+  container.addEventListener('wheel', e => {
+    if(!hovering || e.ctrlKey) return;               // ctrl+wheel is browser zoom
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    if(!dy) return;
+    const dir = dy > 0 ? 1 : -1;
+    if((dir === 1 && pos >= total - 1) || (dir === -1 && pos <= 0)) return;   // at an end: let the page scroll
+    e.preventDefault();
+    const now = performance.now();
+    const gap = now - lastWheel;
+    lastWheel = now;
+    if(needQuiet){ if(gap < 130) return; needQuiet = false; }   // one step per flick, ignore trackpad inertia
+    if(gap > 220) wheelAcc = 0;
+    wheelAcc += dy;
+    if(Math.abs(wheelAcc) >= WHEEL_STEP){
+      wheelAcc = 0; needQuiet = true;
+      if(dir === 1) stepNext(); else stepPrev();
+    }
+  }, { passive:false });
+
+  // ---- buttons + touch taps (these wrap around) ----
+  document.getElementById('nrNext').addEventListener('click', stepNext);
+  document.getElementById('nrPrev').addEventListener('click', stepPrev);
+  container.addEventListener('pointerup', e => {
+    if(e.pointerType === 'touch' && !e.target.closest('a')) stepNext();
+  });
 
   // re-layout when the available width crosses a size bucket
   let rz = null;
   if('ResizeObserver' in window){
     new ResizeObserver(() => {
       clearTimeout(rz);
-      rz = setTimeout(() => { if(metrics().key !== M.key) layout(); }, 120);
+      rz = setTimeout(() => { if(metrics().key !== M.key){ setHover(false); layout(); } }, 120);
     }).observe(stage);
   }
 })();
