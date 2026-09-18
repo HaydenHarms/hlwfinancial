@@ -101,22 +101,22 @@
     color:rgba(247,245,239,0.75);max-width:480px;
   }
 
-  /* scroll cue — identical component to index.html's .hero-scroll-cue,
-     moved to bottom-right since bottom-left is now the title/body copy */
+  /* scroll cue: a thin down arrow over "Scroll to Explore", centered at the bottom of the hero.
+     Same component on index.html, bookkeeping.html and tax-prep.html. */
   .hero-scroll-cue{
-    position:absolute;right:60px;bottom:34px;z-index:2;
-    display:flex;align-items:center;gap:12px;
-    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
-    color:rgba(244,241,232,0.55);
+    position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:2;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;font-weight:400;letter-spacing:.01em;line-height:1.2;
+    white-space:nowrap;color:rgba(244,241,232,.92);text-shadow:0 1px 8px rgba(0,0,0,.45);
+    pointer-events:none;
   }
-  .hero-scroll-cue .line{width:1px;height:34px;background:rgba(244,241,232,0.35);position:relative;overflow:hidden;}
-  .hero-scroll-cue .line i{
-    position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--gold);
-    animation:scrollCue 2.2s ease-in-out infinite;
+  .hero-scroll-cue svg{width:20px;height:26px;display:block;overflow:visible;animation:scrollCueBob 2.2s ease-in-out infinite;}
+  .hero-scroll-cue svg path{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  @keyframes scrollCueBob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(6px);}
   }
-  @keyframes scrollCue{
-    0%{top:-100%;} 60%{top:100%;} 100%{top:100%;}
-  }
+  @media (prefers-reduced-motion:reduce){.hero-scroll-cue svg{animation:none;}}
 
   /* .type-cursor / @keyframes cursorBlink now live in hlw-chrome.css
      (shared across every page that uses the hero typewriter effect) */
@@ -295,9 +295,9 @@
   /* ===== FOOTER — identical to index.html ===== */
 
   @media(max-width:900px){
-    .product-hero-inner{padding:0 22px 60px;}
-    .hero-scroll-cue{right:22px;bottom:26px;gap:14px;font-size:13px;letter-spacing:.1em;}
-    .hero-scroll-cue .line{width:2px;height:48px;}
+    .product-hero-inner{padding:0 22px 110px;} /* room for the centered scroll cue */
+    .hero-scroll-cue{font-size:15px;}
+    .hero-scroll-cue svg{width:22px;height:28px;}
     .pricing-note{padding:0 22px;margin-bottom:60px;}
     .pricing-note-inner{padding:28px 26px;}
     .cta-inner{padding:70px 22px;}
@@ -339,7 +339,7 @@
     <h1 id="heroTitle" data-text="Bookkeeping"></h1>
     <p id="heroBody" data-text="Books reconciled and categorized as transactions clear, kept on a continuous-close cadence all year."></p>
   </div>
-  <div class="hero-scroll-cue"><div class="line"><i></i></div> Scroll</div>
+  <div class="hero-scroll-cue" aria-hidden="true"><svg viewBox="0 0 20 26"><path d="M10 1V24M3 17l7 7 7-7"/></svg><span>Scroll to Explore</span></div>
 </section>
 
 <div class="showcase" id="showcase">
