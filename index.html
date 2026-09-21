@@ -1398,7 +1398,10 @@
   <div class="hero-sticky">
     <div class="hero-bg">
       <div class="hero-bg-fallback"></div>
-      <video src="media/hero.mp4" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+      <video autoplay muted loop playsinline webkit-playsinline preload="auto" poster="media/hero-poster.jpg">
+        <source src="media/hero.webm" type="video/webm">
+        <source src="media/hero.mp4" type="video/mp4">
+      </video>
     </div>
     <div class="hero-noise"></div>
     <div class="hero-overlay"></div>
