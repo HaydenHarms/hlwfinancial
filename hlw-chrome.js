@@ -28,7 +28,7 @@
     '</a>' +
     '<div class="nav-links">' +
       '<a href="about.html">About Us</a>' +
-      '<a href="client-access.html" class="nav-btn">Client Access</a>' +
+      '<a href="https://hlwfinancial.myassembly.com/" class="nav-btn" target="_blank" rel="noopener">Client Access</a>' +
       '<a href="get-started.html" class="nav-btn nav-btn-primary js-get-started">Get Started</a>' +
     '</div>';
 
