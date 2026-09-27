@@ -101,14 +101,54 @@
 }
 .nav-links a.nav-btn-primary:hover{background:#9c8a4a;}
 
+/* hamburger toggle — hidden on desktop, so the desktop nav is untouched */
+.nav-toggle{display:none;}
+
 @media(max-width:900px){
   .site-nav{padding:18px 22px;}
   .site-nav.scrolled{padding-top:14px;padding-bottom:14px;}
-  .nav-links{gap:20px;}
-  /* Client Access (the 2nd link, a bulkier pill button) drops off on
-     mobile to save space; About Us (plain text, lightweight) and Get
-     Started (the primary action) both stay */
-  .nav-links a:nth-child(2){display:none;}
+
+  /* ===== MOBILE HAMBURGER MENU =====
+     The three nav links collapse behind a hamburger button and drop
+     down as a stacked panel under the nav bar when it's tapped. */
+  .nav-toggle{
+    display:flex;flex-direction:column;justify-content:center;gap:5px;
+    width:40px;height:40px;padding:10px 8px;margin-right:-8px;
+    background:none;border:0;cursor:pointer;color:inherit;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .nav-toggle span{
+    display:block;height:1.5px;width:100%;background:var(--cream);
+    transition:transform .3s ease, opacity .2s ease;
+  }
+  /* bars morph into an ✕ while the menu is open */
+  .site-nav.menu-open .nav-toggle span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+  .site-nav.menu-open .nav-toggle span:nth-child(2){opacity:0;}
+  .site-nav.menu-open .nav-toggle span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+  /* nav bar goes solid while the menu is open, even over the hero */
+  .site-nav.menu-open{
+    background:rgba(11,18,13,0.92);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(244,241,232,0.12);
+  }
+
+  .nav-links{
+    position:absolute;top:100%;left:0;right:0;
+    flex-direction:column;align-items:stretch;gap:12px;
+    padding:20px 22px 26px;
+    background:rgba(11,18,13,0.92);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(244,241,232,0.12);
+    opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s linear .25s;
+  }
+  .site-nav.menu-open .nav-links{
+    opacity:1;visibility:visible;transform:none;
+    transition:opacity .25s ease, transform .25s ease, visibility 0s;
+  }
+  .nav-links a{padding:12px 0;font-size:14px;color:var(--cream);}
+  .nav-links a.nav-btn{text-align:center;padding:14px 18px;font-size:12px;}
 }
 
 /* ===== GET STARTED — slide-in panel form, modeled on Palantir's

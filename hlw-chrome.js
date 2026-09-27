@@ -26,7 +26,10 @@
       '</svg>' +
       'HLW <span>Financial</span>' +
     '</a>' +
-    '<div class="nav-links">' +
+    '<button class="nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">' +
+      '<span></span><span></span><span></span>' +
+    '</button>' +
+    '<div class="nav-links" id="navLinks">' +
       '<a href="about.html">About Us</a>' +
       '<a href="https://hlwfinancial.myassembly.com/" class="nav-btn" target="_blank" rel="noopener">Client Access</a>' +
       '<a href="get-started.html" class="nav-btn nav-btn-primary js-get-started">Get Started</a>' +
@@ -133,6 +136,33 @@
       window.addEventListener('resize', updateNav);
       updateNav();
     }
+  }
+
+  // ---- mobile hamburger menu (button only visible under 900px) ----
+  var navToggle = document.getElementById('navToggle');
+  if(navMount && navToggle){
+    var setMenu = function(open){
+      navMount.classList.toggle('menu-open', open);
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+    navToggle.addEventListener('click', function(){
+      setMenu(!navMount.classList.contains('menu-open'));
+    });
+    // close after picking a link, on Escape, on tapping outside, or
+    // when the window is widened back to desktop
+    navMount.querySelectorAll('.nav-links a').forEach(function(a){
+      a.addEventListener('click', function(){ setMenu(false); });
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') setMenu(false);
+    });
+    document.addEventListener('click', function(e){
+      if(!navMount.contains(e.target)) setMenu(false);
+    });
+    window.addEventListener('resize', function(){
+      if(window.innerWidth > 900) setMenu(false);
+    });
   }
 
   // ---- Get Started modal: open/close + mailto submit ----
