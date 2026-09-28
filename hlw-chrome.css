@@ -251,8 +251,9 @@
 .footer .footer-links a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent;transition:color .2s ease,border-color .2s ease;}
 .footer .footer-links a:hover{color:var(--green);border-color:var(--line);}
 .footer .footer-links .footer-sep{color:var(--muted);opacity:.5;}
-.footer .footer-badges{display:flex;align-items:center;gap:14px;}
-.footer .footer-badges img{height:64px;width:auto;display:block;}
+.footer .footer-badges{display:flex;align-items:center;gap:20px;}
+@media(max-width:900px){.footer .footer-badges img{height:104px;}}
+.footer .footer-badges img{height:128px;width:auto;display:block;}
 
 @media(max-width:900px){
   .footer{padding:32px 22px;}
