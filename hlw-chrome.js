@@ -91,6 +91,10 @@
         '<span class="footer-sep">·</span>' +
         '<a href="terms-of-use.html">Terms of Use</a>' +
       '</div>' +
+      '<div class="footer-badges">' +
+        '<img src="media/intuit-bookkeeping-trained.png" alt="Intuit Bookkeeping Trained badge" loading="lazy">' +
+        '<img src="media/intuit-proadvisor-cas-foundations.png" alt="Intuit ProAdvisor Graduate: Client Advisory Services Foundations badge" loading="lazy">' +
+      '</div>' +
     '</div>';
 
   // ---- inject into the mount points every page provides ----
